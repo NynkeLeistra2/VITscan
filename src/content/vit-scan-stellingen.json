@@ -2,6 +2,7 @@
   "meta": {
     "naam": "VIT-scan",
     "eigenaar": "Nynke Leistra Coaching en Advies",
+    "versie": "1.0.0",
     "schaal": {
       "type": "likert5",
       "labels": ["Helemaal oneens", "Oneens", "Neutraal", "Eens", "Helemaal eens"],
