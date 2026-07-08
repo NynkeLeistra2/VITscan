@@ -1,0 +1,237 @@
+{
+  "meta": {
+    "naam": "VIT-scan",
+    "eigenaar": "Nynke Leistra Coaching en Advies",
+    "schaal": {
+      "type": "likert5",
+      "labels": ["Helemaal oneens", "Oneens", "Neutraal", "Eens", "Helemaal eens"],
+      "waarden": [1, 2, 3, 4, 5]
+    }
+  },
+  "delen": [
+    {
+      "id": "werkenergie",
+      "titel": "Werkenergie",
+      "emoji": "🌟",
+      "themas": [
+        {
+          "id": "plezier",
+          "titel": "Plezier",
+          "emoji": "🎉",
+          "stellingen": [
+            "Ik heb inhoudelijk leuk werk.",
+            "Ik heb plezier in het werk wat ik doe.",
+            "De sfeer is goed in het team waar ik werk.",
+            "De sfeer is goed binnen de organisatie waar ik werk."
+          ]
+        },
+        {
+          "id": "voldoening",
+          "titel": "Voldoening",
+          "emoji": "✨",
+          "stellingen": [
+            "Ik voel me geïnspireerd op het werk.",
+            "Mijn werk geeft mij energie.",
+            "Mijn werkdruk voelt voor mij goed hanteerbaar.",
+            "Ik zit regelmatig in een flow op mijn werk en vergeet daarbij de tijd.",
+            "Aan het einde van de dag heb ik een voldaan gevoel."
+          ]
+        },
+        {
+          "id": "competentie",
+          "titel": "Competentie",
+          "emoji": "🧠",
+          "stellingen": [
+            "Ik kan elke dag het werk doen waar ik het beste in ben.",
+            "Ik voel me vaardig genoeg om mijn werk te kunnen doen.",
+            "Ik maak in mijn werk optimaal gebruik van mijn kwaliteiten en talenten."
+          ]
+        },
+        {
+          "id": "uitdaging",
+          "titel": "Uitdaging",
+          "emoji": "🚀",
+          "stellingen": [
+            "Ik ervaar voldoende uitdaging in mijn werk.",
+            "Ik ervaar voldoende ontwikkel- en/of doorgroeimogelijkheden in mijn werk.",
+            "Ik krijg voldoende kansen om te leren en mezelf te ontwikkelen, ook buiten mijn huidige functie."
+          ]
+        },
+        {
+          "id": "autonomie",
+          "titel": "Autonomie",
+          "emoji": "🕊️",
+          "toelichting": "Gaat over zelfstandigheid, professionele ruimte en invloed.",
+          "stellingen": [
+            "Ik ervaar voldoende vrijheid in mijn werk.",
+            "Ik ervaar voldoende ruimte binnen de kaders van de organisatie om mijn werk naar eigen inzicht te kunnen doen.",
+            "Ik ervaar voldoende invloed en professionele ruimte om mee te denken over mijn werk en de organisatie."
+          ]
+        },
+        {
+          "id": "vertrouwen",
+          "titel": "Vertrouwen",
+          "emoji": "🤝",
+          "subcategorieen": [
+            {
+              "titel": "Psychologische veiligheid & communicatie",
+              "emoji": "💬",
+              "stellingen": [
+                "Ik voel me op mijn gemak om mijn mening te delen, zelfs als die afwijkt van die van anderen.",
+                "Suggesties en ideeën worden serieus genomen door mijn collega's of leidinggevende.",
+                "Ik kan open en eerlijk communiceren met mijn team zonder bang te zijn voor kritiek of afwijzing."
+              ]
+            },
+            {
+              "titel": "Vertrouwen & respect",
+              "emoji": "🤝",
+              "stellingen": [
+                "Ik heb het gevoel dat collega's mij vertrouwen.",
+                "Ik heb vertrouwen in mijn collega's.",
+                "Ik voel me gerespecteerd door mijn collega's."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "verbinding",
+          "titel": "Verbinding",
+          "emoji": "🔗",
+          "stellingen": [
+            "Ik voel me verbonden met de waarden, missie, visie en doelen van de organisatie.",
+            "Ik voel me thuis binnen de organisatie en kan helemaal mijzelf zijn.",
+            "Ik voel me verbonden met de collega's met wie ik werk.",
+            "Ik ervaar verbindend leiderschap vanuit mijn leidinggevende."
+          ]
+        },
+        {
+          "id": "waardering",
+          "titel": "Waardering",
+          "emoji": "🏆",
+          "stellingen": [
+            "Ik ervaar voldoende persoonlijke waardering in mijn werk.",
+            "Ik ervaar voldoende financiële waardering in mijn werk.",
+            "Ik heb het gevoel dat ik er toe doe op mijn werk.",
+            "Ik ervaar voldoende steun van mijn collega's."
+          ]
+        },
+        {
+          "id": "zingeving",
+          "titel": "Zingeving",
+          "emoji": "💡",
+          "stellingen": [
+            "Ik heb het gevoel dat mijn werk zinvol is.",
+            "Ik voel me van toegevoegde waarde binnen de organisatie waar ik werk.",
+            "Ik ben van toegevoegde waarde voor de mensen met wie ik werk (klanten)."
+          ]
+        },
+        {
+          "id": "duidelijkheid",
+          "titel": "Duidelijkheid",
+          "emoji": "📋",
+          "stellingen": [
+            "Ik weet wat er van mij wordt verwacht in mijn werk.",
+            "De rollen binnen de organisatie zijn duidelijk."
+          ]
+        },
+        {
+          "id": "fysieke_werkomgeving",
+          "titel": "Fysieke werkomgeving",
+          "emoji": "🏢",
+          "stellingen": [
+            "Mijn fysieke werkomgeving ondersteunt mij goed in het uitvoeren van mijn werk.",
+            "Ik voel me comfortabel en op mijn gemak in mijn werkomgeving.",
+            "De fysieke werkomgeving draagt bij aan mijn gevoel van welzijn op het werk."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "persoonlijk_welzijn",
+      "titel": "Persoonlijk Welzijn",
+      "emoji": "⚖️",
+      "themas": [
+        {
+          "id": "balans",
+          "titel": "Balans",
+          "emoji": "🧘",
+          "stellingen": [
+            "Mijn werk en privé voelen meestal in balans.",
+            "Ik ervaar emotionele balans in mijn privéleven."
+          ]
+        },
+        {
+          "id": "fysieke_gezondheid",
+          "titel": "Fysieke gezondheid",
+          "emoji": "💪",
+          "stellingen": [
+            "Ik voel me fysiek gezond.",
+            "Ik voel me vrij van stress gerelateerde fysieke klachten.",
+            "Ik heb voldoende aandacht voor mijn fysieke gezondheid.",
+            "Ik beweeg voldoende."
+          ]
+        },
+        {
+          "id": "mentale_gezondheid",
+          "titel": "Mentale gezondheid",
+          "emoji": "🧠",
+          "stellingen": [
+            "Ik voel mij mentaal gezond.",
+            "Ik voel me vrij van stress gerelateerde mentale klachten.",
+            "Ik voel voldoende veerkracht om met tegenslagen om te gaan.",
+            "Ik heb voldoende aandacht voor mijn mentale gezondheid."
+          ]
+        },
+        {
+          "id": "ontspanning",
+          "titel": "Ontspanning – vrije tijd",
+          "emoji": "🌴",
+          "stellingen": [
+            "Ik kan mijn werk makkelijk loslaten in mijn vrije tijd.",
+            "Ik heb voldoende ontspanningsmomenten in een week.",
+            "Ik slaap goed en krijg voldoende slaap."
+          ]
+        },
+        {
+          "id": "financien",
+          "titel": "Financiën – omgaan met geld",
+          "emoji": "💰",
+          "stellingen": [
+            "Ik ben over het algemeen tevreden over mijn financiën.",
+            "Ik voel mij voorbereid op onverwachte financiële tegenvallers.",
+            "Ik hoef me geen zorgen te maken of ik wel rond kan komen."
+          ]
+        },
+        {
+          "id": "persoonlijke_ontwikkeling",
+          "titel": "Persoonlijke ontwikkeling",
+          "emoji": "🌱",
+          "stellingen": [
+            "Ik voel dat ik richting geef aan mijn leven op een manier die bij me past.",
+            "Ik heb helder wat mijn sterke kanten zijn en weet hoe ik die kan inzetten.",
+            "Ik neem regelmatig tijd om aan mijn persoonlijke groei te werken om nieuwe vaardigheden te leren en mezelf te ontwikkelen."
+          ]
+        },
+        {
+          "id": "familie_relaties",
+          "titel": "Familie en relaties",
+          "emoji": "👨‍👩‍👧‍👦",
+          "stellingen": [
+            "Mensen die belangrijk voor mij zijn (familie, vrienden etc.) ervaar ik als steunend.",
+            "Het contact met de mensen met wie ik omga ervaar ik als zorgeloos."
+          ]
+        },
+        {
+          "id": "huis_leefomgeving",
+          "titel": "Huis en leefomgeving",
+          "emoji": "🏡",
+          "stellingen": [
+            "Ik woon op een fijne plek waar ik me goed voel.",
+            "Ik woon op een plek waar ik tot rust kom en energie opdoe.",
+            "Ik voel me veilig in mijn huis en omgeving."
+          ]
+        }
+      ]
+    }
+  ]
+}
