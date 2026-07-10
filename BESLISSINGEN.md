@@ -50,6 +50,65 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   het scenario waarbij dezelfde antwoordenset twee keer wordt opgeslagen
   (zoals bij afronden gebeurt).
 
+## Wave 1, stap 4 — Antwoordschaal naar 1-10 (2026-07-10)
+
+- **Wijziging:** stellingen worden nu direct op een schaal van 1-10
+  beantwoord i.p.v. een 5-punts Likert-schaal. Themascore (gemiddelde van de
+  stellingen) staat daardoor al op de gewenste 1-10-schaal, geen omrekening
+  meer nodig.
+- **Schaal blijft data-gedreven:** `meta.schaal` in
+  `vit-scan-stellingen.json` bevat nu `waarden: [1..10]` en alleen twee
+  labels (voor de uitersten, i.p.v. één label per punt) — `AntwoordSchaal`
+  (hernoemd van `LikertVraag`) leest dit nog steeds dynamisch uit, dus een
+  toekomstige schaalwijziging vereist alleen een JSON-aanpassing.
+- **`meta.versie` opgehoogd naar 2.0.0** — oude 1-5-antwoorden zijn
+  betekenisverschillend van nieuwe 1-10-antwoorden, dus niet vergelijkbaar
+  (zelfde principe als bij wijziging van stellingvolgorde/-inhoud).
+- **UI:** 10 knoppen op één rij was te krap voor mobiel (touch targets), dus
+  `AntwoordSchaal` toont een grid van 5 kolommen x 2 rijen i.p.v. één rij.
+- **Database:** `antwoorden.waarde`-constraint verruimd van 1-5 naar 1-10
+  (`supabase/migrations/0004_antwoordschaal_10punts.sql`). Bestaande
+  testdata (waarden 1-5) valt binnen de nieuwe, ruimere grens, dus geen
+  opschoning nodig.
+
+## Wave 1, stap 4 — Eén stelling per scherm (2026-07-10)
+
+- **Wijziging:** i.p.v. alle stellingen van een thema op één scherm, nu één
+  stelling per scherm (64 in totaal, over 19 thema's). `ScanFlow.tsx` bouwt
+  hiervoor één keer een platte `STELLING_STAPPEN`-lijst (thema + stelling +
+  of het de laatste van het thema is), en `sessie.stapIndex` wijst nu naar
+  een stelling i.p.v. een thema.
+- **Opslaan blijft per afgerond thema** (niet per stelling), om het aantal
+  Supabase-requests te beperken zoals eerder besloten (stap 3) — de trigger
+  ligt nu bij het verlaten van de láátste stelling van een thema i.p.v. bij
+  een aparte "volgende thema"-knop.
+- **`ThemaScreen` vervangen door `StellingScreen`**: toont thema-titel/emoji
+  + eventuele subcategorie als context boven de ene stelling.
+- **Opmaak van `AntwoordSchaal` en `StellingScreen`** is qua stijl
+  overgenomen uit `werkgeluk-kompas-main` (`ScaleInput`/`QuestionCard`/
+  `WerkgelukScan`, ter referentie bekeken, niet gekopieerd als code/
+  dependency): labels boven de schaal, knoppen in een `flex flex-wrap
+  justify-center`-rij (dus naast elkaar waar er ruimte is, wrapt vanzelf op
+  smalle schermen), geselecteerde knop met lichte scale-animatie. Zie ook
+  `project_lovable_decoupling` in het geheugen — dit is puur visuele
+  inspiratie, geen overname van de Lovable-stack of -workflow.
+- **Auto-advance toegevoegd** (alsnog, op verzoek): een klik op een cijfer
+  slaat het antwoord op en springt na 400ms door naar de volgende stelling —
+  geen aparte "Volgende"-knop meer, alleen nog "Vorige". Een lopende
+  auto-advance-timer wordt geannuleerd zodra je handmatig navigeert (Vorige,
+  of een nieuwe klik binnen die 400ms), anders zou je na "Vorige" alsnog een
+  stap verder geschoten worden. Tijdens het opslaan (bij de laatste stelling
+  van een thema) zijn de antwoordknoppen tijdelijk uitgeschakeld.
+- **Antwoordknoppen op één rij, altijd** (`flex` zonder wrap, knoppen
+  `flex-1 min-w-0`): passen zich aan de beschikbare breedte aan i.p.v. te
+  wrappen naar een tweede rij op smallere schermen.
+- **Layout breder/groter**: alle scanschermen van `max-w-md` (448px) naar
+  `max-w-xl` (576px), plus grotere tekst/knoppen op het stellingscherm. Het
+  stellingscherm zelf is daarna nog verder verbreed naar `max-w-3xl`
+  (768px, incl. de voortgangsbalk erboven), zodat een gemiddelde stelling op
+  één regel past. Intro/open vraag/afronden blijven op `max-w-xl` — beter
+  leesbaar voor lopende tekst dan een brede kolom.
+
 ## Aandachtspunt voor Wave 1, stap 4 — PDF-export (nog te bouwen)
 
 - **jsPDF-kwetsbaarheid (CVE-2025-68428 / GHSA-f8cm-6447-x5h2):** de Node.js-bouwversie van jsPDF (`<4.0.0`) laat willekeurige bestanden van de server inlezen via `loadFile`/`addImage`/`addFont`/`html` als daar een door de gebruiker beïnvloed pad in terechtkomt. Niet van toepassing op de oude Lovable-scan (die gebruikt jsPDF alleen in de browser, geen serverbestandssysteem om te lekken). **Wél relevant hier**, omdat de PDF-export in dit project server-side gebeurt (zie CLAUDE.md). Bij het bouwen van die stap: gebruik jsPDF `^4.0.0` of hoger, en geef nooit een pad/bestandsnaam aan `addImage`/`addFont`/`html` mee dat (ook maar gedeeltelijk) is opgebouwd uit gebruikersinvoer.

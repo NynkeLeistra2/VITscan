@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { themaLijst } from "@/lib/stellingen";
+import { useEffect, useRef, useState } from "react";
+import { themaLijst, type StellingRef, type ThemaMetStellingen } from "@/lib/stellingen";
 import {
   laadSessie,
   nieuweSessie,
@@ -15,14 +15,32 @@ import {
 } from "@/lib/supabase/scan-repository";
 import type { ScanrondeContext } from "@/lib/supabase/scanronde";
 import { IntroScreen } from "./IntroScreen";
-import { ThemaScreen } from "./ThemaScreen";
+import { StellingScreen } from "./StellingScreen";
 import { OpenVraagScreen } from "./OpenVraagScreen";
 import { AfrondenScreen } from "./AfrondenScreen";
 import { VoortgangsBalk } from "./VoortgangsBalk";
 
-const THEMAS = themaLijst();
-const OPEN_VRAAG_STAP = THEMAS.length + 1;
-const AFGEROND_STAP = THEMAS.length + 2;
+interface StellingStap {
+  thema: ThemaMetStellingen;
+  stelling: StellingRef;
+  toonSubcategorie: boolean;
+  laatsteVanThema: boolean;
+}
+
+/** Eén stap per stelling (i.p.v. per thema), gegroepeerd in themavolgorde,
+ * zodat we nog steeds één keer per afgerond thema kunnen opslaan. */
+const STELLING_STAPPEN: StellingStap[] = themaLijst().flatMap((thema) =>
+  thema.stellingen.map((stelling, i) => ({
+    thema,
+    stelling,
+    toonSubcategorie:
+      stelling.subcategorieTitel !== null &&
+      stelling.subcategorieTitel !== (thema.stellingen[i - 1]?.subcategorieTitel ?? null),
+    laatsteVanThema: i === thema.stellingen.length - 1,
+  }))
+);
+const OPEN_VRAAG_STAP = STELLING_STAPPEN.length + 1;
+const AFGEROND_STAP = STELLING_STAPPEN.length + 2;
 
 interface ScanFlowProps {
   context: ScanrondeContext;
@@ -32,6 +50,13 @@ export function ScanFlow({ context }: ScanFlowProps) {
   const [sessie, setSessie] = useState<ScanSessie | null>(null);
   const [bezig, setBezig] = useState(false);
   const [foutmelding, setFoutmelding] = useState<string | null>(null);
+  const autoVolgendeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (autoVolgendeTimer.current) clearTimeout(autoVolgendeTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     // localStorage is alleen client-side beschikbaar; deze eenmalige sync na
@@ -63,6 +88,17 @@ export function ScanFlow({ context }: ScanFlowProps) {
     });
   }
 
+  /** Navigatie die niet via het antwoord-auto-advance loopt (Vorige-knop,
+   * open vraag): annuleert een eventueel nog lopende auto-advance-timer,
+   * anders schiet je na "Vorige" alsnog een stap verder. */
+  function gaNaarStap(stapIndex: number) {
+    if (autoVolgendeTimer.current) {
+      clearTimeout(autoVolgendeTimer.current);
+      autoVolgendeTimer.current = null;
+    }
+    bijwerken({ stapIndex });
+  }
+
   async function start() {
     setFoutmelding(null);
     setBezig(true);
@@ -85,22 +121,37 @@ export function ScanFlow({ context }: ScanFlowProps) {
   }
 
   function antwoordWijzig(stellingKey: string, waarde: number) {
-    bijwerken({
-      antwoorden: { ...sessie!.antwoorden, [stellingKey]: waarde },
-    });
+    const nieuweAntwoorden = { ...sessie!.antwoorden, [stellingKey]: waarde };
+    bijwerken({ antwoorden: nieuweAntwoorden });
+
+    if (autoVolgendeTimer.current) clearTimeout(autoVolgendeTimer.current);
+    const huidigeStapIndex = sessie!.stapIndex;
+    autoVolgendeTimer.current = setTimeout(() => {
+      autoVolgendeTimer.current = null;
+      stellingVolgende(huidigeStapIndex, nieuweAntwoorden);
+    }, 400);
   }
 
-  async function themaVolgende(themaIndex: number) {
+  async function stellingVolgende(
+    huidigeStapIndex: number,
+    antwoorden: Record<string, number>
+  ) {
     setFoutmelding(null);
+    const stap = STELLING_STAPPEN[huidigeStapIndex - 1];
+    const volgendeStap =
+      huidigeStapIndex < STELLING_STAPPEN.length ? huidigeStapIndex + 1 : OPEN_VRAAG_STAP;
+
+    if (!stap.laatsteVanThema) {
+      bijwerken({ stapIndex: volgendeStap });
+      return;
+    }
+
     setBezig(true);
     try {
-      const thema = THEMAS[themaIndex];
       const antwoordenVoorThema = Object.fromEntries(
-        thema.stellingen.map((s) => [s.key, sessie!.antwoorden[s.key]])
+        stap.thema.stellingen.map((s) => [s.key, antwoorden[s.key]])
       );
       await slaAntwoordenOp(sessie!.respondentId, antwoordenVoorThema);
-      const volgendeStap =
-        themaIndex < THEMAS.length - 1 ? themaIndex + 2 : OPEN_VRAAG_STAP;
       bijwerken({ stapIndex: volgendeStap });
     } catch {
       setFoutmelding(
@@ -147,7 +198,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
   if (sessie.stapIndex === OPEN_VRAAG_STAP) {
     return (
       <div className="flex flex-1 flex-col">
-        <div className="mx-auto w-full max-w-md px-6 pt-6">
+        <div className="mx-auto w-full max-w-xl px-6 pt-6">
           <VoortgangsBalk
             huidigeStapNummer={OPEN_VRAAG_STAP}
             totaalStappen={OPEN_VRAAG_STAP}
@@ -159,7 +210,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
         <OpenVraagScreen
           waarde={sessie.openVraagAntwoord}
           onWijzig={(waarde) => bijwerken({ openVraagAntwoord: waarde })}
-          onVorige={() => bijwerken({ stapIndex: THEMAS.length })}
+          onVorige={() => gaNaarStap(STELLING_STAPPEN.length)}
           onVerder={afronden}
           bezig={bezig}
         />
@@ -167,12 +218,11 @@ export function ScanFlow({ context }: ScanFlowProps) {
     );
   }
 
-  const themaIndex = sessie.stapIndex - 1;
-  const thema = THEMAS[themaIndex];
+  const stap = STELLING_STAPPEN[sessie.stapIndex - 1];
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mx-auto w-full max-w-md px-6 pt-6">
+      <div className="mx-auto w-full max-w-3xl px-6 pt-6">
         <VoortgangsBalk
           huidigeStapNummer={sessie.stapIndex}
           totaalStappen={OPEN_VRAAG_STAP}
@@ -181,14 +231,14 @@ export function ScanFlow({ context }: ScanFlowProps) {
           <p className="mt-3 text-sm text-red-600">{foutmelding}</p>
         )}
       </div>
-      <ThemaScreen
-        thema={thema}
-        antwoorden={sessie.antwoorden}
-        onAntwoordWijzig={antwoordWijzig}
-        onVorige={() => bijwerken({ stapIndex: sessie.stapIndex - 1 })}
-        onVolgende={() => themaVolgende(themaIndex)}
+      <StellingScreen
+        thema={stap.thema}
+        stelling={stap.stelling}
+        toonSubcategorie={stap.toonSubcategorie}
+        waarde={sessie.antwoorden[stap.stelling.key]}
+        onAntwoordWijzig={(waarde) => antwoordWijzig(stap.stelling.key, waarde)}
+        onVorige={() => gaNaarStap(sessie.stapIndex - 1)}
         toontVorige={sessie.stapIndex > 1}
-        volgendeLabel={bezig ? "Bezig..." : "Volgende"}
         bezig={bezig}
       />
     </div>

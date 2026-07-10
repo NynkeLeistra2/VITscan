@@ -14,7 +14,7 @@ export function OpenVraagScreen({
   bezig,
 }: OpenVraagScreenProps) {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 py-8">
+    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-6 py-8">
       <h2 className="text-xl font-semibold text-zinc-900">
         Wat wil je nog kwijt?
       </h2>

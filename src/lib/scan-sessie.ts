@@ -5,11 +5,11 @@ export interface ScanSessie {
   respondentId: string;
   respondentCode: string;
   stellingenVersie: string;
-  /** stelling_key -> waarde (1-5) */
+  /** stelling_key -> waarde (1-10) */
   antwoorden: Record<string, number>;
   openVraagAntwoord: string;
   afgerond: boolean;
-  /** Index in de platte stappenlijst (0 = intro), zodat herladen hervat waar je was. */
+  /** Index in de platte stappenlijst (0 = intro, 1 per stelling, dan open vraag/afgerond), zodat herladen hervat waar je was. */
   stapIndex: number;
 }
 

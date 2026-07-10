@@ -20,8 +20,8 @@ Bouw Wave 1 zo dat Wave 2 erop kan aansluiten: sla antwoorden op met respondent-
 
 ## Scoring
 
-- 5-punts Likert (1–5) per stelling
-- Themascore = gemiddelde stellingen, getoond op schaal 1–10
+- Schaal 1–10 per stelling (geen 5-punts Likert; alleen de uitersten hebben een tekstlabel, zie `meta.schaal` in `vit-scan-stellingen.json`)
+- Themascore = gemiddelde stellingen (staat al op schaal 1–10, geen omrekening nodig)
 - Kleuren: groen ≥ 7,5 · oranje 5,5–7,4 · rood < 5,5 (configureerbaar in één config-bestand)
 - Deelscores per deel + totale VIT-score
 
