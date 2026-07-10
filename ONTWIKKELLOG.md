@@ -8,9 +8,14 @@ zie `VIT-scan-projectplan.md`.
 
 **Wave 1, stap 1 (project opzetten):** klaar.
 **Wave 1, stap 2 (datamodel):** klaar, migratie toegepast.
-**Wave 1, stap 3 (scanflow):** code klaar en gecommit (intro → 19
-thema-schermen → open vraag → afronden-placeholder). Build/typecheck/lint
-zijn schoon. **Blijft hangen op end-to-end testen — zie blocker hieronder.**
+**Wave 1, stap 3 (scanflow):** klaar en end-to-end getest in de browser
+(intro → stellingen → open vraag → afronden-placeholder), inclusief de
+RLS/upsert-blockers hieronder — allebei opgelost en geverifieerd.
+**Wave 1, stap 4 (scoring + rapport):** nog te doen. Voorbereidende
+UI/datamodel-wijziging al doorgevoerd en getest: antwoordschaal 1-10
+(i.p.v. 5-punts Likert) en één stelling per scherm met auto-advance — zie
+`BESLISSINGEN.md` voor details. Themascore = gemiddelde van de stellingen,
+staat al op schaal 1-10, geen omrekening meer nodig.
 
 ## RLS-blocker: opgelost (2026-07-10)
 
@@ -60,9 +65,9 @@ returned"). Geverifieerd met een los Node-script tegen de echte database
 (incl. het exacte "hele set nogmaals opslaan"-scenario van `afronden()`):
 alle stappen slagen zonder fouten.
 
-**Volgende stap:** happy path nu ook echt in de browser doorklikken (zie
-testlink hieronder) om te bevestigen dat de UI het probleem niet meer
-tegenkomt.
+Bevestigd in de browser: happy path (incl. antwoorden boven de 5, na het
+draaien van migratie `0004_antwoordschaal_10punts.sql` die de
+waarde-constraint verruimt naar 1-10) loopt door zonder foutmelding.
 
 ## Testgegevens (al aangemaakt in de database)
 
@@ -76,8 +81,10 @@ Deze hoeven niet opnieuw aangemaakt te worden.
 
 ## Hervatten: te doen
 
-1. Happy path echt in de browser doorklikken op de testlink hierboven (niet
-   alleen via API-simulatie): intro → 19 thema's → open vraag → afronden.
-   Moet nu doorlopen zonder foutmelding.
-2. Task-tracker stap 15 ("Scanflow end-to-end testen") afronden.
-3. Door naar Wave 1, stap 4: scoring + persoonlijk rapport.
+1. Wave 1, stap 4 bouwen: scoring (themascore, deelscores, totale VIT-score,
+   kleurgrenzen) + persoonlijk rapport (overzicht + per thema duiding/
+   reflectievragen/aanbevelingen uit contentbestanden) + PDF-export
+   (let op de jsPDF-kwetsbaarheid, zie `BESLISSINGEN.md`).
+2. Let bij het testen op nieuwe respondenten/localStorage-sessies: de
+   testlink hierboven kan nog een oude, afgeronde sessie in `localStorage`
+   hebben staan van eerdere tests — open in dat geval een incognito-venster.
