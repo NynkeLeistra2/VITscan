@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // los, ongerelateerd Lovable/Vite-project — zie BESLISSINGEN.md
+    "werkgeluk-kompas-main/**",
   ]),
 ]);
 

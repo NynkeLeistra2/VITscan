@@ -3,7 +3,8 @@
  * supabase/migrations/0001_init_schema.sql. Bij schemawijzigingen: eerst de
  * migratie aanpassen, dan dit bestand bijwerken (of vervangen door
  * `supabase gen types typescript` zodra de Supabase CLI aan het project
- * gelinkt is).
+ * gelinkt is). De `Relationships`-arrays zijn nodig zodat supabase-js
+ * embedded selects (bv. `organisaties(naam)`) correct kan typen.
  */
 export interface Database {
   public: {
@@ -20,6 +21,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["organisaties"]["Insert"]>;
+        Relationships: [];
       };
       teams: {
         Row: {
@@ -35,6 +37,15 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["teams"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "teams_organisatie_id_fkey";
+            columns: ["organisatie_id"];
+            isOneToOne: false;
+            referencedRelation: "organisaties";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       scanrondes: {
         Row: {
@@ -54,6 +65,15 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["scanrondes"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "scanrondes_organisatie_id_fkey";
+            columns: ["organisatie_id"];
+            isOneToOne: false;
+            referencedRelation: "organisaties";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       respondenten: {
         Row: {
@@ -81,6 +101,22 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["respondenten"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "respondenten_scanronde_id_fkey";
+            columns: ["scanronde_id"];
+            isOneToOne: false;
+            referencedRelation: "scanrondes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "respondenten_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       antwoorden: {
         Row: {
@@ -98,7 +134,20 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["antwoorden"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "antwoorden_respondent_id_fkey";
+            columns: ["respondent_id"];
+            isOneToOne: false;
+            referencedRelation: "respondenten";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
