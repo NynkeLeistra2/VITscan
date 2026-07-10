@@ -28,3 +28,28 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
 - **Open vraag** ("Wat wil je nog kwijt?") is altijd aanwezig maar optioneel — beslissing uit de openstaande-keuzes-lijst, klaargezet in `respondenten.open_vraag_antwoord`.
 - **Afronden-scherm is nu een placeholder** ("Bedankt, je rapport volgt"). Het echte persoonlijk rapport met scoring is stap 4.
 - **Niet getest met echte data:** de anon-key kan geen rijen in `organisaties`/`teams`/`scanrondes` aanmaken (terecht, door RLS — geverifieerd met een losse curl-test). Om de happy path te testen: draai `supabase/seed_testdata.sql` in de Supabase SQL Editor en open de link die de laatste query oplevert. Wel al getest: build, typecheck, lint (allemaal schoon) en het foutpad bij een ongeldige/niet-bestaande link.
+
+## Wave 1, stap 3 — Schrijven naar respondenten/antwoorden via RPC i.p.v. upsert (2026-07-10)
+
+- **Probleem:** zowel `.upsert()` (401, vereist SELECT-recht onder RLS voor
+  `ON CONFLICT DO UPDATE`) als de tussentijdse update-dan-insert-aanpak (409,
+  `.update(..., { count: 'exact' })` geeft zonder select-policy altijd
+  `count: 0` terug, ook als de rij al bestaat) bleken onbetrouwbaar zonder
+  select-policy op `respondenten`/`antwoorden` — en die policy komt er
+  bewust niet (privacyregel, zie stap 2).
+- **Oplossing:** `SECURITY DEFINER`-databasefuncties `upsert_respondent` en
+  `upsert_antwoorden` (`supabase/migrations/0003_upsert_functies.sql`) die de
+  upsert zelf uitvoeren met eigenaarsrechten (bypassen dus RLS voor de
+  schrijfactie), maar exposen alleen die ene smalle actie — er komt geen
+  SELECT op de tabellen bij. `scan-repository.ts` roept ze aan via
+  `supabase.rpc(...)`. `upsert_antwoorden` accepteert de volledige
+  antwoordenset als jsonb-object in één call, dus ook minder requests dan de
+  vorige aanpak (was één losse request per stelling).
+- **Geverifieerd** met een los Node-testscript rechtstreeks tegen de
+  productiedatabase (niet gecommit, alleen ter verificatie gebruikt), incl.
+  het scenario waarbij dezelfde antwoordenset twee keer wordt opgeslagen
+  (zoals bij afronden gebeurt).
+
+## Aandachtspunt voor Wave 1, stap 4 — PDF-export (nog te bouwen)
+
+- **jsPDF-kwetsbaarheid (CVE-2025-68428 / GHSA-f8cm-6447-x5h2):** de Node.js-bouwversie van jsPDF (`<4.0.0`) laat willekeurige bestanden van de server inlezen via `loadFile`/`addImage`/`addFont`/`html` als daar een door de gebruiker beïnvloed pad in terechtkomt. Niet van toepassing op de oude Lovable-scan (die gebruikt jsPDF alleen in de browser, geen serverbestandssysteem om te lekken). **Wél relevant hier**, omdat de PDF-export in dit project server-side gebeurt (zie CLAUDE.md). Bij het bouwen van die stap: gebruik jsPDF `^4.0.0` of hoger, en geef nooit een pad/bestandsnaam aan `addImage`/`addFont`/`html` mee dat (ook maar gedeeltelijk) is opgebouwd uit gebruikersinvoer.

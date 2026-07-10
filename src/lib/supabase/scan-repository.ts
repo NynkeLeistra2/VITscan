@@ -1,11 +1,22 @@
 import { supabase } from "./client";
 
 /**
- * Schrijffuncties voor de scanflow. Bewust alleen insert/update zonder
- * `.select()` erna: respondenten/antwoorden hebben geen select-policy (zie
- * supabase/migrations/0001_init_schema.sql), dus een representation-request
- * zou door RLS altijd leeg terugkomen. id's worden daarom altijd
- * client-side gegenereerd (crypto.randomUUID()) vóór het schrijven.
+ * Schrijffuncties voor de scanflow. Gaan via RPC naar SECURITY DEFINER
+ * database-functies (zie supabase/migrations/0003_upsert_functies.sql) in
+ * plaats van rechtstreeks `.insert()`/`.update()`/`.upsert()` op
+ * respondenten/antwoorden.
+ *
+ * Waarom niet gewoon `.upsert()`: dat genereert `INSERT ... ON CONFLICT DO
+ * UPDATE`, wat onder RLS SELECT-rechten vereist op de bestaande rij --
+ * rechten die deze tabellen bewust niet hebben (privacyregel: individuele
+ * antwoorden niet uitleesbaar via de API). En `.update(..., { count: 'exact'
+ * })` gevolgd door `.insert()` bij count 0 werkt ook niet: PostgREST kan de
+ * exacte count niet bepalen zonder select-recht en geeft dan altijd 0 terug,
+ * ook als de rij al bestaat -- met een 409 (unique constraint) tot gevolg
+ * zodra je een al opgeslagen antwoord probeert te overschrijven (bv. bij
+ * "afronden", waar de volledige antwoordenset nog een keer wordt
+ * aangeboden). De RPC-functies doen de upsert zelf, met eigenaarsrechten,
+ * zonder dat de app ooit SELECT-toegang nodig heeft.
  */
 
 export async function maakOfWerkRespondentBij(params: {
@@ -15,16 +26,13 @@ export async function maakOfWerkRespondentBij(params: {
   respondentCode: string;
   stellingenVersie: string;
 }): Promise<void> {
-  const { error } = await supabase.from("respondenten").upsert(
-    {
-      id: params.respondentId,
-      scanronde_id: params.scanrondeId,
-      team_id: params.teamId,
-      respondent_code: params.respondentCode,
-      stellingen_versie: params.stellingenVersie,
-    },
-    { onConflict: "id" }
-  );
+  const { error } = await supabase.rpc("upsert_respondent", {
+    p_respondent_id: params.respondentId,
+    p_scanronde_id: params.scanrondeId,
+    p_team_id: params.teamId,
+    p_respondent_code: params.respondentCode,
+    p_stellingen_versie: params.stellingenVersie,
+  });
 
   if (error) throw error;
 }
@@ -33,17 +41,12 @@ export async function slaAntwoordenOp(
   respondentId: string,
   antwoorden: Record<string, number>
 ): Promise<void> {
-  const rijen = Object.entries(antwoorden).map(([stellingKey, waarde]) => ({
-    respondent_id: respondentId,
-    stelling_key: stellingKey,
-    waarde,
-  }));
+  if (Object.keys(antwoorden).length === 0) return;
 
-  if (rijen.length === 0) return;
-
-  const { error } = await supabase
-    .from("antwoorden")
-    .upsert(rijen, { onConflict: "respondent_id,stelling_key" });
+  const { error } = await supabase.rpc("upsert_antwoorden", {
+    p_respondent_id: respondentId,
+    p_antwoorden: antwoorden,
+  });
 
   if (error) throw error;
 }

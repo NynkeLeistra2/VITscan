@@ -146,7 +146,25 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      upsert_respondent: {
+        Args: {
+          p_respondent_id: string;
+          p_scanronde_id: string;
+          p_team_id: string | null;
+          p_respondent_code: string;
+          p_stellingen_versie: string;
+        };
+        Returns: void;
+      };
+      upsert_antwoorden: {
+        Args: {
+          p_respondent_id: string;
+          p_antwoorden: Record<string, number>;
+        };
+        Returns: void;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
