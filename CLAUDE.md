@@ -1,5 +1,10 @@
 # CLAUDE.md — VIT-scan project
 
+## Security — verplicht
+
+Lees en volg @SECURITY.md bij elke wijziging. Deze regels gelden altijd,
+ook als er niet om gevraagd wordt. Kernprincipe: deny by default, fail closed.
+
 ## Wat is dit project
 
 Webapp voor de VIT-scan van Nynke Leistra Coaching en Advies: een vragenlijst die vitaliteit en inzetbaarheid van medewerkers meet op 19 thema's (11 × Werkenergie, 8 × Persoonlijk Welzijn). Zie `VIT-scan-projectplan.md` voor het volledige plan en `src/content/vit-scan-stellingen.json` voor alle stellingen — dat JSON-bestand is de enige bron voor vragen; hardcode nooit stellingen in componenten.
