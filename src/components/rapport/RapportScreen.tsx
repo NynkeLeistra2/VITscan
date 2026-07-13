@@ -1,13 +1,18 @@
 import { berekenScores } from "@/lib/scoring";
 import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
 import { NIVEAU_KLEUR } from "@/lib/scoring-config";
-import { ScoreBalk } from "./ScoreBalk";
 import { ThemaDetail } from "./ThemaDetail";
+import { WerkgelukWiel } from "./WerkgelukWiel";
 
 interface RapportScreenProps {
   antwoorden: Record<string, number>;
   respondentCode: string;
 }
+
+const WIEL_TITEL: Record<string, string> = {
+  werkenergie: "Werkgelukwiel",
+  persoonlijk_welzijn: "Levenswiel",
+};
 
 export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
@@ -34,11 +39,22 @@ export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps
         <p className="mt-3 text-left text-zinc-700">{totaalTeksten.tekst}</p>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      <div className="mt-8 flex flex-col items-center gap-10">
         {resultaat.deelScores.map((deel) => (
-          <div key={deel.deelId} className="rounded-lg border border-zinc-200 p-4">
-            <ScoreBalk label={deel.deelTitel} score={deel.score} niveau={deel.niveau} />
-          </div>
+          <WerkgelukWiel
+            key={deel.deelId}
+            titel={WIEL_TITEL[deel.deelId] ?? deel.deelTitel}
+            gemiddelde={deel.score}
+            gemiddeldeNiveau={deel.niveau}
+            segmenten={resultaat.themaScores
+              .filter((thema) => thema.deelId === deel.deelId)
+              .map((thema) => ({
+                themaId: thema.themaId,
+                label: thema.themaTitel,
+                score: thema.score,
+                niveau: thema.niveau,
+              }))}
+          />
         ))}
       </div>
 
