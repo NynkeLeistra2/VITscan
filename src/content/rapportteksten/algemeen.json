@@ -1,0 +1,110 @@
+{
+  "overzichtIntro": "Dit is jouw persoonlijke VIT-scan. De scores hieronder laten zien hoe je energie en welzijn er nu voor staan — niet als oordeel, maar als startpunt. Je voelt vaak al aan waar het schuurt; dit rapport helpt je dat concreet te maken.",
+  "totaalscoreNiveaus": [
+    {
+      "minScore": 1.0,
+      "maxScore": 2.9,
+      "titel": "Zeer laag werkgeluk",
+      "tekst": "Je staat in de overlevingsstand. Grote kans dat energie, plezier en voldoening structureel ontbreken. Dit is een signaal dat er nú actie nodig is, blijf hier niet alleen mee rondlopen.",
+      "reflectievragen": [
+        "Wat kost jou op dit moment het meeste energie in je werk?",
+        "Welke onderdelen zijn voor jou het meest belangrijk en vragen nu om actie?",
+        "Welk thema biedt jou de meeste kans op snelle verbetering?",
+        "Welke concrete stap zou je vandaag al kunnen zetten richting meer werkgeluk?",
+        "Wat heb je nodig van je omgeving om hierin ondersteund te worden?"
+      ],
+      "aanbevelingen": [
+        "Bespreek je situatie met je leidinggevende. Lukt dit niet, neem dan contact op met een vertrouwenspersoon, de arbodienst of je huisarts.",
+        "Zet je welzijn en stressmanagement op de eerste plaats.",
+        "Probeer dagelijks herstelactiviteiten zoals sporten, wandelen, ademhalingsoefeningen, mindfulness, yoga of journaling.",
+        "Onderzoek of er een mismatch is tussen jou en je werkgever.",
+        "Kijk naar de subcategorieën waar je laag op scoort en zet één of twee concrete acties in gang om je werkgeluk te verhogen.",
+        "Mail me via contact@nynkeleistra.nl — ik denk graag met je mee."
+      ]
+    },
+    {
+      "minScore": 3.0,
+      "maxScore": 5.4,
+      "titel": "Laag werkgeluk",
+      "tekst": "Er zitten een paar lichtpuntjes in je werk, maar de minpunten wegen nu zwaarder. Dat kost energie en motivatie. Breng in kaart wat jou het meeste belemmert en begin met het wegnemen of verminderen van die factor. Kleine verbeteringen kunnen al snel merkbaar zijn.",
+      "reflectievragen": [
+        "Wat belemmert jou het meest in je werkgeluk op dit moment en op welke subcategorieën scoor je het laagst?",
+        "Welke onderdelen zijn voor jou het meest belangrijk en vragen nu om actie?",
+        "Waar kun je snel winst behalen met een kleine verandering?",
+        "Welke concrete eerste stap kun je zetten om je werkgeluk te verhogen?",
+        "Wat heb je nodig van je omgeving om hierin ondersteund te worden?"
+      ],
+      "aanbevelingen": [
+        "Bespreek je situatie met je leidinggevende. Lukt dit niet, neem dan contact op met een vertrouwenspersoon, de arbodienst of je huisarts.",
+        "Onderzoek of er een mismatch is tussen jou en je functie of tussen jou en je werkgever.",
+        "Overweeg een gesprek met een professional, zoals een loopbaancoach of psycholoog.",
+        "Kies één of twee thema's waar je snel verbetering kunt aanbrengen en zet daar concrete acties op.",
+        "Experimenteer met kleine aanpassingen in je werkdag.",
+        "Mail me via contact@nynkeleistra.nl — ik denk graag met je mee."
+      ]
+    },
+    {
+      "minScore": 5.5,
+      "maxScore": 6.9,
+      "titel": "Gemiddeld werkgeluk",
+      "tekst": "Er is zeker wat goed, maar ook genoeg wat beter kan. Dit is hét moment om bewust keuzes te maken en te bouwen aan meer energie, plezier en betekenis. Sta ook stil bij wat er wél goed gaat. Door te erkennen wat werkt, kun je dat versterken en uitbouwen.",
+      "reflectievragen": [
+        "Wat gaat er goed en wil je graag behouden? Wat is daarvoor nodig?",
+        "Op welke subcategorieën scoor jij het laagst en wat zegt dat over jouw huidige werkbeleving?",
+        "Welke onderdelen zijn voor jou het meest belangrijk en kosten je het meeste energie?",
+        "Welk thema biedt jou de meeste kans op snelle verbetering?",
+        "Welke concrete eerste stap kun je zetten om je werkgeluk te verhogen?"
+      ],
+      "aanbevelingen": [
+        "Plan een gesprek met je leidinggevende over je werkgeluk: wat geeft jou energie en wanneer zit je in een flow? Waar ligt nog ruimte voor ontwikkeling?",
+        "Onderzoek wat jouw talenten zijn en hoe je deze optimaal kunt benutten.",
+        "Zorg voor micro-herstelmomenten tijdens drukke dagen.",
+        "Zoek nieuwe uitdagingen of leerprojecten.",
+        "Overweeg ondersteuning van HR of een loopbaancoach.",
+        "Stel een persoonlijk werkgelukdoel voor de komende maand."
+      ]
+    },
+    {
+      "minScore": 7.0,
+      "maxScore": 8.9,
+      "titel": "Hoog werkgeluk",
+      "tekst": "Je bent over het algemeen tevreden en voelt je regelmatig energiek en betrokken. Hartstikke fijn! Juist als het goed gaat, is het krachtig om stil te staan bij wat daaraan bijdraagt en het bewust te versterken.",
+      "reflectievragen": [
+        "Wat werkt op dit moment goed voor jou en waarom?",
+        "Waar liggen nog punten ter verbetering voor je?",
+        "Wat zou je willen versterken of veranderen?",
+        "Hoe kun je jouw werkgeluk delen of versterken binnen je team?",
+        "Wat zou jou uitdagen zonder je balans te verstoren?"
+      ],
+      "aanbevelingen": [
+        "Onderzoek wat je nodig hebt om je werkgeluk levendig te houden.",
+        "Bewaak je balans, vooral in drukke periodes.",
+        "Deel positieve ervaringen met je team.",
+        "Start een mini-project waarin je je werkgeluk versterkt binnen het team.",
+        "Vier je successen bewust, ook de kleine."
+      ]
+    },
+    {
+      "minScore": 9.0,
+      "maxScore": 10.0,
+      "titel": "Zeer hoog werkgeluk",
+      "tekst": "Je zit helemaal op je plek en straalt dat uit. Je energie werkt aanstekelijk voor je omgeving. Blijf bewust investeren in wat werkt, zodat je ook in minder gunstige tijden je werkgeluk behoudt.",
+      "reflectievragen": [
+        "Wat maakt dat jij je zo goed voelt in je werk?",
+        "Hoe kun je je werkgeluk duurzaam behouden, ook in uitdagende tijden?",
+        "Op welke manieren kun je anderen meenemen in jouw positieve aanpak?"
+      ],
+      "aanbevelingen": [
+        "Deel je positieve ervaringen met je leidinggevende en collega's.",
+        "Blijf uitdagingen zoeken om groei te stimuleren.",
+        "Sta regelmatig stil bij wat jou energie geeft.",
+        "Inspireer anderen met jouw aanpak.",
+        "Reflecteer op hoe je je werkgeluk duurzaam kunt verankeren."
+      ]
+    }
+  ],
+  "afsluiting": {
+    "titel": "En nu?",
+    "tekst": "Je hebt nu een concreet beeld van waar je energie vandaan komt en waar het schuurt. Dat inzicht wordt pas echt waardevol als je het gesprek aangaat — met je leidinggevende, met HR, of met iemand die er van buitenaf naar kan kijken. Nynke Leistra Coaching en Advies begeleidt dat gesprek graag als neutrale derde, zonder oordeel en met oog voor wat voor jou werkt."
+  }
+}

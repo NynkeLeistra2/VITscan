@@ -1,0 +1,38 @@
+{
+  "themaId": "huis_leefomgeving",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je huis of leefomgeving geeft je nu weinig rust of veiligheid. Dat is een basisbehoefte die niet vervuld wordt, en dat raakt breder dan alleen wonen.",
+      "reflectievragen": [
+        "Wat maakt dat je je hier niet op je gemak voelt?",
+        "Is dit tijdelijk of een structureel gegeven?"
+      ],
+      "aanbevelingen": [
+        "Breng in kaart wat concreet zou helpen — soms is een kleine aanpassing al voldoende.",
+        "Zoek hulp of advies als de situatie structureel onveilig of belastend voelt."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je woonomgeving is redelijk, maar geeft niet altijd het gevoel van rust of energie dat je zou willen.",
+      "reflectievragen": [
+        "Wat zou jouw leefomgeving voor jou fijner maken?",
+        "Is er een kleine verandering die al verschil zou maken?"
+      ],
+      "aanbevelingen": [
+        "Maak een kleine aanpassing in huis die bijdraagt aan rust, bijvoorbeeld een opgeruimde plek om tot rust te komen.",
+        "Neem de tijd om na te denken of je woonsituatie nog bij je past."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je thuis en veilig in je woonomgeving en komt er tot rust. Dat is een belangrijke basis onder je welzijn.",
+      "reflectievragen": [
+        "Wat maakt jouw thuis zo'n plek van rust?",
+        "Hoe waardeer en onderhoud je dit?"
+      ],
+      "aanbevelingen": [
+        "Blijf bewust tijd besteden aan wat je huis een fijne plek maakt.",
+        "Deel wat voor jou werkt met anderen die hier moeite mee hebben."
+      ]
+    }
+  }
+}

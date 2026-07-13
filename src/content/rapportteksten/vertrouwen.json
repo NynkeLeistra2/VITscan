@@ -1,0 +1,38 @@
+{
+  "themaId": "vertrouwen",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je voelt je niet vrij om open te zijn en het vertrouwen in en met collega's staat onder druk. Dat maakt samenwerken zwaarder dan nodig.",
+      "reflectievragen": [
+        "Wat gebeurt er (of is er gebeurd) waardoor je je mening niet vrij deelt?",
+        "Is dit met specifieke mensen, of voelt het breder in het team?"
+      ],
+      "aanbevelingen": [
+        "Zoek één persoon uit waarmee je dit patroon kan doorbreken, met een klein, concreet gesprek.",
+        "Bespreek met je leidinggevende hoe de veiligheid in het team te verbeteren is — dit los je zelden alleen op."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er is een basis van vertrouwen, maar niet in elke situatie voel je je vrij om open te zijn. Dat maakt je soms voorzichtig.",
+      "reflectievragen": [
+        "In welke situaties voel je je wel volledig veilig, en wat is daar anders?",
+        "Wat zou jou helpen om je vaker uit te spreken?"
+      ],
+      "aanbevelingen": [
+        "Oefen met het delen van een kleine, afwijkende mening in een veilige setting.",
+        "Geef zelf het goede voorbeeld door open te reageren op ideeën van anderen."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je veilig om jezelf te zijn en te zeggen wat je denkt. Dat vertrouwen is een van de sterkste fundamenten van een goed functionerend team.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan dit vertrouwen?",
+        "Hoe help jij mee dit vertrouwen ook voor anderen te laten groeien?"
+      ],
+      "aanbevelingen": [
+        "Blijf dit gedrag actief voorleven — het werkt aanstekelijk.",
+        "Signaleer het als je merkt dat een collega zich minder vrij voelt."
+      ]
+    }
+  }
+}

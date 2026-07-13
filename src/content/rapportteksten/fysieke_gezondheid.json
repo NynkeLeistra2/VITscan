@@ -1,0 +1,38 @@
+{
+  "themaId": "fysieke_gezondheid",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je voelt je fysiek niet fit en merkt mogelijk stressgerelateerde klachten. Dat is een signaal dat je lichaam aandacht vraagt.",
+      "reflectievragen": [
+        "Welke klacht of signaal merk je het meest, en hoe lang speelt dit al?",
+        "Wat zou de eerste, kleine stap kunnen zijn om hier iets aan te doen?"
+      ],
+      "aanbevelingen": [
+        "Overweeg een gesprek met een huisarts of bedrijfsarts als klachten aanhouden.",
+        "Bouw beweging in kleine, haalbare stappen op in plaats van in één keer alles anders te willen doen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je gezondheid is redelijk op orde, maar niet altijd je prioriteit. Je merkt dat het kan verslappen.",
+      "reflectievragen": [
+        "Wat zorgt ervoor dat je gezondheid soms naar de achtergrond verdwijnt?",
+        "Wat zou je structureel meer aandacht willen geven?"
+      ],
+      "aanbevelingen": [
+        "Plan beweegmomenten net zo vast in als werkafspraken.",
+        "Let bewust op vroege signalen van stress, voordat het klachten wordt."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je fysiek gezond en besteedt er bewust aandacht aan. Dat is een stevige basis onder je vitaliteit.",
+      "reflectievragen": [
+        "Wat werkt voor jou het beste om dit vast te houden?",
+        "Hoe blijf je dit doen als je het drukker krijgt?"
+      ],
+      "aanbevelingen": [
+        "Blijf je huidige routine vasthouden, ook in drukke periodes.",
+        "Wees alert op signalen die aangeven dat dit onder druk komt te staan."
+      ]
+    }
+  }
+}

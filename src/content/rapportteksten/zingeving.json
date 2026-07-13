@@ -1,0 +1,38 @@
+{
+  "themaId": "zingeving",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je twijfelt aan de zin van je werk en het gevoel van toegevoegde waarde ontbreekt. Dat is een fundamentele vraag die aandacht verdient.",
+      "reflectievragen": [
+        "Wat zou je werk voor jou weer zinvol maken?",
+        "Mis je vooral het grotere doel, of het directe effect van je werk?"
+      ],
+      "aanbevelingen": [
+        "Zoek het gesprek met je leidinggevende over hoe jouw werk bijdraagt aan het grotere geheel.",
+        "Vraag om concrete voorbeelden of feedback van klanten of collega's over jouw bijdrage."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je ziet de zin van je werk soms wel, soms niet. Het gevoel van toegevoegde waarde is er, maar niet altijd overtuigend.",
+      "reflectievragen": [
+        "Wanneer voel je het sterkst dat je werk ertoe doet?",
+        "Wat zou dat gevoel vaker terug kunnen laten komen?"
+      ],
+      "aanbevelingen": [
+        "Maak zichtbaar (voor jezelf en anderen) wat jouw werk concreet oplevert.",
+        "Zoek bewust naar het grotere plaatje achter je dagelijkse taken."
+      ]
+    },
+    "groen": {
+      "duiding": "Je ervaart je werk als zinvol en voelt je van toegevoegde waarde. Dat draagt sterk bij aan je motivatie en energie.",
+      "reflectievragen": [
+        "Wat maakt dat je dit gevoel van zin zo sterk ervaart?",
+        "Hoe blijf je dit gevoel vasthouden als het werk verandert?"
+      ],
+      "aanbevelingen": [
+        "Deel met je team wat jouw werk voor jou zinvol maakt — het inspireert vaak ook anderen.",
+        "Blijf bewust stilstaan bij het effect van je werk, ook in drukke periodes."
+      ]
+    }
+  }
+}

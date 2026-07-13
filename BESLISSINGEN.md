@@ -109,6 +109,50 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   één regel past. Intro/open vraag/afronden blijven op `max-w-xl` — beter
   leesbaar voor lopende tekst dan een brede kolom.
 
+## Wave 1, stap 4 — Scoring + persoonlijk rapport op scherm (2026-07-13)
+
+- **Scoring** (`src/lib/scoring.ts`, `src/lib/scoring-config.ts`): themascore =
+  gemiddelde van de stellingen binnen het thema (al op schaal 1-10).
+  Deelscore = gemiddelde van de thémascores binnen dat deel (niet van de
+  losse stellingen, anders telt een deel met veel kleine thema's zwaarder
+  mee). Totale VIT-score = gemiddelde van de twee deelscores, zodat
+  Werkenergie en Persoonlijk Welzijn even zwaar wegen ondanks het verschil
+  in aantal thema's (11 vs. 8). Kleurgrenzen (groen ≥7,5 / oranje 5,5-7,4 /
+  rood <5,5) in één config-bestand, zoals CLAUDE.md vraagt.
+- **Twee lagen rapportteksten**, met een eigen structuur en bron:
+  1. **Per thema** (`src/content/rapportteksten/<themaId>.json`, 19
+     bestanden): duiding + 2 reflectievragen + 2 aanbevelingen per
+     rood/oranje/groen-niveau. Eerste versie door Claude geschreven in
+     Nynkes tone of voice, gebaseerd op de exacte stellingen per thema —
+     Nynke controleert en past aan waar nodig.
+  2. **Totaalscore** (`src/content/rapportteksten/algemeen.json`,
+     `totaalscoreNiveaus`): 5 bandbreedtes (1,0-2,9 / 3,0-5,4 / 5,5-6,9 /
+     7,0-8,9 / 9,0-10,0), tekst + reflectievragen + aanbevelingen
+     **letterlijk overgenomen van Nynkes eigen aangeleverde tekst**, alleen
+     de ondergrens van de middelste band gecorrigeerd van "5,0" naar "5,5"
+     (rekenkundige inconsistentie met de aangrenzende banden: elke band
+     begint waar de vorige eindigt +0,1). Deze bandbreedte-indeling is
+     bewust losstaand van de eenvoudigere rood/oranje/groen-indeling die
+     per thema gebruikt wordt — twee verschillende granulariteiten voor
+     twee verschillende doelen (groot verhaal vs. detail per thema).
+  3. Beide lagen samen op het rapportscherm: het totaalscore-verhaal
+     bovenaan (breed, altijd zichtbaar), de per-thema duiding in een
+     uitklapbare lijst per thema (voorkomt een enorm lang scherm bij 19
+     thema's).
+- **Rapport wordt client-side opgebouwd** uit `sessie.antwoorden` (niet
+  opnieuw uit de database gehaald — zie privacyregel in migratie 0001).
+- **`RapportScreen`/`ScoreBalk`/`ThemaDetail`** vervangen de oude
+  `AfrondenScreen`-placeholder. Visualisatie: staafdiagram (geen radar) —
+  eenvoudiger te bouwen zonder extra dependency en net zo goed toegestaan
+  volgens het projectplan ("radar of staven, keuze bij bouw").
+- **Geverifieerd zonder live browsersessie** (Nynke was afwezig tijdens het
+  bouwen): typecheck, lint, productiebuild (`next build`) slagen allemaal;
+  alle 19 thema-id's uit `vit-scan-stellingen.json` hebben exact een
+  bijpassend contentbestand (kruiscontrole via script); scoringswiskunde
+  handmatig doorgerekend met een testset antwoorden. **Nog te doen: een
+  keer echt doorklikken in de browser** om het rapport visueel te
+  beoordelen.
+
 ## Aandachtspunt voor Wave 1, stap 4 — PDF-export (nog te bouwen)
 
 - **jsPDF-kwetsbaarheid (CVE-2025-68428 / GHSA-f8cm-6447-x5h2):** de Node.js-bouwversie van jsPDF (`<4.0.0`) laat willekeurige bestanden van de server inlezen via `loadFile`/`addImage`/`addFont`/`html` als daar een door de gebruiker beïnvloed pad in terechtkomt. Niet van toepassing op de oude Lovable-scan (die gebruikt jsPDF alleen in de browser, geen serverbestandssysteem om te lekken). **Wél relevant hier**, omdat de PDF-export in dit project server-side gebeurt (zie CLAUDE.md). Bij het bouwen van die stap: gebruik jsPDF `^4.0.0` of hoger, en geef nooit een pad/bestandsnaam aan `addImage`/`addFont`/`html` mee dat (ook maar gedeeltelijk) is opgebouwd uit gebruikersinvoer.

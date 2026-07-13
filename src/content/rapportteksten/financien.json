@@ -1,0 +1,38 @@
+{
+  "themaId": "financien",
+  "niveaus": {
+    "rood": {
+      "duiding": "Financiële zorgen spelen op dit moment een grote rol. Dat trekt aandacht en energie weg, ook op werk.",
+      "reflectievragen": [
+        "Welk deel van de financiële zorgen weegt het zwaarst?",
+        "Heb je hier al met iemand over gesproken, professioneel of persoonlijk?"
+      ],
+      "aanbevelingen": [
+        "Overweeg een gesprek met een financieel adviseur of budgetcoach om overzicht te krijgen.",
+        "Kijk of er binnen je werk (bijvoorbeeld via de werkgever) ondersteuning beschikbaar is."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je financiën zijn redelijk op orde, maar onverwachte tegenvallers baren je wel zorgen.",
+      "reflectievragen": [
+        "Wat zou jou meer financiële rust geven?",
+        "Heb je zicht op wat een onverwachte tegenvaller voor jou zou betekenen?"
+      ],
+      "aanbevelingen": [
+        "Bouw, indien mogelijk, een buffer op voor onverwachte kosten.",
+        "Maak periodiek tijd voor overzicht in plaats van het te laten liggen."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je financieel stabiel en voorbereid op tegenvallers. Dat geeft rust die verder reikt dan alleen je portemonnee.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan deze financiële rust?",
+        "Blijft dit zo bij grote veranderingen in je leven?"
+      ],
+      "aanbevelingen": [
+        "Blijf je financiën periodiek checken, ook als het nu goed gaat.",
+        "Deel je aanpak met iemand die hier meer moeite mee heeft."
+      ]
+    }
+  }
+}

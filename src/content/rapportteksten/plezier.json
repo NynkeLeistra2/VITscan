@@ -1,0 +1,38 @@
+{
+  "themaId": "plezier",
+  "niveaus": {
+    "rood": {
+      "duiding": "Het werk en de sfeer om je heen geven je weinig energie op dit moment. Dat weegt zwaar, want plezier is de basis van vitaliteit op werk.",
+      "reflectievragen": [
+        "Wanneer had je voor het laatst echt plezier in je werk, en wat maakte dat moment anders?",
+        "Is het de inhoud van je werk, de sfeer, of allebei die op dit moment tegenvalt?"
+      ],
+      "aanbevelingen": [
+        "Breng in kaart welke taken je nog wél energie geven en zoek naar manieren om daar meer van te doen.",
+        "Bespreek met je leidinggevende concreet wat er in de sfeer of samenwerking beter kan — wachten helpt niet."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er zijn momenten van plezier, maar het is niet vanzelfsprekend. Je voelt het verschil tussen goede en minder goede dagen duidelijk.",
+      "reflectievragen": [
+        "Wat maakt dat de ene dag wel plezierig is en de andere niet?",
+        "Wat zou er structureel anders moeten zijn, niet incidenteel?"
+      ],
+      "aanbevelingen": [
+        "Let een week bewust op bij welke taken en momenten je energie krijgt of verliest.",
+        "Maak plezier bespreekbaar met je team — vaak speelt het bij meer mensen."
+      ]
+    },
+    "groen": {
+      "duiding": "Je haalt duidelijk plezier uit je werk en de sfeer om je heen. Dat is een sterke basis — koester wat daaraan bijdraagt.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan dit plezier, en hoe blijf je dat vasthouden?",
+        "Kun je dit plezier ook voor een collega vergroten?"
+      ],
+      "aanbevelingen": [
+        "Deel wat voor jou werkt met je team of leidinggevende, zodat het ook voor anderen behouden blijft.",
+        "Blijf alert op signalen dat dit verandert — plezier is geen vanzelfsprekendheid."
+      ]
+    }
+  }
+}

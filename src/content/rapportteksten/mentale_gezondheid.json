@@ -1,0 +1,38 @@
+{
+  "themaId": "mentale_gezondheid",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je voelt je mentaal niet in je vel zitten en veerkracht is nu lastig te vinden. Dit verdient serieuze aandacht, niet uitstel.",
+      "reflectievragen": [
+        "Wat speelt er op dit moment het meest — spanning, somberheid, vermoeidheid, iets anders?",
+        "Wie kan jou hierin op dit moment het beste steunen?"
+      ],
+      "aanbevelingen": [
+        "Zoek professionele ondersteuning, bijvoorbeeld via de huisarts, een coach of bedrijfsmaatschappelijk werk.",
+        "Praat erover met iemand die je vertrouwt — je hoeft dit niet alleen te dragen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je mentale gezondheid is wisselend. Op sommige momenten voel je je stevig, op andere minder.",
+      "reflectievragen": [
+        "Wat maakt het verschil tussen een goede en een mindere dag?",
+        "Wat helpt jou om je veerkracht te herstellen?"
+      ],
+      "aanbevelingen": [
+        "Bouw bewust herstelmomenten in je week in, ook als het druk is.",
+        "Bespreek met je leidinggevende als werk een grote factor is in hoe je je voelt."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je mentaal gezond en veerkrachtig. Dat is een belangrijke basis om tegenslag aan te kunnen.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan deze veerkracht?",
+        "Hoe herken je het als dit begint te verschuiven?"
+      ],
+      "aanbevelingen": [
+        "Blijf investeren in wat jou mentaal sterk houdt.",
+        "Wees alert op vroege signalen bij jezelf en anderen."
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "themaId": "uitdaging",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je ervaart nu weinig uitdaging en ziet weinig ruimte om te groeien. Dat kan op termijn leiden tot onderprikkeling en afhaken.",
+      "reflectievragen": [
+        "Mis je uitdaging in de inhoud van je werk, of vooral in doorgroeimogelijkheden?",
+        "Wat zou voor jou een reële volgende stap zijn?"
+      ],
+      "aanbevelingen": [
+        "Ga het gesprek aan over ontwikkelmogelijkheden — wachten tot het aangeboden wordt, werkt zelden.",
+        "Zoek zelf een leerdoel of project buiten je vaste taken om je te blijven ontwikkelen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er is af en toe uitdaging, maar structurele groeimogelijkheden zijn niet vanzelfsprekend. Je merkt dat je meer zou aankunnen.",
+      "reflectievragen": [
+        "Welke uitdaging zou je energie geven zonder dat het je overvraagt?",
+        "Wat houdt je tegen om hierover het gesprek aan te gaan?"
+      ],
+      "aanbevelingen": [
+        "Bespreek concreet één ontwikkelwens in je eerstvolgende gesprek met je leidinggevende.",
+        "Verken mogelijkheden buiten je huidige functie, zoals een cursus of project."
+      ]
+    },
+    "groen": {
+      "duiding": "Je ervaart voldoende uitdaging en ziet ruimte om te groeien. Dat houdt je scherp en betrokken.",
+      "reflectievragen": [
+        "Welke uitdaging heeft de afgelopen tijd het meeste bijgedragen aan je ontwikkeling?",
+        "Wat is de volgende stap die je voor jezelf ziet?"
+      ],
+      "aanbevelingen": [
+        "Blijf actief sturen op nieuwe leermomenten, ook als het nu goed gaat.",
+        "Deel je ontwikkelpad met je leidinggevende zodat het zichtbaar blijft."
+      ]
+    }
+  }
+}

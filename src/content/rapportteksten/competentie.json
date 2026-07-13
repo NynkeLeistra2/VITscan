@@ -1,0 +1,38 @@
+{
+  "themaId": "competentie",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je hebt het gevoel dat je kwaliteiten en talenten nu onvoldoende worden ingezet. Dat is frustrerend — je weet wat je kunt, maar krijgt er de ruimte niet voor.",
+      "reflectievragen": [
+        "Welke van je kwaliteiten komen in je huidige werk het minste tot hun recht?",
+        "Wat zou er moeten veranderen zodat je vaker kan doen waar je goed in bent?"
+      ],
+      "aanbevelingen": [
+        "Maak concreet met je leidinggevende welke taken beter bij je kwaliteiten passen.",
+        "Vraag gericht feedback: soms zit het verschil in vaardigheid dichterbij een oplossing dan je denkt."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je kunt je werk aan, maar het gevoel dat je optimaal je talenten benut is er niet altijd. Er is ruimte om dat scherper te krijgen.",
+      "reflectievragen": [
+        "Welk deel van je werk voelt als een goede match met wie je bent?",
+        "Wat mis je nog om je volle potentieel te benutten?"
+      ],
+      "aanbevelingen": [
+        "Vraag om taken die net iets meer aansluiten bij je sterke kanten.",
+        "Investeer in een vaardigheid die je huidige werk nog completer maakt."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je vaardig en zet je talenten goed in. Dat vertrouwen in je eigen kunnen is een belangrijke energiebron.",
+      "reflectievragen": [
+        "Wat maakt dat je je kwaliteiten hier zo goed kwijt kunt?",
+        "Waar zou je jezelf nog verder in willen ontwikkelen, vanuit deze sterke basis?"
+      ],
+      "aanbevelingen": [
+        "Zoek bewust nieuwe uitdagingen die passen bij je huidige niveau van vaardigheid.",
+        "Help collega's die hier meer moeite mee hebben — het versterkt ook jouw positie."
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "themaId": "autonomie",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je ervaart weinig vrijheid en ruimte om je werk naar eigen inzicht te doen. Dat knelt, zeker als je weet dat het anders zou kunnen.",
+      "reflectievragen": [
+        "Waar voel je de beperking het sterkst — in beslissingen, in werkwijze, of in invloed op besluiten?",
+        "Wat zou er minimaal moeten veranderen om meer ruimte te voelen?"
+      ],
+      "aanbevelingen": [
+        "Benoem concreet één situatie waarin je meer ruimte nodig had, en bespreek die met je leidinggevende.",
+        "Onderzoek of de beperking echt van buitenaf komt, of dat je 'm onbewust zelf aanhoudt."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je hebt enige vrijheid, maar niet altijd het gevoel dat je volledig je eigen koers kan varen. Het wisselt per situatie.",
+      "reflectievragen": [
+        "In welke situaties voel je wél voldoende ruimte, en wat is daar anders aan?",
+        "Welke kaders voelen behulpzaam, en welke voelen als een blokkade?"
+      ],
+      "aanbevelingen": [
+        "Vraag expliciet om meer eigenaarschap op een concreet onderdeel van je werk.",
+        "Bespreek met je leidinggevende welke kaders wel en niet nodig zijn."
+      ]
+    },
+    "groen": {
+      "duiding": "Je ervaart voldoende vrijheid en professionele ruimte. Dat vertrouwen geeft je de mogelijkheid om je werk op je eigen manier te doen.",
+      "reflectievragen": [
+        "Wat maakt dat je deze ruimte krijgt en hoe waardevol is dat voor je?",
+        "Zijn er collega's die deze ruimte minder ervaren, en kun jij daarin iets betekenen?"
+      ],
+      "aanbevelingen": [
+        "Gebruik deze ruimte bewust om initiatief te blijven nemen.",
+        "Deel hoe deze vrijheid voor jou werkt — het kan ook voor anderen behulpzaam zijn."
+      ]
+    }
+  }
+}

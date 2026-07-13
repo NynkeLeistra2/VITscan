@@ -1,0 +1,38 @@
+{
+  "themaId": "persoonlijke_ontwikkeling",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je hebt weinig richting of ruimte voor je eigen ontwikkeling op dit moment. Dat gevoel van stilstand kan wegen.",
+      "reflectievragen": [
+        "Wat zou jou het gevoel geven dat je weer richting geeft aan je eigen pad?",
+        "Wat houdt je tegen om tijd voor jezelf te nemen?"
+      ],
+      "aanbevelingen": [
+        "Maak een klein, concreet plan voor iets dat jou persoonlijk verder brengt, hoe klein ook.",
+        "Zoek een moment om met iemand te sparren over waar je naartoe wil — dat hoeft niet in je eentje."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er is af en toe ruimte voor je eigen ontwikkeling, maar het is niet structureel. Je zou het meer willen prioriteren.",
+      "reflectievragen": [
+        "Wat zou jou helpen om hier vaker tijd voor te maken?",
+        "Weet je waar je sterke kanten liggen, of is dat ook nog een zoektocht?"
+      ],
+      "aanbevelingen": [
+        "Plan vaste momenten in voor reflectie of ontwikkeling, ook al is het maar kort.",
+        "Vraag feedback aan iemand die je goed kent om je sterke kanten scherper te krijgen."
+      ]
+    },
+    "groen": {
+      "duiding": "Je geeft actief richting aan je eigen ontwikkeling en kent je sterke kanten. Dat zelfinzicht is waardevol.",
+      "reflectievragen": [
+        "Wat helpt jou het meest om hierin te blijven investeren?",
+        "Wat is de volgende stap in je persoonlijke groei?"
+      ],
+      "aanbevelingen": [
+        "Blijf tijd reserveren voor reflectie, ook als het druk is.",
+        "Deel je inzichten met anderen — het kan hen ook op weg helpen."
+      ]
+    }
+  }
+}

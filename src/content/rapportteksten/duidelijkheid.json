@@ -1,0 +1,38 @@
+{
+  "themaId": "duidelijkheid",
+  "niveaus": {
+    "rood": {
+      "duiding": "Het is voor jou onduidelijk wat er van je verwacht wordt en hoe de rollen liggen. Dat maakt je werk onnodig zwaar en onzeker.",
+      "reflectievragen": [
+        "Op welk vlak mis je vooral duidelijkheid — taken, verantwoordelijkheden, of verwachtingen?",
+        "Wat zou jou helpen om hier meer grip op te krijgen?"
+      ],
+      "aanbevelingen": [
+        "Vraag expliciet aan je leidinggevende om je takenpakket en verwachtingen concreet te maken.",
+        "Leg samen met collega's vast wie waarvoor verantwoordelijk is, zeker bij overlappende taken."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je hebt redelijk zicht op wat er van je verwacht wordt, maar niet alles is helder. Dat zorgt af en toe voor twijfel.",
+      "reflectievragen": [
+        "Welk deel van je rol voelt nog onduidelijk?",
+        "Waar zou je zelf meer duidelijkheid kunnen creëren?"
+      ],
+      "aanbevelingen": [
+        "Check periodiek bij je leidinggevende of jullie beelden nog overeenkomen.",
+        "Leg afspraken die je maakt kort schriftelijk vast, dat voorkomt misverstanden."
+      ]
+    },
+    "groen": {
+      "duiding": "Je weet goed wat er van je verwacht wordt en de rollen zijn helder. Die duidelijkheid geeft rust en richting.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan deze duidelijkheid?",
+        "Kun je die duidelijkheid ook bieden aan collega's die daar meer moeite mee hebben?"
+      ],
+      "aanbevelingen": [
+        "Blijf verwachtingen actief afstemmen, ook als je functie verandert.",
+        "Help nieuwe collega's snel dezelfde duidelijkheid te krijgen."
+      ]
+    }
+  }
+}

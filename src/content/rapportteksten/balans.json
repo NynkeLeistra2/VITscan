@@ -1,0 +1,38 @@
+{
+  "themaId": "balans",
+  "niveaus": {
+    "rood": {
+      "duiding": "Werk en privé voelen niet in balans en ook emotioneel voel je weinig rust. Dat vraagt aandacht, want dit tast je herstel aan.",
+      "reflectievragen": [
+        "Waar zit de disbalans vooral — in tijd, in energie, of in hoofd bezig blijven?",
+        "Wat zou als eerste moeten veranderen om meer balans te voelen?"
+      ],
+      "aanbevelingen": [
+        "Maak concrete afspraken met jezelf (en eventueel je werkgever) over grenzen tussen werk en privé.",
+        "Zoek indien nodig steun — een gesprek met een coach of vertrouwenspersoon kan helpen om het patroon te doorbreken."
+      ]
+    },
+    "oranje": {
+      "duiding": "De balans is er soms wel, soms niet. Je merkt dat het kan doorslaan als het druk wordt.",
+      "reflectievragen": [
+        "Wat zijn de signalen dat de balans begint te verschuiven?",
+        "Wat helpt je om op tijd bij te sturen?"
+      ],
+      "aanbevelingen": [
+        "Bouw vaste momenten in die alleen van jou zijn, ook in drukke periodes.",
+        "Bespreek met je omgeving (werk en privé) wat je nodig hebt om in balans te blijven."
+      ]
+    },
+    "groen": {
+      "duiding": "Werk en privé voelen in balans en je ervaart emotionele rust. Dat is een goede basis om op terug te vallen in drukke periodes.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan deze balans?",
+        "Hoe bewaak je dit als de omstandigheden veranderen?"
+      ],
+      "aanbevelingen": [
+        "Blijf bewust kiezen voor wat deze balans in stand houdt.",
+        "Deel je aanpak met anderen die hier meer moeite mee hebben."
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "themaId": "familie_relaties",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je ervaart weinig steun vanuit familie of vrienden en het contact voelt niet zorgeloos. Dat mist een belangrijke bron van veerkracht.",
+      "reflectievragen": [
+        "Wat maakt dat dit contact nu zwaar voelt?",
+        "Is er iemand met wie je dit zou kunnen bespreken, ook al is het lastig?"
+      ],
+      "aanbevelingen": [
+        "Zoek bewust naar één relatie waarin je wel steun ervaart en investeer daarin.",
+        "Overweeg professionele ondersteuning als relaties structureel zwaar voelen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er is steun vanuit je omgeving, maar het contact voelt niet altijd zorgeloos. Het wisselt.",
+      "reflectievragen": [
+        "Met wie voel je je het meest gesteund?",
+        "Wat zou het contact met anderen makkelijker maken?"
+      ],
+      "aanbevelingen": [
+        "Maak bewust tijd vrij voor de mensen die jou energie geven.",
+        "Bespreek openlijk als iets in een relatie schuurt, in plaats van het te laten liggen."
+      ]
+    },
+    "groen": {
+      "duiding": "Je ervaart steun vanuit je familie en vrienden en het contact voelt zorgeloos. Dat is een sterke basis om op terug te vallen.",
+      "reflectievragen": [
+        "Wat maakt deze relaties zo waardevol voor je?",
+        "Hoe blijf je hierin investeren als het druk wordt?"
+      ],
+      "aanbevelingen": [
+        "Blijf bewust tijd maken voor deze mensen, ook in drukke periodes.",
+        "Wees er ook voor anderen — steun werkt vaak wederkerig."
+      ]
+    }
+  }
+}

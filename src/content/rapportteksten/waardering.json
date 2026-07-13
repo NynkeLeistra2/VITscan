@@ -1,0 +1,38 @@
+{
+  "themaId": "waardering",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je voelt je onvoldoende gewaardeerd — persoonlijk, financieel, of allebei. Dat knaagt, zeker als je het gevoel hebt dat je het niet hardop kan maken.",
+      "reflectievragen": [
+        "Mis je vooral erkenning, financiële waardering, of het gevoel dat je ertoe doet?",
+        "Wanneer voelde je je voor het laatst echt gewaardeerd?"
+      ],
+      "aanbevelingen": [
+        "Maak concreet bespreekbaar wat je nodig hebt om je gewaardeerd te voelen — vaag blijven helpt niet.",
+        "Zoek zelf naar momenten om waardering te geven; dat verlaagt vaak ook de drempel om het te ontvangen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Je voelt soms waardering, maar het is niet vanzelfsprekend of structureel. Je twijfelt weleens of je ertoe doet.",
+      "reflectievragen": [
+        "Op welke momenten voel je je wel gewaardeerd?",
+        "Wat zou een klein signaal van waardering voor jou betekenen?"
+      ],
+      "aanbevelingen": [
+        "Vraag actief om feedback in plaats van te wachten tot het spontaan komt.",
+        "Bespreek in een functioneringsgesprek concreet hoe waardering voor jou werkt."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je gewaardeerd, persoonlijk en in wat je bijdraagt. Dat gevoel van ertoe doen versterkt je motivatie.",
+      "reflectievragen": [
+        "Wat draagt het meest bij aan dit gevoel van waardering?",
+        "Hoe geef jij op jouw beurt waardering aan anderen?"
+      ],
+      "aanbevelingen": [
+        "Blijf uitspreken wanneer iets goed voelt — het houdt het gesprek levend.",
+        "Geef de waardering die jij ervaart ook door aan je team."
+      ]
+    }
+  }
+}

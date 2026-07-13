@@ -11,11 +11,11 @@ zie `VIT-scan-projectplan.md`.
 **Wave 1, stap 3 (scanflow):** klaar en end-to-end getest in de browser
 (intro → stellingen → open vraag → afronden-placeholder), inclusief de
 RLS/upsert-blockers hieronder — allebei opgelost en geverifieerd.
-**Wave 1, stap 4 (scoring + rapport):** nog te doen. Voorbereidende
-UI/datamodel-wijziging al doorgevoerd en getest: antwoordschaal 1-10
-(i.p.v. 5-punts Likert) en één stelling per scherm met auto-advance — zie
-`BESLISSINGEN.md` voor details. Themascore = gemiddelde van de stellingen,
-staat al op schaal 1-10, geen omrekening meer nodig.
+**Wave 1, stap 4 (scoring + rapport):** code klaar en gecommit — scoring-
+engine, 19 thema-contentbestanden + totaalscore-content (Nynkes eigen
+tekst verwerkt), `RapportScreen`. Typecheck/lint/`next build` slagen en de
+scoringswiskunde is doorgerekend. **Nog niet in de browser bekeken — dat is
+de eerstvolgende stap bij hervatten.**
 
 ## RLS-blocker: opgelost (2026-07-10)
 
@@ -81,10 +81,13 @@ Deze hoeven niet opnieuw aangemaakt te worden.
 
 ## Hervatten: te doen
 
-1. Wave 1, stap 4 bouwen: scoring (themascore, deelscores, totale VIT-score,
-   kleurgrenzen) + persoonlijk rapport (overzicht + per thema duiding/
-   reflectievragen/aanbevelingen uit contentbestanden) + PDF-export
-   (let op de jsPDF-kwetsbaarheid, zie `BESLISSINGEN.md`).
-2. Let bij het testen op nieuwe respondenten/localStorage-sessies: de
-   testlink hierboven kan nog een oude, afgeronde sessie in `localStorage`
-   hebben staan van eerdere tests — open in dat geval een incognito-venster.
+1. Rapportscherm echt doorklikken in de browser (incognito, zie hierboven
+   waarom): volledige scan invullen en het rapport op verschillende
+   scoreniveaus beoordelen (probeer bewust een lage, gemiddelde en hoge
+   score uit).
+2. Nynke laat de 19 per-thema-teksten (`src/content/rapportteksten/
+   <themaId>.json`) controleren/aanpassen — eerste versie is door Claude
+   geschreven.
+3. Door naar Wave 1, stap 6: PDF-export (let op de jsPDF-kwetsbaarheid, zie
+   `BESLISSINGEN.md`). Stap 5 (rapportteksten) is met dit alles feitelijk
+   al meegenomen.

@@ -17,8 +17,8 @@ import type { ScanrondeContext } from "@/lib/supabase/scanronde";
 import { IntroScreen } from "./IntroScreen";
 import { StellingScreen } from "./StellingScreen";
 import { OpenVraagScreen } from "./OpenVraagScreen";
-import { AfrondenScreen } from "./AfrondenScreen";
 import { VoortgangsBalk } from "./VoortgangsBalk";
+import { RapportScreen } from "@/components/rapport/RapportScreen";
 
 interface StellingStap {
   thema: ThemaMetStellingen;
@@ -179,7 +179,12 @@ export function ScanFlow({ context }: ScanFlowProps) {
   }
 
   if (sessie.afgerond || sessie.stapIndex === AFGEROND_STAP) {
-    return <AfrondenScreen respondentCode={sessie.respondentCode} />;
+    return (
+      <RapportScreen
+        antwoorden={sessie.antwoorden}
+        respondentCode={sessie.respondentCode}
+      />
+    );
   }
 
   if (sessie.stapIndex === 0) {

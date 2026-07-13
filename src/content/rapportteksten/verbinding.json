@@ -1,0 +1,38 @@
+{
+  "themaId": "verbinding",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je voelt weinig verbinding met de organisatie, je collega's of je leidinggevende. Dat gevoel van 'erbij horen' ontbreekt, en dat weegt.",
+      "reflectievragen": [
+        "Mis je verbinding met de mensen, met de organisatie als geheel, of allebei?",
+        "Wanneer voelde je je voor het laatst wél verbonden, en wat was er toen anders?"
+      ],
+      "aanbevelingen": [
+        "Zoek bewust contact met één collega waarmee je die klik wel voelt of zou kunnen voelen.",
+        "Bespreek met je leidinggevende wat verbindend leiderschap voor jou zou betekenen."
+      ]
+    },
+    "oranje": {
+      "duiding": "Er is verbinding, maar niet overal even sterk. Met sommige mensen of onderdelen voel je meer afstand.",
+      "reflectievragen": [
+        "Waar voel je de meeste verbinding, en waar het minst?",
+        "Wat zou die verbinding kunnen versterken?"
+      ],
+      "aanbevelingen": [
+        "Investeer bewust in contact met collega's buiten de waan van de dag.",
+        "Vraag je leidinggevende naar de missie en richting — begrip vergroot vaak verbinding."
+      ]
+    },
+    "groen": {
+      "duiding": "Je voelt je verbonden met je werk, je collega's en de organisatie. Dat is een krachtige basis om vanuit te werken.",
+      "reflectievragen": [
+        "Wat maakt deze verbinding voor jou zo sterk?",
+        "Hoe kun jij bijdragen aan verbinding voor anderen in het team?"
+      ],
+      "aanbevelingen": [
+        "Blijf investeren in de relaties die deze verbinding voeden.",
+        "Wees een aanspreekpunt voor nieuwe collega's die deze verbinding nog moeten opbouwen."
+      ]
+    }
+  }
+}

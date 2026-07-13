@@ -1,0 +1,38 @@
+{
+  "themaId": "ontspanning",
+  "niveaus": {
+    "rood": {
+      "duiding": "Je kan werk moeilijk loslaten, hebt weinig ontspanning en de slaap laat te wensen over. Dat is een combinatie die uitputting in de hand werkt.",
+      "reflectievragen": [
+        "Wat houdt je vast als je probeert los te laten na werktijd?",
+        "Wat zou je slaap of ontspanning het meest ten goede komen?"
+      ],
+      "aanbevelingen": [
+        "Bouw een vast 'afsluitritueel' in aan het einde van de werkdag om over te schakelen.",
+        "Beperk schermgebruik vlak voor het slapengaan en houd vaste bedtijden aan."
+      ]
+    },
+    "oranje": {
+      "duiding": "Ontspanning en slaap zijn er wel, maar niet altijd voldoende. Je merkt dat het kan verbeteren.",
+      "reflectievragen": [
+        "Wat zorgt ervoor dat ontspanning er soms bij inschiet?",
+        "Hoe zou je ideale week eruitzien qua rust?"
+      ],
+      "aanbevelingen": [
+        "Plan ontspanningsmomenten net zo bewust in als afspraken.",
+        "Kijk naar je slaapritme: kleine aanpassingen hebben vaak groot effect."
+      ]
+    },
+    "groen": {
+      "duiding": "Je kan werk goed loslaten, neemt voldoende rust en slaapt goed. Dat is een belangrijke bron van herstel.",
+      "reflectievragen": [
+        "Wat helpt je het meest om te ontspannen?",
+        "Hoe bewaak je dit als het drukker wordt?"
+      ],
+      "aanbevelingen": [
+        "Blijf deze gewoontes vasthouden, ook in drukke periodes.",
+        "Deel wat voor jou werkt — het kan ook anderen helpen."
+      ]
+    }
+  }
+}
