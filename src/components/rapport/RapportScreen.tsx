@@ -1,12 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import { berekenScores } from "@/lib/scoring";
 import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
-import { NIVEAU_KLEUR } from "@/lib/scoring-config";
+import { scoreKleur } from "@/lib/scoring-config";
 import { ThemaDetail } from "./ThemaDetail";
 import { WerkgelukWiel } from "./WerkgelukWiel";
+import { ScanFooter } from "@/components/scan/ScanFooter";
 
 interface RapportScreenProps {
   antwoorden: Record<string, number>;
   respondentCode: string;
+  naam: string;
 }
 
 const WIEL_TITEL: Record<string, string> = {
@@ -14,15 +19,59 @@ const WIEL_TITEL: Record<string, string> = {
   persoonlijk_welzijn: "Levenswiel",
 };
 
-export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps) {
+function bestandsnaamUitHeader(contentDisposition: string | null, fallback: string): string {
+  const match = contentDisposition?.match(/filename="([^"]+)"/);
+  return match?.[1] ?? fallback;
+}
+
+export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
+  const [pdfBezig, setPdfBezig] = useState(false);
+  const [pdfFoutmelding, setPdfFoutmelding] = useState<string | null>(null);
+
+  async function downloadPdf() {
+    setPdfFoutmelding(null);
+    setPdfBezig(true);
+    try {
+      const response = await fetch("/api/rapport-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          antwoorden,
+          naam: naam.trim() || null,
+          respondentCode,
+        }),
+      });
+
+      if (!response.ok) throw new Error("PDF-download mislukt");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = bestandsnaamUitHeader(
+        response.headers.get("Content-Disposition"),
+        "vit-scan-resultaat.pdf"
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {
+      setPdfFoutmelding(
+        "Het downloaden van je rapport is niet gelukt. Controleer je internetverbinding en probeer het opnieuw."
+      );
+    } finally {
+      setPdfBezig(false);
+    }
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10">
       <div className="text-center">
         <h1 className="text-2xl font-semibold text-zinc-900">
-          Jouw VIT-scan resultaat
+          {naam ? `Jouw VIT-scan resultaat, ${naam}` : "Jouw VIT-scan resultaat"}
         </h1>
         <p className="mt-2 text-zinc-600">{algemeen.overzichtIntro}</p>
       </div>
@@ -31,7 +80,7 @@ export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps
         <p className="text-sm font-medium text-zinc-500">Jouw totale VIT-score</p>
         <p
           className="mt-1 text-5xl font-bold"
-          style={{ color: NIVEAU_KLEUR[resultaat.totaalNiveau] }}
+          style={{ color: scoreKleur(resultaat.totaalScore) }}
         >
           {resultaat.totaalScore.toFixed(1)}
         </p>
@@ -45,14 +94,12 @@ export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps
             key={deel.deelId}
             titel={WIEL_TITEL[deel.deelId] ?? deel.deelTitel}
             gemiddelde={deel.score}
-            gemiddeldeNiveau={deel.niveau}
             segmenten={resultaat.themaScores
               .filter((thema) => thema.deelId === deel.deelId)
               .map((thema) => ({
                 themaId: thema.themaId,
                 label: thema.themaTitel,
                 score: thema.score,
-                niveau: thema.niveau,
               }))}
           />
         ))}
@@ -102,15 +149,32 @@ export function RapportScreen({ antwoorden, respondentCode }: RapportScreenProps
         <p className="mt-2 text-zinc-700">{algemeen.afsluiting.tekst}</p>
       </div>
 
+      <div className="mt-8 flex flex-col items-center">
+        <button
+          type="button"
+          onClick={downloadPdf}
+          disabled={pdfBezig}
+          className="h-12 w-full max-w-xs rounded-lg bg-teal-600 font-medium text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+        >
+          {pdfBezig ? "Rapport wordt gemaakt..." : "Download rapport (PDF)"}
+        </button>
+        {pdfFoutmelding && (
+          <p className="mt-3 text-sm text-red-600">{pdfFoutmelding}</p>
+        )}
+      </div>
+
       <div className="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center">
         <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>
         <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
           {respondentCode}
         </p>
         <p className="mt-1 text-xs text-zinc-500">
-          Bewaar deze code voor een eventuele vervolgmeting.
+          Bewaar deze code. Bij een vervolgmeting kun je &apos;m gebruiken om je
+          resultaten te laten koppelen, in overleg met Nynke.
         </p>
       </div>
+
+      <ScanFooter />
     </div>
   );
 }

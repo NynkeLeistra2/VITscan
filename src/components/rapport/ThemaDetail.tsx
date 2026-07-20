@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { NIVEAU_KLEUR } from "@/lib/scoring-config";
+import { scoreKleur } from "@/lib/scoring-config";
 import type { ThemaScoreResultaat } from "@/lib/scoring";
 import { themaTeksten } from "@/lib/rapportteksten";
 
@@ -12,7 +12,7 @@ interface ThemaDetailProps {
 export function ThemaDetail({ themaScore }: ThemaDetailProps) {
   const [open, setOpen] = useState(false);
   const teksten = themaTeksten(themaScore.themaId).niveaus[themaScore.niveau];
-  const kleur = NIVEAU_KLEUR[themaScore.niveau];
+  const kleur = scoreKleur(themaScore.score);
   const percentage = Math.max(0, Math.min(100, (themaScore.score / 10) * 100));
 
   return (

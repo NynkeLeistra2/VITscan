@@ -1,5 +1,6 @@
 import type { StellingRef, ThemaMetStellingen } from "@/lib/stellingen";
 import { AntwoordSchaal } from "./AntwoordSchaal";
+import { ScanFooter } from "./ScanFooter";
 
 interface StellingScreenProps {
   thema: ThemaMetStellingen;
@@ -60,6 +61,8 @@ export function StellingScreen({
           <p className="text-sm text-zinc-400">Bezig met opslaan...</p>
         )}
       </div>
+
+      <ScanFooter />
     </div>
   );
 }

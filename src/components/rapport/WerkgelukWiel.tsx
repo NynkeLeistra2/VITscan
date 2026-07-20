@@ -1,108 +1,111 @@
-import { NIVEAU_KLEUR, type ScoreNiveau } from "@/lib/scoring-config";
+import { scoreKleur } from "@/lib/scoring-config";
+import {
+  WIEL_SIZE,
+  WIEL_CENTER,
+  WIEL_INNER_RADIUS,
+  WIEL_NUM_NIVEAUS,
+  WIEL_NIVEAU_STAP,
+  WIEL_LABEL_RADIUS,
+  wielPunt,
+  wielSegmentPad,
+  wielSegmentHoek,
+  wielLabelRegels,
+} from "@/lib/wiel-geometrie";
 
 export interface WerkgelukWielSegment {
   themaId: string;
   label: string;
   score: number;
-  niveau: ScoreNiveau;
 }
 
 interface WerkgelukWielProps {
   titel: string;
   segmenten: WerkgelukWielSegment[];
   gemiddelde: number;
-  gemiddeldeNiveau: ScoreNiveau;
 }
 
-const SIZE = 440;
-const CENTER = SIZE / 2;
-const OUTER_RADIUS = 150;
-const INNER_RADIUS = 96;
-const LABEL_RADIUS = 168;
-const GAP_DEG = 2.5;
-
-function punt(r: number, hoekGraden: number) {
-  const rad = (Math.PI / 180) * hoekGraden;
-  return { x: CENTER + r * Math.sin(rad), y: CENTER - r * Math.cos(rad) };
-}
-
-function segmentPad(startHoek: number, eindHoek: number) {
-  const p1 = punt(OUTER_RADIUS, startHoek);
-  const p2 = punt(OUTER_RADIUS, eindHoek);
-  const p3 = punt(INNER_RADIUS, eindHoek);
-  const p4 = punt(INNER_RADIUS, startHoek);
-  const grootBoog = eindHoek - startHoek > 180 ? 1 : 0;
-  return `M ${p1.x} ${p1.y} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 ${grootBoog} 1 ${p2.x} ${p2.y} L ${p3.x} ${p3.y} A ${INNER_RADIUS} ${INNER_RADIUS} 0 ${grootBoog} 0 ${p4.x} ${p4.y} Z`;
-}
-
-/** Kiest tekst-uitlijning en verticale nudge op basis van de hoek, zodat
- * labels rondom de cirkel netjes van het middelpunt af wijzen i.p.v. erover
- * heen te lopen. */
-function labelUitlijning(hoek: number): { anchor: "start" | "middle" | "end"; dy: number } {
-  const genormaliseerd = ((hoek % 360) + 360) % 360;
-  if (genormaliseerd > 15 && genormaliseerd < 165) return { anchor: "start", dy: 4 };
-  if (genormaliseerd > 195 && genormaliseerd < 345) return { anchor: "end", dy: 4 };
-  if (genormaliseerd <= 15 || genormaliseerd >= 345) return { anchor: "middle", dy: -4 };
-  return { anchor: "middle", dy: 12 };
-}
-
-export function WerkgelukWiel({
-  titel,
-  segmenten,
-  gemiddelde,
-  gemiddeldeNiveau,
-}: WerkgelukWielProps) {
+export function WerkgelukWiel({ titel, segmenten, gemiddelde }: WerkgelukWielProps) {
   const aantal = segmenten.length;
-  const anglePer = 360 / aantal;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex w-full flex-col items-center">
       <h3 className="text-lg font-semibold text-zinc-900">{titel}</h3>
       <svg
-        viewBox={`0 0 ${SIZE} ${SIZE}`}
-        className="mt-2 w-full max-w-[380px] overflow-visible"
+        viewBox={`0 0 ${WIEL_SIZE} ${WIEL_SIZE}`}
+        className="mt-2 w-full max-w-[540px] overflow-visible drop-shadow-md"
       >
+        {Array.from({ length: WIEL_NUM_NIVEAUS }, (_, i) => (
+          <circle
+            key={i}
+            cx={WIEL_CENTER}
+            cy={WIEL_CENTER}
+            r={WIEL_INNER_RADIUS + (i + 1) * WIEL_NIVEAU_STAP}
+            fill="none"
+            stroke="#e4e4e7"
+            strokeWidth={1}
+            opacity={0.5}
+          />
+        ))}
+
         {segmenten.map((segment, i) => {
-          const start = i * anglePer + GAP_DEG / 2;
-          const eind = (i + 1) * anglePer - GAP_DEG / 2;
+          const { start, eind } = wielSegmentHoek(aantal, i);
+          const buitenRadius = WIEL_INNER_RADIUS + segment.score * WIEL_NIVEAU_STAP;
+          return (
+            <path
+              key={segment.themaId}
+              d={wielSegmentPad(start, eind, buitenRadius)}
+              fill={scoreKleur(segment.score)}
+              opacity={0.85}
+              stroke="white"
+              strokeWidth={2}
+            />
+          );
+        })}
+
+        {segmenten.map((segment, i) => {
+          const { start, eind } = wielSegmentHoek(aantal, i);
           const labelHoek = (start + eind) / 2;
-          const labelPunt = punt(LABEL_RADIUS, labelHoek);
-          const { anchor, dy } = labelUitlijning(labelHoek);
+          const labelPunt = wielPunt(WIEL_LABEL_RADIUS, labelHoek);
+          const regels = wielLabelRegels(segment.label.toUpperCase());
           return (
             <g key={segment.themaId}>
-              <path d={segmentPad(start, eind)} fill={NIVEAU_KLEUR[segment.niveau]} />
-              <text
-                x={labelPunt.x}
-                y={labelPunt.y + dy}
-                textAnchor={anchor}
-                fontSize={9.5}
-                fontWeight={600}
-                fill="#3f3f46"
-              >
-                {segment.label.toUpperCase()}
-              </text>
+              {regels.map((regel, regelIndex) => (
+                <text
+                  key={regel}
+                  x={labelPunt.x}
+                  y={labelPunt.y + (regelIndex - (regels.length - 1) / 2) * 14}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fontSize={13}
+                  fontWeight={700}
+                  fill="#27272a"
+                >
+                  {regel}
+                </text>
+              ))}
             </g>
           );
         })}
+
         <circle
-          cx={CENTER}
-          cy={CENTER}
-          r={INNER_RADIUS - 4}
+          cx={WIEL_CENTER}
+          cy={WIEL_CENTER}
+          r={WIEL_INNER_RADIUS - 10}
           fill="white"
           stroke="#e4e4e7"
           strokeWidth={1}
         />
         <text
-          x={CENTER}
-          y={CENTER - 6}
+          x={WIEL_CENTER}
+          y={WIEL_CENTER - 6}
           textAnchor="middle"
-          fontSize={34}
+          fontSize={38}
           fontWeight={700}
-          fill={NIVEAU_KLEUR[gemiddeldeNiveau]}
+          fill={scoreKleur(gemiddelde)}
         >
           {gemiddelde.toFixed(1)}
         </text>
-        <text x={CENTER} y={CENTER + 20} textAnchor="middle" fontSize={13} fill="#71717a">
+        <text x={WIEL_CENTER} y={WIEL_CENTER + 22} textAnchor="middle" fontSize={14} fill="#71717a">
           Gemiddelde
         </text>
       </svg>

@@ -2,7 +2,7 @@
   "themaId": "competentie",
   "niveaus": {
     "rood": {
-      "duiding": "Je hebt het gevoel dat je kwaliteiten en talenten nu onvoldoende worden ingezet. Dat is frustrerend — je weet wat je kunt, maar krijgt er de ruimte niet voor.",
+      "duiding": "Je hebt het gevoel dat je kwaliteiten en talenten nu onvoldoende worden ingezet. Dat is frustrerend: je weet wat je kunt, maar krijgt er de ruimte niet voor.",
       "reflectievragen": [
         "Welke van je kwaliteiten komen in je huidige werk het minste tot hun recht?",
         "Wat zou er moeten veranderen zodat je vaker kan doen waar je goed in bent?"
@@ -31,7 +31,7 @@
       ],
       "aanbevelingen": [
         "Zoek bewust nieuwe uitdagingen die passen bij je huidige niveau van vaardigheid.",
-        "Help collega's die hier meer moeite mee hebben — het versterkt ook jouw positie."
+        "Help collega's die hier meer moeite mee hebben. Het versterkt ook jouw positie."
       ]
     }
   }

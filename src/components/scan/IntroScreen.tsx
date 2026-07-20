@@ -1,7 +1,13 @@
+import Image from "next/image";
+import { ScanFooter } from "./ScanFooter";
+
 interface IntroScreenProps {
   organisatieNaam: string;
   teamNaam: string | null;
   respondentCode: string;
+  naam: string;
+  onNaamWijzig: (naam: string) => void;
+  emailVerplicht: boolean;
   onStart: () => void;
   bezig: boolean;
   foutmelding: string | null;
@@ -11,13 +17,24 @@ export function IntroScreen({
   organisatieNaam,
   teamNaam,
   respondentCode,
+  naam,
+  onNaamWijzig,
+  emailVerplicht,
   onStart,
   bezig,
   foutmelding,
 }: IntroScreenProps) {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-6 py-12">
-      <h1 className="text-2xl font-semibold text-zinc-900">VIT-scan</h1>
+      <Image
+        src="/nynke-logo-pdf.png"
+        alt="Nynke Leistra Coaching en Advies"
+        width={175}
+        height={100}
+        className="h-12 w-auto self-start"
+        priority
+      />
+      <h1 className="mt-3 text-2xl font-semibold text-zinc-900">VIT-scan</h1>
       <p className="mt-1 text-sm text-zinc-500">
         {organisatieNaam}
         {teamNaam ? ` · ${teamNaam}` : ""}
@@ -33,7 +50,27 @@ export function IntroScreen({
           zien krijgt, is alleen voor jou. Je werkgever ziet nooit
           individuele antwoorden, alleen geanonimiseerde teamcijfers.
         </p>
-        <p>Een naam of e-mailadres is niet nodig.</p>
+        <p>
+          Een naam invullen is niet nodig — je herkent je rapport ook aan je
+          persoonlijke code hieronder. Wil je wel je naam erop, dan kan dat.
+          {emailVerplicht
+            ? " We vragen straks ook je e-mailadres, zodat je het rapport ook per e-mail ontvangt."
+            : " Aan het einde kun je optioneel ook je e-mailadres achterlaten om het rapport toegestuurd te krijgen."}
+        </p>
+      </div>
+
+      <div className="mt-6">
+        <label className="text-sm font-medium text-zinc-700" htmlFor="naam">
+          Je naam (optioneel)
+        </label>
+        <input
+          id="naam"
+          type="text"
+          value={naam}
+          onChange={(e) => onNaamWijzig(e.target.value)}
+          placeholder="Bijv. Jan Jansen"
+          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+        />
       </div>
 
       <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4">
@@ -42,8 +79,8 @@ export function IntroScreen({
           {respondentCode}
         </p>
         <p className="mt-1 text-xs text-zinc-500">
-          Onthoud deze code — hiermee kun je straks een vervolgmeting
-          koppelen zonder dat je jezelf hoeft te identificeren.
+          Bewaar deze code. Bij een vervolgmeting kun je &apos;m gebruiken om je
+          resultaten te laten koppelen, in overleg met Nynke.
         </p>
       </div>
 
@@ -59,6 +96,8 @@ export function IntroScreen({
       >
         {bezig ? "Bezig..." : "Start de scan"}
       </button>
+
+      <ScanFooter />
     </div>
   );
 }

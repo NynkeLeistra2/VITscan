@@ -5,9 +5,14 @@ export interface ScanSessie {
   respondentId: string;
   respondentCode: string;
   stellingenVersie: string;
+  /** Optioneel: zodat de medewerker zichzelf op het rapport herkent i.p.v. alleen de respondent-code. */
+  naam: string;
   /** stelling_key -> waarde (1-10) */
   antwoorden: Record<string, number>;
   openVraagAntwoord: string;
+  email: string;
+  /** Standaard aan: mensen kunnen 'm uitzetten als ze geen rapport per e-mail willen. */
+  emailOptIn: boolean;
   afgerond: boolean;
   /** Index in de platte stappenlijst (0 = intro, 1 per stelling, dan open vraag/afgerond), zodat herladen hervat waar je was. */
   stapIndex: number;
@@ -28,7 +33,9 @@ export function laadSessie(
   if (!ruw) return null;
 
   try {
-    return JSON.parse(ruw) as ScanSessie;
+    const sessie = JSON.parse(ruw) as ScanSessie;
+    // Sessies opgeslagen vóór introductie van het naamveld hebben dit nog niet.
+    return { ...sessie, naam: sessie.naam ?? "" };
   } catch {
     return null;
   }
@@ -51,8 +58,11 @@ export function nieuweSessie(): ScanSessie {
     respondentId: crypto.randomUUID(),
     respondentCode: genereerRespondentCode(),
     stellingenVersie: STELLINGEN_VERSIE,
+    naam: "",
     antwoorden: {},
     openVraagAntwoord: "",
+    email: "",
+    emailOptIn: true,
     afgerond: false,
     stapIndex: 0,
   };

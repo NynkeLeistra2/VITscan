@@ -153,6 +153,120 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   keer echt doorklikken in de browser** om het rapport visueel te
   beoordelen.
 
-## Aandachtspunt voor Wave 1, stap 4 — PDF-export (nog te bouwen)
+## Wave 1, stap 4 — Optioneel naamveld op introscherm (2026-07-13)
 
-- **jsPDF-kwetsbaarheid (CVE-2025-68428 / GHSA-f8cm-6447-x5h2):** de Node.js-bouwversie van jsPDF (`<4.0.0`) laat willekeurige bestanden van de server inlezen via `loadFile`/`addImage`/`addFont`/`html` als daar een door de gebruiker beïnvloed pad in terechtkomt. Niet van toepassing op de oude Lovable-scan (die gebruikt jsPDF alleen in de browser, geen serverbestandssysteem om te lekken). **Wél relevant hier**, omdat de PDF-export in dit project server-side gebeurt (zie CLAUDE.md). Bij het bouwen van die stap: gebruik jsPDF `^4.0.0` of hoger, en geef nooit een pad/bestandsnaam aan `addImage`/`addFont`/`html` mee dat (ook maar gedeeltelijk) is opgebouwd uit gebruikersinvoer.
+- **Aanleiding:** Nynke wilde dat een medewerker zichzelf op het rapport
+  herkent (niet alleen aan de respondent-code). Dit botste met de
+  oorspronkelijke privacyregel in CLAUDE.md ("geen naam verplicht, en er
+  wordt ook nooit naar gevraagd") — expliciet voorgelegd en samen bijgesteld:
+  naam vragen mag, zolang het optioneel blijft en nooit gekoppeld zichtbaar
+  wordt voor de werkgever/teamrapportage.
+- **Opslag:** naam wordt, net als e-mail, opgeslagen bij de respondent
+  (`respondenten.naam`, migratie `0006_respondent_naam.sql`) via de
+  bestaande `upsert_respondent`-RPC (nieuwe optionele `p_naam`-parameter).
+  Geen nieuwe select-policy nodig — blijft binnen de bestaande
+  privacy-grens (niet uitleesbaar via anon-key/API).
+- **UI:** tekstveld op `IntroScreen` (vóór de respondent-code), placeholder
+  "Bijv. Jan Jansen", altijd optioneel. Op `RapportScreen` verschijnt de
+  naam in de titel ("Jouw VIT-scan resultaat, {naam}") als die is ingevuld,
+  anders ongewijzigd.
+- **CLAUDE.md bijgewerkt** om de nieuwe afspraak te reflecteren.
+
+## Wave 1, stap 4 — Kleurschaal + leesbaarheid wiel bijgesteld (2026-07-13)
+
+- **`scoreKleur`** (visuele 10-staps schaal, `src/lib/scoring-config.ts`):
+  de band 6,0-6,99 gaf `#ADFF2F` (yellowgreen), wat voor een middenscore als
+  6,3 te groen oogde. Band 6,x is nu geel (`#FFD700`, overgenomen van de
+  band eronder) en band 5,x is een lichtere oranje (`#FFB74D`) i.p.v.
+  hetzelfde geel — geeft een duidelijkere opbouw donker oranje → licht
+  oranje → geel → groen naarmate de score stijgt. Alleen deze twee banden
+  aangepast, de rest van de schaal (incl. de losstaande rood/oranje/groen-
+  duiding in `bepaalNiveau`) ongewijzigd.
+- **`WerkgelukWiel`**: labels rond het wiel waren te klein (9px-equivalent in
+  de SVG, op mobiel door schaling van de viewBox zelfs nog kleiner en
+  nauwelijks leesbaar). Font vergroot (9 → 13, gecentreerd cijfer 34 → 38),
+  regelafstand en labelradius navenant aangepast zodat labels niet over hun
+  buren heen lopen bij zowel het 11-segment- als het 8-segment-wiel.
+- **Wielen bleken vast te zitten op 300px** ongeacht `max-w-[...]`: de svg
+  had geen expliciete breedte/hoogte, en de omliggende wrapper-div
+  (`flex flex-col items-center`) kromp daardoor naar de browser-default
+  intrinsieke SVG-afmeting (300×150) i.p.v. de beschikbare breedte te
+  gebruiken — een pre-existing bug, los van de labelgrootte. Opgelost door
+  de wrapper-div `w-full` te geven; `max-w` op de svg zelf werkt nu pas echt.
+  Tegelijk `max-w` verhoogd van 420px naar 540px op verzoek van Nynke
+  ("mogen in het geheel wel wat groter").
+
+## Wave 1, stap 4 — Copy persoonlijke code eerlijker gemaakt (2026-07-13)
+
+- **Probleem gesignaleerd:** de tekst bij de respondent-code beloofde dat de
+  medewerker de code "kan gebruiken om een vervolgmeting te koppelen", maar
+  er is nergens in de app een invoerveld waar een terugkerende respondent
+  die code kan invoeren — bij een nieuwe scanronde wordt altijd een verse,
+  willekeurige code gegenereerd. De koppeling is (bewust, zie stap 2) alleen
+  infrastructuur voor Wave 2, niet iets wat de medewerker nu zelf kan
+  activeren.
+- **Opgelost door de tekst aan te passen** (op zowel `IntroScreen` als
+  `RapportScreen`) i.p.v. de invoerstap nu al te bouwen: "Bewaar deze code.
+  Bij een vervolgmeting kun je 'm gebruiken om je resultaten te laten
+  koppelen, in overleg met Nynke." — eerlijk over dat dit via Nynke loopt,
+  niet iets wat de app zelf automatisch afhandelt.
+
+## Wave 1, stap 4 — PDF-export van het persoonlijk rapport (2026-07-14)
+
+- **Server-side, zoals CLAUDE.md voorschrijft**: nieuwe route
+  `POST /api/rapport-pdf` (`export const runtime = "nodejs"`, nodig voor
+  `fs`/native binaries) bouwt de PDF met `jsPDF` (`^4.2.1`, dus na de eerder
+  gesignaleerde CVE-2025-68428 gefixed) uit antwoorden die de client al
+  in-memory heeft — geen Supabase-leesactie nodig, past bij de privacyregel
+  dat `respondenten`/`antwoorden` geen select-policy hebben.
+- **Wielen als afbeelding in de PDF**: de wielgeometrie (`punt`/`segmentPad`/
+  `labelRegels`/constanten) is verplaatst van `WerkgelukWiel.tsx` naar
+  `src/lib/wiel-geometrie.ts`, zodat zowel de React-component als de nieuwe
+  server-side SVG-string-builder (`src/lib/pdf/wiel-raster.ts`) exact
+  dezelfde berekening gebruiken. Rasterisatie naar PNG via `@resvg/resvg-js`
+  (native binary, geen headless browser nodig).
+- **Lettertype gebundeld i.p.v. systeemfonts**: `resvg` valt zonder eigen
+  fontbestand terug op systeemfonts, en Vercel's serverless Node-omgeving
+  heeft geen desktop-fonts zoals Arial — zonder fix zouden wiel-labels in
+  productie onzichtbaar/leeg blijven (lokaal op Windows viel dit niet op,
+  Arial is daar wél aanwezig). Opgelost door **Roboto** (Apache 2.0, statisch
+  TTF Regular+Bold) te bundelen onder `src/lib/pdf/fonts/` en expliciet aan
+  `resvg` mee te geven (`loadSystemFonts: false`). Documenttekst zelf
+  gebruikt jsPDF's ingebouwde Helvetica (geen embedding nodig, altijd
+  beschikbaar).
+- **Geen emoji in de PDF**: thema-emoji (bv. 😊 bij "Plezier") renderen
+  correct op het scherm maar worden door jsPDF's standaardfont (WinAnsi-only)
+  omgezet in onleesbare tekens. De oude Lovable-PDF liet emoji om dezelfde
+  reden ook al weg uit de PDF-tekst (wel op het scherm) — zelfde aanpak hier.
+- **Bestandsgrootte-bug gevonden en opgelost**: een eerste testversie woog
+  **12MB** voor 7 pagina's. Oorzaak: `pdf.addImage()` embedt zonder het
+  `compression`-argument de rauwe, ongecomprimeerde bitmap (bv. 1080×1080×3
+  bytes voor het logo-icoon), i.p.v. de brondata te comprimeren. Met
+  `compression: "MEDIUM"` (+ een expliciete `alias` zodat jsPDF's
+  cache het icoon-logo, dat op elke pagina staat, maar één keer opslaat) ging
+  dit terug naar **~530KB**.
+- **Huisstijl**: teal (zelfde als de site) als hoofdkleur, met een bewust
+  terughoudende knipoog naar Nynkes bestaande merkkleuren — dunne gouden
+  accentlijnen (dividers) en een klein donkergroen accentblokje per
+  thema-header, i.p.v. de volle groen/goud-koppen van de oude Lovable-PDF
+  (expliciet "subtieler" gevraagd).
+- **Inhoud**: zelfde diepte als het scherm (totaalscore + duiding, per thema
+  score + duiding/reflectievragen/aanbevelingen, afsluiting, persoonlijke
+  code) — geen losse stellingscores zoals de oude Lovable-PDF had.
+- **Logo's**: `public/nynke-logo-pdf.png` (officieel logo, titelpagina) en
+  nieuw toegevoegd `public/nynke-logo-n.png` (N-icoon, klein rechtsonder op
+  elke pagina) — aangeleverd door Nynke via de `logo/`-map.
+- **Beveiliging** (SECURITY.md): input server-side gevalideerd met Zod
+  (antwoorden moeten bekende stelling-keys zijn met waarde 1-10, aantal
+  begrensd op het totaal aantal stellingen, naam/respondentCode aan
+  lengtelimieten gebonden); generieke foutmeldingen zonder stack traces;
+  best-effort in-memory rate limiting per IP (10 requests/10 min) — geen
+  Redis/Upstash in Wave 1, dus geen garantie bij meerdere serverless-
+  instanties, maar beter dan niets zolang er nog geen auth is.
+- **`next.config.ts`**: `serverExternalPackages: ["@resvg/resvg-js"]`
+  toegevoegd — Turbopack kan de native binary van dit pakket niet in een
+  ESM-chunk bundelen; gecontroleerd dat Next's file-tracing de font-
+  bestanden, logo's én de native binary automatisch meeneemt in de
+  gedeployde functie (`.next/server/app/api/rapport-pdf/route.js.nft.json`).
+- **`html2canvas` verwijderd**: hoorde bij de client-side aanpak van de oude
+  Lovable-PDF, niet nodig nu de PDF server-side wordt opgebouwd.

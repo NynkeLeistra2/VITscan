@@ -25,6 +25,7 @@ export async function maakOfWerkRespondentBij(params: {
   teamId: string | null;
   respondentCode: string;
   stellingenVersie: string;
+  naam: string | null;
 }): Promise<void> {
   const { error } = await supabase.rpc("upsert_respondent", {
     p_respondent_id: params.respondentId,
@@ -32,6 +33,7 @@ export async function maakOfWerkRespondentBij(params: {
     p_team_id: params.teamId,
     p_respondent_code: params.respondentCode,
     p_stellingen_versie: params.stellingenVersie,
+    p_naam: params.naam,
   });
 
   if (error) throw error;
@@ -53,13 +55,15 @@ export async function slaAntwoordenOp(
 
 export async function rondRespondentAf(
   respondentId: string,
-  openVraagAntwoord: string
+  openVraagAntwoord: string,
+  email: string | null
 ): Promise<void> {
   const { error } = await supabase
     .from("respondenten")
     .update({
       afgerond_op: new Date().toISOString(),
       open_vraag_antwoord: openVraagAntwoord || null,
+      email,
     })
     .eq("id", respondentId);
 

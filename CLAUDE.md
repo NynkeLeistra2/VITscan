@@ -27,7 +27,13 @@ Bouw Wave 1 zo dat Wave 2 erop kan aansluiten: sla antwoorden op met respondent-
 
 - Schaal 1–10 per stelling (geen 5-punts Likert; alleen de uitersten hebben een tekstlabel, zie `meta.schaal` in `vit-scan-stellingen.json`)
 - Themascore = gemiddelde stellingen (staat al op schaal 1–10, geen omrekening nodig)
-- Kleuren: groen ≥ 7,5 · oranje 5,5–7,4 · rood < 5,5 (configureerbaar in één config-bestand)
+- Kleuren, twee aparte schalen in `src/lib/scoring-config.ts`:
+  - `bepaalNiveau`/`ScoreNiveau` (rood/oranje/groen, groen ≥ 7,5 · oranje 5,5–7,4 · rood < 5,5):
+    stuurt welke duiding/reflectievragen/aanbevelingen per thema getoond worden
+    (3 niveaus per thema in `content/rapportteksten/*.json`, laag/midden/hoog)
+  - `scoreKleur` (10-staps, per heel scorepunt): puur visuele kleur voor het
+    wiel, de scorebalk en het cijfer, zodat bijvoorbeeld een 7.3 er duidelijk
+    positief uitziet i.p.v. oranje. Niet gekoppeld aan de teksten hierboven.
 - Deelscores per deel + totale VIT-score
 
 ## Persoonlijk rapport
@@ -38,7 +44,16 @@ Bouw Wave 1 zo dat Wave 2 erop kan aansluiten: sla antwoorden op met respondent-
 
 ## Privacy (niet onderhandelbaar)
 
-- Geen naam of e-mail verplicht; e-mail alleen optioneel voor toesturen rapport
+- Naam is optioneel (net als e-mail): op de introscreen kan de medewerker een
+  naam invullen zodat die zichzelf op het rapport herkent, maar dit is nooit
+  verplicht — bij leeg laten toont het rapport de respondent-code. Een
+  ingevulde naam wordt opgeslagen bij de respondent (zelfde privacyniveau als
+  e-mail: geen select-policy, dus nooit uitleesbaar via de app/API, alleen
+  rechtstreeks door Nynke in de database) en nooit gekoppeld getoond in
+  teamrapportage. E-mail is standaard optioneel (checkbox "stuur mij dit
+  rapport ook per e-mail", standaard aangevinkt), maar kan per scanronde
+  verplicht gesteld worden via `scanrondes.email_verplicht` (bijv. voor
+  betalende klanten; workshops blijven optioneel)
 - Individuele resultaten zijn alléén voor de medewerker
 - Teamrapportage (Wave 2) alleen geaggregeerd en bij minimaal 5 respondenten (instelbaar)
 - Data in EU

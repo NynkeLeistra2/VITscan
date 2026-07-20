@@ -54,6 +54,7 @@ export interface Database {
           naam: string;
           gestart_op: string | null;
           gesloten_op: string | null;
+          email_verplicht: boolean;
           created_at: string;
         };
         Insert: {
@@ -62,6 +63,7 @@ export interface Database {
           naam: string;
           gestart_op?: string | null;
           gesloten_op?: string | null;
+          email_verplicht?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["scanrondes"]["Insert"]>;
@@ -82,6 +84,7 @@ export interface Database {
           team_id: string | null;
           respondent_code: string;
           email: string | null;
+          naam: string | null;
           stellingen_versie: string;
           open_vraag_antwoord: string | null;
           gestart_op: string;
@@ -94,6 +97,7 @@ export interface Database {
           team_id?: string | null;
           respondent_code: string;
           email?: string | null;
+          naam?: string | null;
           stellingen_versie: string;
           open_vraag_antwoord?: string | null;
           gestart_op?: string;
@@ -154,6 +158,7 @@ export interface Database {
           p_team_id: string | null;
           p_respondent_code: string;
           p_stellingen_versie: string;
+          p_naam?: string | null;
         };
         Returns: void;
       };

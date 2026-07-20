@@ -6,6 +6,7 @@ export interface ScanrondeContext {
   organisatieNaam: string;
   teamId: string | null;
   teamNaam: string | null;
+  emailVerplicht: boolean;
 }
 
 /**
@@ -19,7 +20,7 @@ export async function haalScanrondeContext(
 ): Promise<ScanrondeContext | null> {
   const { data: scanronde, error: scanrondeError } = await supabase
     .from("scanrondes")
-    .select("id, naam, organisatie_id, organisaties(naam)")
+    .select("id, naam, organisatie_id, email_verplicht, organisaties(naam)")
     .eq("id", scanrondeId)
     .maybeSingle();
 
@@ -45,5 +46,6 @@ export async function haalScanrondeContext(
     organisatieNaam: scanronde.organisaties?.naam ?? "",
     teamId,
     teamNaam,
+    emailVerplicht: scanronde.email_verplicht,
   };
 }

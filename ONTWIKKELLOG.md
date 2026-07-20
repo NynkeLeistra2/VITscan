@@ -17,6 +17,38 @@ tekst verwerkt), `RapportScreen`. Typecheck/lint/`next build` slagen en de
 scoringswiskunde is doorgerekend. **Nog niet in de browser bekeken — dat is
 de eerstvolgende stap bij hervatten.**
 
+## Status per 2026-07-16
+
+**Wave 1, stap 4 (rapport) en stap 6 (PDF-export): volledig end-to-end getest** in de
+browser — intro (met naam + persoonlijke code) → alle 65 stellingen → open vraag + e-mail →
+rapport (Werkgelukwiel, Levenswiel, per-thema duiding/reflectievragen/aanbevelingen,
+afsluiting) → PDF-download. Alle 19 rapportteksten + `algemeen.json` nagelezen op toon en
+inhoud (past bij de stijl uit `CLAUDE.md`), geen aanpassingen nodig gebleken.
+
+**Resultaten-webhook (e-mail + Google Sheet via n8n): nog steeds kapot.** De payload naar de
+bestaande n8n-workflow miste twee velden die de oude Lovable-workflow altijd kreeg (`answers`
+en `recommendation`) — toegevoegd in `src/app/api/verstuur-resultaten/route.ts`, afgeleid uit
+`rapportteksten.ts`. Loste het niet op: de server-naar-n8n-aanroep geeft consistent
+`{"ok":true}` (200 OK), maar er komt geen mail en geen Sheet-rij binnen. Het probleem zit dus
+vermoedelijk verderop in de n8n-workflow zelf (uitgeschakelde node, verlopen Gmail/Sheets-
+koppeling, verkeerd filter) — niet meer te diagnosticeren zonder toegang tot n8n's
+executielogs. Nynke pakt dit zelf op.
+
+**Deployment: live op Vercel.** https://vit-scan-self.vercel.app werkt publiek (Deployment
+Protection/SSO stond standaard aan, is uitgezet). Custom domain `vit-scan.nynkeleistra.nl` is
+toegevoegd aan het Vercel-project; wacht nog op een DNS A-record (`vit-scan → 76.76.21.21`)
+dat Nynke zelf bij Strato/rzone.de moet toevoegen. Zie memory `project_vit_scan_vercel_
+deployment` voor een valkuil die hierbij optrad (Framework Preset sprong op "Other" i.p.v.
+"Next.js" bij handmatig aangemaakt project → alles 404'te) en memory `project_vit_scan_
+cloudflare_blocker` voor waarom volledige Cloudflare-hosting (Nynkes voorkeur op termijn) nu
+nog geblokkeerd is door de native `@resvg/resvg-js`-dependency in `src/lib/pdf/wiel-raster.ts`.
+
+**Portaalpagina / workshop-link:** besproken, nog niet gebouwd. Eén scanronde-link werkt al
+voor meerdere gelijktijdige respondenten (elke opener krijgt een eigen respondent-code) — geen
+aparte feature nodig voor workshops. Een portaalpagina waarmee Nynke zelf scanrondes/klantlinks
+kan aanmaken (i.p.v. handwerk in de Supabase SQL-editor) is nog niet gebouwd; vergt een vorm
+van authenticatie (Supabase Auth, alleen voor Nynke) — bewust uitgesteld tot een volgende sessie.
+
 ## RLS-blocker: opgelost (2026-07-10)
 
 De oorspronkelijke 42501-fout bleek écht verholpen door reparatiemigratie
@@ -79,15 +111,13 @@ Via `supabase/seed_testdata.sql`:
 
 Deze hoeven niet opnieuw aangemaakt te worden.
 
-## Hervatten: te doen
+## Hervatten: te doen (bijgewerkt 2026-07-16)
 
-1. Rapportscherm echt doorklikken in de browser (incognito, zie hierboven
-   waarom): volledige scan invullen en het rapport op verschillende
-   scoreniveaus beoordelen (probeer bewust een lage, gemiddelde en hoge
-   score uit).
-2. Nynke laat de 19 per-thema-teksten (`src/content/rapportteksten/
-   <themaId>.json`) controleren/aanpassen — eerste versie is door Claude
-   geschreven.
-3. Door naar Wave 1, stap 6: PDF-export (let op de jsPDF-kwetsbaarheid, zie
-   `BESLISSINGEN.md`). Stap 5 (rapportteksten) is met dit alles feitelijk
-   al meegenomen.
+1. n8n-workflow zelf debuggen (execution-logs bekijken voor de teststuurmomenten, de node
+   vinden die faalt en herstellen — zie "Resultaten-webhook" hierboven).
+2. DNS A-record bij Strato toevoegen voor `vit-scan.nynkeleistra.nl` (`vit-scan → 76.76.21.21`)
+   en verifiëren dat het domein het overneemt.
+3. Portaalpagina bouwen waarmee Nynke zelf scanrondes/klantlinks kan aanmaken (met lichte
+   auth, alleen voor haarzelf).
+4. (Later, bewust apart gepland) Cloudflare-migratie: `@resvg/resvg-js` vervangen door de
+   WASM-variant en de hele PDF-flow opnieuw testen voordat dit live gaat.

@@ -109,6 +109,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
         teamId: context.teamId,
         respondentCode: sessie!.respondentCode,
         stellingenVersie: sessie!.stellingenVersie,
+        naam: sessie!.naam.trim() || null,
       });
       bijwerken({ stapIndex: 1 });
     } catch {
@@ -167,7 +168,27 @@ export function ScanFlow({ context }: ScanFlowProps) {
     setBezig(true);
     try {
       await slaAntwoordenOp(sessie!.respondentId, sessie!.antwoorden);
-      await rondRespondentAf(sessie!.respondentId, sessie!.openVraagAntwoord);
+      const emailVoorOpslag =
+        context.emailVerplicht || sessie!.emailOptIn ? sessie!.email.trim() : "";
+      await rondRespondentAf(
+        sessie!.respondentId,
+        sessie!.openVraagAntwoord,
+        emailVoorOpslag || null
+      );
+      // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
+      // afgewacht/geblokkeerd op — een storing hierin mag de respondent
+      // nooit het zicht op het eigen rapport ontnemen.
+      fetch("/api/verstuur-resultaten", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          antwoorden: sessie!.antwoorden,
+          naam: sessie!.naam.trim() || null,
+          email: emailVoorOpslag || null,
+          respondentCode: sessie!.respondentCode,
+          openVraagAntwoord: sessie!.openVraagAntwoord,
+        }),
+      }).catch(() => {});
       bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true });
     } catch {
       setFoutmelding(
@@ -183,6 +204,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
       <RapportScreen
         antwoorden={sessie.antwoorden}
         respondentCode={sessie.respondentCode}
+        naam={sessie.naam.trim()}
       />
     );
   }
@@ -193,6 +215,9 @@ export function ScanFlow({ context }: ScanFlowProps) {
         organisatieNaam={context.organisatieNaam}
         teamNaam={context.teamNaam}
         respondentCode={sessie.respondentCode}
+        naam={sessie.naam}
+        onNaamWijzig={(naam) => bijwerken({ naam })}
+        emailVerplicht={context.emailVerplicht}
         onStart={start}
         bezig={bezig}
         foutmelding={foutmelding}
@@ -215,6 +240,11 @@ export function ScanFlow({ context }: ScanFlowProps) {
         <OpenVraagScreen
           waarde={sessie.openVraagAntwoord}
           onWijzig={(waarde) => bijwerken({ openVraagAntwoord: waarde })}
+          email={sessie.email}
+          onEmailWijzig={(email) => bijwerken({ email })}
+          emailOptIn={sessie.emailOptIn}
+          onEmailOptInWijzig={(emailOptIn) => bijwerken({ emailOptIn })}
+          emailVerplicht={context.emailVerplicht}
           onVorige={() => gaNaarStap(STELLING_STAPPEN.length)}
           onVerder={afronden}
           bezig={bezig}

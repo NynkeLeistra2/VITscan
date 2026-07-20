@@ -1,5 +1,5 @@
 {
-  "overzichtIntro": "Dit is jouw persoonlijke VIT-scan. De scores hieronder laten zien hoe je energie en welzijn er nu voor staan — niet als oordeel, maar als startpunt. Je voelt vaak al aan waar het schuurt; dit rapport helpt je dat concreet te maken.",
+  "overzichtIntro": "Dit is jouw persoonlijke VIT-scan. De scores hieronder laten zien hoe je energie en welzijn er nu voor staan, niet als oordeel, maar als startpunt. Je voelt vaak al aan waar het schuurt; dit rapport helpt je dat concreet te maken.",
   "totaalscoreNiveaus": [
     {
       "minScore": 1.0,
@@ -19,7 +19,7 @@
         "Probeer dagelijks herstelactiviteiten zoals sporten, wandelen, ademhalingsoefeningen, mindfulness, yoga of journaling.",
         "Onderzoek of er een mismatch is tussen jou en je werkgever.",
         "Kijk naar de subcategorieën waar je laag op scoort en zet één of twee concrete acties in gang om je werkgeluk te verhogen.",
-        "Mail me via contact@nynkeleistra.nl — ik denk graag met je mee."
+        "Mail me via contact@nynkeleistra.nl. Ik denk graag met je mee."
       ]
     },
     {
@@ -40,7 +40,7 @@
         "Overweeg een gesprek met een professional, zoals een loopbaancoach of psycholoog.",
         "Kies één of twee thema's waar je snel verbetering kunt aanbrengen en zet daar concrete acties op.",
         "Experimenteer met kleine aanpassingen in je werkdag.",
-        "Mail me via contact@nynkeleistra.nl — ik denk graag met je mee."
+        "Mail me via contact@nynkeleistra.nl. Ik denk graag met je mee."
       ]
     },
     {
@@ -105,6 +105,6 @@
   ],
   "afsluiting": {
     "titel": "En nu?",
-    "tekst": "Je hebt nu een concreet beeld van waar je energie vandaan komt en waar het schuurt. Dat inzicht wordt pas echt waardevol als je het gesprek aangaat — met je leidinggevende, met HR, of met iemand die er van buitenaf naar kan kijken. Nynke Leistra Coaching en Advies begeleidt dat gesprek graag als neutrale derde, zonder oordeel en met oog voor wat voor jou werkt."
+    "tekst": "Je hebt nu een concreet beeld van waar je energie vandaan komt en waar het schuurt. Dat inzicht wordt pas echt waardevol als je het gesprek aangaat, met je leidinggevende, met HR, of met iemand die er van buitenaf naar kan kijken. Nynke Leistra Coaching en Advies begeleidt dat gesprek graag als neutrale derde, zonder oordeel en met oog voor wat voor jou werkt."
   }
 }
