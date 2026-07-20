@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Als alles klopt — Boost je werkgeluk</title>
+<title>Als alles klopt: Boost je werkgeluk</title>
 <style>
   :root {
     --donkergroen: #2c4a3e;
@@ -276,24 +276,24 @@
     In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk
     ernaar: ben je tevreden, of mag het anders? Vul daarna in het
     <strong>groene</strong> vakje in welk cijfer je zou geven als dat wonder
-    gebeurd is. Er is geen goed of fout — jij hebt de regie.
+    gebeurd is. Er is geen goed of fout. Jij hebt de regie.
   </p>
 </div>
 
 <p class="melding" id="melding">
   Er zijn geen scan-scores gevonden om automatisch in te vullen. Geen
-  probleem — vul de gele vakjes gewoon zelf in.
+  probleem, vul de gele vakjes gewoon zelf in.
 </p>
 
 <div id="secties"></div>
 
 <div class="acties">
   <button class="print-knop" type="button" id="print-btn">Opslaan / printen als PDF</button>
-  <p>Alles wat je hier invult blijft alleen in je eigen browser — er wordt niets naar een server gestuurd.</p>
+  <p>Alles wat je hier invult blijft alleen in je eigen browser. Er wordt niets naar een server gestuurd.</p>
 </div>
 
 <footer>
-  Boost je werkgeluk — Nynke Leistra Coaching en Advies © 2026<br />
+  Boost je werkgeluk, Nynke Leistra Coaching en Advies © 2026<br />
   <a href="https://www.nynkeleistra.nl">www.nynkeleistra.nl</a>
 </footer>
 
@@ -373,7 +373,7 @@
     try {
       window.localStorage.setItem(OPSLAG_SLEUTEL, JSON.stringify(opgeslagenAntwoorden));
     } catch (e) {
-      /* geen opslag beschikbaar (bv. privénavigatie) — niet fataal */
+      /* geen opslag beschikbaar (bv. privénavigatie), niet fataal */
     }
   }
 
@@ -400,7 +400,7 @@
     huidig.max = "10";
     huidig.step = "0.1";
     huidig.className = "huidig";
-    huidig.setAttribute("aria-label", item.label + " — huidig cijfer");
+    huidig.setAttribute("aria-label", item.label + ": huidig cijfer");
     var scanWaarde = scanScores[item.id];
     huidig.value = veldWaarde(item.id, "huidig", scanWaarde !== undefined ? scanWaarde : "");
     huidig.addEventListener("input", function () {
@@ -413,7 +413,7 @@
     gewenst.max = "10";
     gewenst.step = "0.1";
     gewenst.className = "gewenst";
-    gewenst.setAttribute("aria-label", item.label + " — gewenst cijfer");
+    gewenst.setAttribute("aria-label", item.label + ": gewenst cijfer");
     gewenst.value = veldWaarde(item.id, "gewenst", "");
     gewenst.addEventListener("input", function () {
       bijwerken(item.id, "gewenst", gewenst.value);
@@ -435,7 +435,7 @@
     mindmap.appendChild(midden);
 
     var n = thema.items.length;
-    var radius = 42; // % van de container
+    var radius = 33; // % van de container (dichter bij de middencirkel)
     thema.items.forEach(function (item, i) {
       var hoek = (i / n) * 2 * Math.PI - Math.PI / 2; // start bovenaan
       var x = 50 + radius * Math.cos(hoek);
@@ -493,7 +493,7 @@
 
       var vraag = document.createElement("p");
       vraag.className = "vraag";
-      vraag.textContent = "Als dat wonder is gebeurd — wat is er precies veranderd, en hoe voel jij je?";
+      vraag.textContent = "Als dat wonder is gebeurd: wat is er precies veranderd, en hoe voel jij je?";
       wrap.appendChild(vraag);
 
       var textarea = document.createElement("textarea");
