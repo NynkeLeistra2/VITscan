@@ -3,7 +3,8 @@ import { supabaseServerClient } from "@/lib/supabase/server";
 import { BeheerForm } from "./BeheerForm";
 import { VerwijderScanrondeKnop } from "./VerwijderScanrondeKnop";
 import { HerstelScanrondeKnop } from "./HerstelScanrondeKnop";
-import { logout, ruimVerlopenArchiefOp, ARCHIEF_BEWAARTERMIJN_DAGEN } from "./actions";
+import { logout, ruimVerlopenArchiefOp } from "./actions";
+import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
 
 interface Scanronde {
   id: string;

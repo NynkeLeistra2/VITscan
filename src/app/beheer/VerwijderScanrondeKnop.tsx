@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { archiveerScanronde, ARCHIEF_BEWAARTERMIJN_DAGEN } from "./actions";
+import { archiveerScanronde } from "./actions";
+import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
 
 interface VerwijderScanrondeKnopProps {
   scanrondeId: string;

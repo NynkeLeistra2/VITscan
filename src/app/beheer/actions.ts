@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { supabaseServerClient } from "@/lib/supabase/server";
+import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
 
 // PostgrestError serialiseert niet vanzelf leesbaar via console.error (het
 // object erft van Error, waarvan `message` niet-enumerable is) — daarom hier
@@ -16,11 +17,6 @@ import { supabaseServerClient } from "@/lib/supabase/server";
 function foutDetail(error: PostgrestError): string {
   return `${error.message} (code: ${error.code}${error.hint ? `, hint: ${error.hint}` : ""})`;
 }
-
-// "Verwijderen" is een soft delete: eerst dertig dagen in het archief
-// (herstelbaar), pas daarna definitief weg — op verzoek van Nynke, als
-// vangnet tegen een verkeerde klik.
-export const ARCHIEF_BEWAARTERMIJN_DAGEN = 30;
 
 export interface MaakScanrondeState {
   fout: string | null;
