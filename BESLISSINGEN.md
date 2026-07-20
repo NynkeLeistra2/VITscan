@@ -312,3 +312,31 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   cascade (0001) verwijdert dan ook alle al ingevulde antwoorden voor die
   ronde, dat kan niet ongedaan gemaakt worden. RLS: delete op `scanrondes`
   alleen voor `authenticated` (migratie `0008`).
+
+## Wave 1, stap 6 — Boost-opdrachtenpagina "Als alles klopt" (2026-07-20)
+
+- **Losstaand statisch bestand** (`public/opdrachten.html`, geen React/
+  build-stap) i.p.v. een Next.js-route — bewust op Nynkes verzoek: één
+  self-contained HTML-bestand dat zij later zelf met een teksteditor kan
+  aanpassen. Nadeel: de 19 subcategorieën staan hier hardcoded en los van
+  `vit-scan-stellingen.json` — bij een toekomstige wijziging daar moet dit
+  bestand handmatig mee-bijgewerkt worden.
+- **Scores via localStorage, niet via URL-parameters**: de scan-scores zijn
+  al client-side bekend zodra het rapport toont (`RapportScreen.tsx`,
+  `berekenScores()`). Bewust geen query-string, want Vercel logt
+  request-URL's inclusief query — bij privacygevoelige welzijnsdata
+  (mentale gezondheid, financiën) wil je dat niet. De opdrachtenpagina leest
+  de sleutel (`boost-opdrachten-scores`) eenmalig uit en wist 'm meteen;
+  ontbreekt hij, dan werkt de pagina gewoon met lege gele vakjes.
+- **Niets naar een server**: eigen antwoorden van de deelnemer (cijfers +
+  reflectietekst) blijven in een aparte localStorage-sleutel
+  (`boost-opdrachten-antwoorden`) zodat een ongelukje met verversen niet
+  alles wist, maar dit verlaat de browser nooit. "Opslaan als PDF" gaat via
+  de ingebouwde printfunctie van de browser (`window.print()` + print-
+  stylesheet), geen losse PDF-library nodig.
+- **Scope v1**: alleen Stap 1 uit het werkboek (twee mindmaps + wonder-
+  reflectie). Stap 2 (gevoelsdoelen/belemmerende factoren), Stap 3 (Cirkel
+  van Invloed) en de BONUS (Intuïst-talenttypes) zijn bewust nog niet
+  gebouwd.
+- **Knop op het rapportscherm** ("Ga naar Boost je werkgeluk") naast de
+  PDF-downloadknop.
