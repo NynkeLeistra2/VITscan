@@ -67,8 +67,10 @@ export async function maakScanrondeAan(
 
   const input = parsed.data;
 
-  let organisatieId = input.organisatieId;
-  if (organisatieId === "__nieuw__") {
+  let organisatieId: string | null = input.organisatieId;
+  if (organisatieId === "__geen__") {
+    organisatieId = null;
+  } else if (organisatieId === "__nieuw__") {
     if (!input.nieuweOrganisatieNaam) {
       return { fout: "Vul een naam voor de nieuwe organisatie in.", link: null };
     }
@@ -105,7 +107,7 @@ export async function maakScanrondeAan(
   }
 
   let teamId: string | null = null;
-  if (input.teamNaam) {
+  if (input.teamNaam && organisatieId) {
     const { data: team, error: teamError } = await supabase
       .from("teams")
       .insert({ organisatie_id: organisatieId, naam: input.teamNaam })

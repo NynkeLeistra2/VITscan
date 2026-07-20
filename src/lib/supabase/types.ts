@@ -50,7 +50,7 @@ export interface Database {
       scanrondes: {
         Row: {
           id: string;
-          organisatie_id: string;
+          organisatie_id: string | null;
           naam: string;
           gestart_op: string | null;
           gesloten_op: string | null;
@@ -60,7 +60,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          organisatie_id: string;
+          organisatie_id?: string | null;
           naam: string;
           gestart_op?: string | null;
           gesloten_op?: string | null;

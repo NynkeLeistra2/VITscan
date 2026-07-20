@@ -34,6 +34,7 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
             </option>
           ))}
           <option value="__nieuw__">+ Nieuwe organisatie</option>
+          <option value="__geen__">Geen organisatie</option>
         </select>
       </div>
 
@@ -65,18 +66,20 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
         />
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-zinc-700" htmlFor="teamNaam">
-          Team (optioneel)
-        </label>
-        <input
-          id="teamNaam"
-          name="teamNaam"
-          type="text"
-          placeholder="Laat leeg voor geen team-indeling"
-          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
-        />
-      </div>
+      {organisatieId !== "__geen__" && (
+        <div>
+          <label className="text-sm font-medium text-zinc-700" htmlFor="teamNaam">
+            Team (optioneel)
+          </label>
+          <input
+            id="teamNaam"
+            name="teamNaam"
+            type="text"
+            placeholder="Laat leeg voor geen team-indeling"
+            className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
+          />
+        </div>
+      )}
 
       <label className="flex items-center gap-2 text-sm text-zinc-700">
         <input type="checkbox" name="emailVerplicht" className="h-4 w-4 rounded border-brand-salie/40 text-brand-violet" />

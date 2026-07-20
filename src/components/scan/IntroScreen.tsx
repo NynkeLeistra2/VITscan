@@ -35,10 +35,12 @@ export function IntroScreen({
         priority
       />
       <h1 className="mt-3 text-2xl font-semibold text-brand-violet">VIT-scan</h1>
-      <p className="mt-1 text-sm text-brand-oudroze">
-        {organisatieNaam}
-        {teamNaam ? ` · ${teamNaam}` : ""}
-      </p>
+      {(organisatieNaam || teamNaam) && (
+        <p className="mt-1 text-sm text-brand-oudroze">
+          {organisatieNaam}
+          {teamNaam ? ` · ${teamNaam}` : ""}
+        </p>
+      )}
 
       <div className="mt-6 space-y-4 text-zinc-700">
         <p>

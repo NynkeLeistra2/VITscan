@@ -45,11 +45,27 @@ export default async function BeheerPagina() {
 
   const organisaties = (data ?? []) as OrganisatieMetLijsten[];
 
-  const archief = organisaties.flatMap((org) =>
-    org.scanrondes
-      .filter((ronde) => ronde.gearchiveerd_op !== null)
-      .map((ronde) => ({ organisatieNaam: org.naam, ronde }))
-  );
+  // Scanrondes zonder organisatie (bewust mogelijk, zie migratie 0010) staan
+  // niet onder een van de organisaties hierboven, dus apart opgehaald.
+  const { data: dataZonderOrg } = await supabase
+    .from("scanrondes")
+    .select("id, naam, email_verplicht, gearchiveerd_op")
+    .is("organisatie_id", null)
+    .order("naam");
+  const scanrondesZonderOrg = (dataZonderOrg ?? []) as Scanronde[];
+  const actieveZonderOrg = scanrondesZonderOrg.filter((ronde) => ronde.gearchiveerd_op === null);
+
+  const archief = organisaties
+    .flatMap((org) =>
+      org.scanrondes
+        .filter((ronde) => ronde.gearchiveerd_op !== null)
+        .map((ronde) => ({ organisatieNaam: org.naam as string | null, ronde }))
+    )
+    .concat(
+      scanrondesZonderOrg
+        .filter((ronde) => ronde.gearchiveerd_op !== null)
+        .map((ronde) => ({ organisatieNaam: null, ronde }))
+    );
 
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
@@ -66,7 +82,7 @@ export default async function BeheerPagina() {
       <BeheerForm organisaties={organisaties.map(({ id, naam }) => ({ id, naam }))} />
 
       <h2 className="mt-10 text-lg font-medium text-zinc-900">Bestaande links</h2>
-      {organisaties.length === 0 && (
+      {organisaties.length === 0 && actieveZonderOrg.length === 0 && (
         <p className="mt-2 text-sm text-zinc-500">Nog geen organisaties.</p>
       )}
       <div className="mt-4 space-y-6">
@@ -106,6 +122,30 @@ export default async function BeheerPagina() {
             </div>
           );
         })}
+
+        {actieveZonderOrg.length > 0 && (
+          <div className="rounded-lg border border-brand-salie/40 p-4">
+            <p className="font-medium text-zinc-900">Zonder organisatie</p>
+            <ul className="mt-2 space-y-3">
+              {actieveZonderOrg.map((ronde) => (
+                <li key={ronde.id} className="text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-zinc-700">
+                      {ronde.naam}
+                      {ronde.email_verplicht && (
+                        <span className="ml-2 rounded bg-brand-ecru px-1.5 py-0.5 text-xs text-zinc-600">
+                          e-mail verplicht
+                        </span>
+                      )}
+                    </p>
+                    <VerwijderScanrondeKnop scanrondeId={ronde.id} scanrondeNaam={ronde.naam} />
+                  </div>
+                  <LinkRegel url={`${origin}/scan/${ronde.id}`} label="Algemene link" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {archief.length > 0 && (
@@ -124,7 +164,8 @@ export default async function BeheerPagina() {
               >
                 <div>
                   <p className="text-zinc-700">
-                    {ronde.naam} <span className="text-zinc-400">, {organisatieNaam}</span>
+                    {ronde.naam}{" "}
+                    <span className="text-zinc-400">, {organisatieNaam ?? "zonder organisatie"}</span>
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     Definitief weg over {dagenTotDefinitief(ronde.gearchiveerd_op!)} dagen
