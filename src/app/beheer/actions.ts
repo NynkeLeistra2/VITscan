@@ -17,6 +17,11 @@ function foutDetail(error: PostgrestError): string {
   return `${error.message} (code: ${error.code}${error.hint ? `, hint: ${error.hint}` : ""})`;
 }
 
+// "Verwijderen" is een soft delete: eerst dertig dagen in het archief
+// (herstelbaar), pas daarna definitief weg — op verzoek van Nynke, als
+// vangnet tegen een verkeerde klik.
+export const ARCHIEF_BEWAARTERMIJN_DAGEN = 30;
+
 export interface MaakScanrondeState {
   fout: string | null;
   link: string | null;
@@ -127,7 +132,7 @@ export async function maakScanrondeAan(
   return { fout: null, link };
 }
 
-export async function verwijderScanronde(scanrondeId: string): Promise<{ fout: string | null }> {
+export async function archiveerScanronde(scanrondeId: string): Promise<{ fout: string | null }> {
   const supabase = await supabaseServerClient();
 
   const {
@@ -137,16 +142,64 @@ export async function verwijderScanronde(scanrondeId: string): Promise<{ fout: s
     return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
   }
 
-  // Cascade (zie 0001): dit verwijdert ook alle respondenten/antwoorden die
-  // aan deze scanronde hangen. De UI vraagt hier bevestiging voor.
-  const { error } = await supabase.from("scanrondes").delete().eq("id", scanrondeId);
+  // Soft delete: de link stopt meteen met werken (zie haalScanrondeContext),
+  // maar de data blijft nog ARCHIEF_BEWAARTERMIJN_DAGEN staan zodat dit
+  // hersteld kan worden bij een verkeerde klik.
+  const { error } = await supabase
+    .from("scanrondes")
+    .update({ gearchiveerd_op: new Date().toISOString() })
+    .eq("id", scanrondeId);
   if (error) {
-    console.error("Verwijderen scanronde mislukt:", foutDetail(error));
+    console.error("Archiveren scanronde mislukt:", foutDetail(error));
     return { fout: `Verwijderen is niet gelukt. ${foutDetail(error)}` };
   }
 
   revalidatePath("/beheer");
   return { fout: null };
+}
+
+export async function herstelScanronde(scanrondeId: string): Promise<{ fout: string | null }> {
+  const supabase = await supabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
+  }
+
+  const { error } = await supabase
+    .from("scanrondes")
+    .update({ gearchiveerd_op: null })
+    .eq("id", scanrondeId);
+  if (error) {
+    console.error("Herstellen scanronde mislukt:", foutDetail(error));
+    return { fout: `Herstellen is niet gelukt. ${foutDetail(error)}` };
+  }
+
+  revalidatePath("/beheer");
+  return { fout: null };
+}
+
+/**
+ * Ruimt scanrondes op die langer dan ARCHIEF_BEWAARTERMIJN_DAGEN geleden
+ * gearchiveerd zijn (definitieve delete, cascade naar respondenten/
+ * antwoorden). Geen aparte cron in Wave 1 — wordt bij elke load van
+ * /beheer aangeroepen ("opruimen bij bezoek"), voldoende voor het lage
+ * bezoekvolume van deze pagina.
+ */
+export async function ruimVerlopenArchiefOp(): Promise<void> {
+  const supabase = await supabaseServerClient();
+  const grens = new Date();
+  grens.setDate(grens.getDate() - ARCHIEF_BEWAARTERMIJN_DAGEN);
+
+  const { error } = await supabase
+    .from("scanrondes")
+    .delete()
+    .lt("gearchiveerd_op", grens.toISOString());
+  if (error) {
+    console.error("Opruimen verlopen archief mislukt:", foutDetail(error));
+  }
 }
 
 export async function logout(): Promise<void> {

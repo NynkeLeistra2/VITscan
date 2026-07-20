@@ -22,6 +22,9 @@ export async function haalScanrondeContext(
     .from("scanrondes")
     .select("id, naam, organisatie_id, email_verplicht, organisaties(naam)")
     .eq("id", scanrondeId)
+    // Een gearchiveerde ("verwijderde") scanronde moet voor de medewerker
+    // onvindbaar zijn, net als een ongeldige link — zie /beheer.
+    .is("gearchiveerd_op", null)
     .maybeSingle();
 
   if (scanrondeError || !scanronde) return null;

@@ -55,6 +55,7 @@ export interface Database {
           gestart_op: string | null;
           gesloten_op: string | null;
           email_verplicht: boolean;
+          gearchiveerd_op: string | null;
           created_at: string;
         };
         Insert: {
@@ -64,6 +65,7 @@ export interface Database {
           gestart_op?: string | null;
           gesloten_op?: string | null;
           email_verplicht?: boolean;
+          gearchiveerd_op?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["scanrondes"]["Insert"]>;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { verwijderScanronde } from "./actions";
+import { archiveerScanronde, ARCHIEF_BEWAARTERMIJN_DAGEN } from "./actions";
 
 interface VerwijderScanrondeKnopProps {
   scanrondeId: string;
@@ -28,8 +28,9 @@ export function VerwijderScanrondeKnop({ scanrondeId, scanrondeNaam }: Verwijder
   return (
     <div className="mt-1 rounded border border-red-200 bg-red-50 p-2 text-xs text-red-900">
       <p>
-        Weet je zeker dat je &quot;{scanrondeNaam}&quot; wilt verwijderen? Dit verwijdert ook alle
-        al ingevulde antwoorden voor deze scanronde en kan niet ongedaan gemaakt worden.
+        Weet je zeker dat je &quot;{scanrondeNaam}&quot; wilt verwijderen? De link stopt meteen met
+        werken. De scanronde gaat naar het archief en blijft daar nog {ARCHIEF_BEWAARTERMIJN_DAGEN}{" "}
+        dagen herstelbaar, daarna wordt hij (met alle ingevulde antwoorden) definitief verwijderd.
       </p>
       {fout && <p className="mt-1 font-medium">{fout}</p>}
       <div className="mt-2 flex gap-3">
@@ -38,7 +39,7 @@ export function VerwijderScanrondeKnop({ scanrondeId, scanrondeNaam }: Verwijder
           disabled={bezig}
           onClick={() =>
             startTransition(async () => {
-              const resultaat = await verwijderScanronde(scanrondeId);
+              const resultaat = await archiveerScanronde(scanrondeId);
               if (resultaat.fout) {
                 setFout(resultaat.fout);
               } else {
