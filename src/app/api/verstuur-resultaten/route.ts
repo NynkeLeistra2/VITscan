@@ -40,6 +40,11 @@ const RequestSchema = z.object({
   email: z.string().trim().email().max(320).nullable().optional().transform((v) => (v ? v : null)),
   respondentCode: z.string().trim().min(1).max(100),
   openVraagAntwoord: z.string().trim().max(5000).nullable().optional().transform((v) => (v ? v : null)),
+  // Alleen relevant bij scanrondes zonder vaste organisatiekoppeling (bv. een
+  // algemene workshop-link) — de medewerker vult dan zelf in voor welk
+  // bedrijf de scan is, puur om in de n8n-webhook/Google Sheet te zetten.
+  // Wordt niet in Supabase bewaard.
+  organisatie: z.string().trim().max(200).nullable().optional().transform((v) => (v ? v : null)),
 });
 
 // Zelfde best-effort in-memory rate limiting als /api/rapport-pdf (zie daar
@@ -141,6 +146,7 @@ export async function POST(request: NextRequest) {
       step: "start",
       name: input.naam,
       email: input.email,
+      bedrijf: input.organisatie,
     };
 
     const startResponse = await fetch(webhookUrl, {
@@ -160,6 +166,7 @@ export async function POST(request: NextRequest) {
       step: "end",
       name: input.naam,
       email: input.email,
+      bedrijf: input.organisatie,
       totalScore: resultaat.totaalScore,
       categoryAverages,
       subcategoryAverages,

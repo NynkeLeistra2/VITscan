@@ -7,6 +7,8 @@ interface IntroScreenProps {
   respondentCode: string;
   naam: string;
   onNaamWijzig: (naam: string) => void;
+  organisatie: string;
+  onOrganisatieWijzig: (organisatie: string) => void;
   emailVerplicht: boolean;
   onStart: () => void;
   bezig: boolean;
@@ -19,6 +21,8 @@ export function IntroScreen({
   respondentCode,
   naam,
   onNaamWijzig,
+  organisatie,
+  onOrganisatieWijzig,
   emailVerplicht,
   onStart,
   bezig,
@@ -69,6 +73,20 @@ export function IntroScreen({
           value={naam}
           onChange={(e) => onNaamWijzig(e.target.value)}
           placeholder="Bijv. Jan Jansen"
+          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+        />
+      </div>
+
+      <div className="mt-4">
+        <label className="text-sm font-medium text-zinc-700" htmlFor="organisatie">
+          Organisatie (optioneel)
+        </label>
+        <input
+          id="organisatie"
+          type="text"
+          value={organisatie}
+          onChange={(e) => onOrganisatieWijzig(e.target.value)}
+          placeholder="Bijv. je werkgever, als die hierboven nog niet genoemd wordt"
           className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
         />
       </div>

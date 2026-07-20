@@ -7,6 +7,8 @@ export interface ScanSessie {
   stellingenVersie: string;
   /** Optioneel: zodat de medewerker zichzelf op het rapport herkent i.p.v. alleen de respondent-code. */
   naam: string;
+  /** Optioneel: alleen relevant bij scanrondes zonder vaste organisatiekoppeling (bv. een algemene workshop-link), zodat de webhook toch weet voor welk bedrijf dit is. Wordt niet in Supabase bewaard, alleen doorgestuurd naar de n8n-webhook. */
+  organisatie: string;
   /** stelling_key -> waarde (1-10) */
   antwoorden: Record<string, number>;
   openVraagAntwoord: string;
@@ -34,8 +36,8 @@ export function laadSessie(
 
   try {
     const sessie = JSON.parse(ruw) as ScanSessie;
-    // Sessies opgeslagen vóór introductie van het naamveld hebben dit nog niet.
-    return { ...sessie, naam: sessie.naam ?? "" };
+    // Sessies opgeslagen vóór introductie van het naam-/organisatieveld hebben dit nog niet.
+    return { ...sessie, naam: sessie.naam ?? "", organisatie: sessie.organisatie ?? "" };
   } catch {
     return null;
   }
@@ -59,6 +61,7 @@ export function nieuweSessie(): ScanSessie {
     respondentCode: genereerRespondentCode(),
     stellingenVersie: STELLINGEN_VERSIE,
     naam: "",
+    organisatie: "",
     antwoorden: {},
     openVraagAntwoord: "",
     email: "",

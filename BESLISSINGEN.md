@@ -270,3 +270,45 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   gedeployde functie (`.next/server/app/api/rapport-pdf/route.js.nft.json`).
 - **`html2canvas` verwijderd**: hoorde bij de client-side aanpak van de oude
   Lovable-PDF, niet nodig nu de PDF server-side wordt opgebouwd.
+
+## Wave 1, stap 5 — n8n-koppeling, organisatieveld en beheerpagina (2026-07-20)
+
+- **Start+end webhook-call**: de bestaande n8n-workflow verwacht eerst een
+  `step: "start"`-call (maakt de Sheets-rij aan) vóór de al bestaande
+  `step: "end"`-call (vult 'm, maakt PDF, mailt) — zonder start-call vond de
+  workflow nooit een rij. Beide calls zitten nu server-side achter elkaar in
+  `/api/verstuur-resultaten` (awaited, dus gegarandeerde volgorde), met
+  identiek `name`/`email` zodat n8n de rij terugvindt. Dit gebeurt pas bij
+  "Afronden", niet al bij de intro: e-mail is in deze app pas op het laatste
+  scherm bekend, niet bij de start van de scan.
+- **`organisatie`/`bedrijf`-veld**: medewerker kan op het introscherm
+  optioneel een organisatienaam invullen (voor scanrondes zonder specifieke
+  klantkoppeling, bv. een algemene workshop-link); valt terug op de
+  organisatienaam die al bij de scanronde hoort als het veld leeg blijft.
+  Alleen doorgestuurd naar de n8n-webhook (veld `bedrijf`), niet opgeslagen
+  in Supabase.
+- **`/beheer`: stukje Wave 2 bewust vervroegd**, op expliciet verzoek van
+  Nynke — ze wil zelf klantlinks (organisatie + scanronde + optioneel team)
+  kunnen aanmaken zonder daarvoor code aan te hoeven passen. Dit is bewust
+  **niet** de volledige Wave 2-beheeromgeving/dashboard uit het projectplan;
+  alleen aanmaken + de link tonen, geen rapportage. Beveiligd met Supabase
+  Auth (`@supabase/ssr`, sessie in httpOnly-cookies) — één account voor
+  Nynke zelf, publieke sign-up staat uit. RLS: insert op
+  `organisaties`/`teams`/`scanrondes` alleen voor rol `authenticated`
+  (migratie `0007`); lezen blijft zoals in stap 2 publiek. Nynkes account en
+  de migratie moeten handmatig in de Supabase SQL Editor/dashboard gezet
+  worden (geen service-role-key lokaal beschikbaar om dit te scripten).
+- **`middleware.ts` hoort in `src/`**, niet in de projectroot, omdat dit
+  project de `src/`-structuur gebruikt — een verkeerde plek zorgde eerst
+  stilzwijgend voor een niet-werkende toegangscontrole op `/beheer` (geen
+  foutmelding, de pagina laadde gewoon zonder sessie-check).
+- **Organisatienaam-fallback**: het `bedrijf`-veld in de webhook-payload
+  gebruikte eerst alléén wat de medewerker zelf intypte; als dat leeg bleef
+  (het gangbare geval bij een scanronde met een vaste klantkoppeling) kwam er
+  niets in de Google Sheet-kolom terecht. Valt nu terug op
+  `context.organisatieNaam` (de organisatie die al bij de scanronde hoort)
+  als het medewerkersveld leeg is.
+- **Scanronde verwijderen** vanuit `/beheer`, met bevestigingsstap: de
+  cascade (0001) verwijdert dan ook alle al ingevulde antwoorden voor die
+  ronde, dat kan niet ongedaan gemaakt worden. RLS: delete op `scanrondes`
+  alleen voor `authenticated` (migratie `0008`).

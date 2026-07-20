@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { BeheerForm } from "./BeheerForm";
+import { VerwijderScanrondeKnop } from "./VerwijderScanrondeKnop";
 import { logout } from "./actions";
 
 interface OrganisatieMetLijsten {
@@ -52,14 +53,17 @@ export default async function BeheerPagina() {
             <ul className="mt-2 space-y-3">
               {org.scanrondes.map((ronde) => (
                 <li key={ronde.id} className="text-sm">
-                  <p className="text-zinc-700">
-                    {ronde.naam}
-                    {ronde.email_verplicht && (
-                      <span className="ml-2 rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600">
-                        e-mail verplicht
-                      </span>
-                    )}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-zinc-700">
+                      {ronde.naam}
+                      {ronde.email_verplicht && (
+                        <span className="ml-2 rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600">
+                          e-mail verplicht
+                        </span>
+                      )}
+                    </p>
+                    <VerwijderScanrondeKnop scanrondeId={ronde.id} scanrondeNaam={ronde.naam} />
+                  </div>
                   <LinkRegel url={`${origin}/scan/${ronde.id}`} label="Algemene link" />
                   {org.teams.map((team) => (
                     <LinkRegel

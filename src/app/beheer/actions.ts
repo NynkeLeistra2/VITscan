@@ -127,6 +127,28 @@ export async function maakScanrondeAan(
   return { fout: null, link };
 }
 
+export async function verwijderScanronde(scanrondeId: string): Promise<{ fout: string | null }> {
+  const supabase = await supabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
+  }
+
+  // Cascade (zie 0001): dit verwijdert ook alle respondenten/antwoorden die
+  // aan deze scanronde hangen. De UI vraagt hier bevestiging voor.
+  const { error } = await supabase.from("scanrondes").delete().eq("id", scanrondeId);
+  if (error) {
+    console.error("Verwijderen scanronde mislukt:", foutDetail(error));
+    return { fout: `Verwijderen is niet gelukt. ${foutDetail(error)}` };
+  }
+
+  revalidatePath("/beheer");
+  return { fout: null };
+}
+
 export async function logout(): Promise<void> {
   const supabase = await supabaseServerClient();
   await supabase.auth.signOut();
