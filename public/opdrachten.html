@@ -231,6 +231,209 @@
     resize: vertical;
   }
 
+  /* Generieke tekstvelden (stap 2/3/bonus) */
+  .stap-inhoud {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .stap-inhoud > p {
+    margin-bottom: 1rem;
+  }
+
+  .veld-blok {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .veld-blok label {
+    display: block;
+    font-weight: 800;
+    color: var(--violet-donker);
+    margin-bottom: 0.4rem;
+  }
+
+  .veld-blok p.veld-hulp {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    color: #7a6b71;
+  }
+
+  .veld-blok input[type="text"],
+  .veld-blok textarea {
+    width: 100%;
+    border: 1px solid var(--lijn);
+    border-radius: 8px;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+
+  .veld-blok textarea { min-height: 80px; resize: vertical; }
+
+  .audio-blok {
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .quote {
+    max-width: 640px;
+    margin: 1.5rem auto;
+    text-align: center;
+    font-style: italic;
+    color: var(--violet-donker);
+    font-size: 1.05rem;
+  }
+
+  .invloed-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 640px;
+    margin: 0 auto 1.5rem;
+  }
+  @media (max-width: 560px) {
+    .invloed-grid { grid-template-columns: 1fr; }
+  }
+  .invloed-kol {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .invloed-kol h3 {
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    color: var(--violet-donker);
+  }
+  .invloed-kol ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+    color: #5a4d53;
+  }
+  .invloed-kol li { margin-bottom: 0.25rem; }
+
+  .actie-blok {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .actie-blok .gevoelsdoel-label {
+    font-weight: 800;
+    color: var(--violet-donker);
+    margin: 0 0 0.8rem;
+  }
+  .subdoel-titel {
+    font-weight: 700;
+    color: var(--violet);
+    margin: 1rem 0 0.5rem;
+    font-size: 0.9rem;
+  }
+  .subdoel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+  @media (max-width: 560px) {
+    .subdoel-grid { grid-template-columns: 1fr; }
+  }
+  .subdoel-grid .veld-mini { grid-column: 1 / -1; }
+  .veld-mini label,
+  .subdoel-grid label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #5a4d53;
+    margin-bottom: 0.25rem;
+  }
+  .veld-mini input[type="text"],
+  .veld-mini textarea,
+  .subdoel-grid input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--lijn);
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+
+  .evaluatie-cta {
+    max-width: 640px;
+    margin: 2rem auto;
+    text-align: center;
+    background: #efe8f1;
+    border: 1px solid var(--violet);
+    border-radius: 10px;
+    padding: 1.4rem;
+  }
+  .evaluatie-cta p { margin: 0 0 0.9rem; color: var(--violet-donker); }
+  .evaluatie-cta a.knop {
+    display: inline-block;
+    background: var(--violet);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.75rem 1.6rem;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  .evaluatie-cta a.knop:hover { background: var(--violet-donker); }
+
+  .talent-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+  }
+  @media (max-width: 560px) {
+    .talent-grid { grid-template-columns: 1fr; }
+  }
+  .talent-kaart {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .talent-naam {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 800;
+    color: var(--violet-donker);
+    margin-bottom: 0.6rem;
+  }
+  .talent-bol {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .talent-kaart textarea {
+    width: 100%;
+    min-height: 60px;
+    border: 1px solid var(--lijn);
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: 0.88rem;
+    resize: vertical;
+  }
+  .talent-kaart select {
+    margin-top: 0.5rem;
+    width: 100%;
+    border: 1px solid var(--lijn);
+    border-radius: 6px;
+    padding: 0.4rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+  }
+
   /* Mobiel: kaartweergave i.p.v. cirkel */
   .kaarten { display: none; }
 
@@ -465,6 +668,81 @@
     opslaan();
   }
 
+  // --- Losse velden voor stap 2/3/bonus (geen geel/violet-cijfers, dus
+  // los van opgeslagenAntwoorden hierboven, eigen localStorage-sleutel). ---
+  var VELDEN_SLEUTEL = "boost-opdrachten-velden";
+  var velden = {};
+  try {
+    var ruwVelden = window.localStorage.getItem(VELDEN_SLEUTEL);
+    if (ruwVelden) velden = JSON.parse(ruwVelden) || {};
+  } catch (e) {
+    velden = {};
+  }
+
+  function veldenOpslaan() {
+    try {
+      window.localStorage.setItem(VELDEN_SLEUTEL, JSON.stringify(velden));
+    } catch (e) {
+      /* niet fataal */
+    }
+  }
+
+  function veldLezen(id, standaard) {
+    var waarde = velden[id];
+    return waarde !== undefined && waarde !== null ? waarde : standaard === undefined ? "" : standaard;
+  }
+
+  function veldSchrijven(id, waarde) {
+    velden[id] = waarde;
+    veldenOpslaan();
+  }
+
+  function maakVeldBlok(id, labelTekst, hulpTekst, meerregelig) {
+    var wrap = document.createElement("div");
+    wrap.className = "veld-blok";
+
+    var label = document.createElement("label");
+    label.textContent = labelTekst;
+    label.setAttribute("for", id);
+    wrap.appendChild(label);
+
+    if (hulpTekst) {
+      var hulp = document.createElement("p");
+      hulp.className = "veld-hulp";
+      hulp.textContent = hulpTekst;
+      wrap.appendChild(hulp);
+    }
+
+    var invoer = document.createElement(meerregelig === false ? "input" : "textarea");
+    if (meerregelig === false) invoer.type = "text";
+    invoer.id = id;
+    invoer.value = veldLezen(id, "");
+    invoer.addEventListener("input", function () {
+      veldSchrijven(id, invoer.value);
+    });
+    wrap.appendChild(invoer);
+
+    return wrap;
+  }
+
+  function maakMiniVeld(id, labelTekst, meerregelig) {
+    var wrap = document.createElement("div");
+    if (meerregelig) wrap.className = "veld-mini";
+    var label = document.createElement("label");
+    label.textContent = labelTekst;
+    label.setAttribute("for", id);
+    wrap.appendChild(label);
+    var invoer = document.createElement(meerregelig ? "textarea" : "input");
+    if (!meerregelig) invoer.type = "text";
+    invoer.id = id;
+    invoer.value = veldLezen(id, "");
+    invoer.addEventListener("input", function () {
+      veldSchrijven(id, invoer.value);
+    });
+    wrap.appendChild(invoer);
+    return wrap;
+  }
+
   // --- Cijfer-vakjes (geel/violet) ---
   function maakVakjes(item) {
     var wrap = document.createElement("div");
@@ -584,6 +862,304 @@
     return blok;
   }
 
+  // --- Evaluatie-oproep (na stap 3 en na de bonus) ---
+  function maakEvaluatieCta() {
+    var cta = document.createElement("div");
+    cta.className = "evaluatie-cta";
+    var tekst = document.createElement("p");
+    tekst.textContent = "Bijna klaar? Ik ben benieuwd wat dit programma je heeft opgeleverd.";
+    var link = document.createElement("a");
+    link.className = "knop";
+    link.href = "/evaluatie.html";
+    link.textContent = "Vul de evaluatie in";
+    cta.appendChild(tekst);
+    cta.appendChild(link);
+    return cta;
+  }
+
+  // --- Stap 2: (Gevoels)doelen stellen ---
+  function bouwStap2() {
+    var sectie = document.createElement("section");
+    sectie.className = "thema";
+
+    var titel = document.createElement("h2");
+    titel.className = "thema-titel";
+    titel.textContent = "(GEVOELS)DOELEN STELLEN";
+    sectie.appendChild(titel);
+
+    var inhoud = document.createElement("div");
+    inhoud.className = "stap-inhoud";
+
+    var intro = document.createElement("p");
+    intro.textContent =
+      "In deze module doen we iets wat je misschien niet gewend bent: een ademhalings- en visualisatieoefening. " +
+      "Doelen stellen werkt krachtiger als je eerst weet hoe je je wilt voelen. Zoek een rustige plek op waar je niet gestoord wordt, en houd pen en papier (of dit scherm) bij de hand.";
+    inhoud.appendChild(intro);
+
+    var audioBlok = document.createElement("div");
+    audioBlok.className = "audio-blok";
+    audioBlok.innerHTML =
+      '<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" ' +
+      'src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fnynkeleistra-nl%2Foefening-regie-op-werkgeluk%2Fs-kmXagwUbDf6&color=%236b4a7a&auto_play=false&show_user=true"></iframe>' +
+      '<p style="text-align:center;font-size:0.85rem;margin-top:0.4rem;">' +
+      'Speler laadt niet? <a href="https://on.soundcloud.com/wOGs5UcPTRmdUuS0M6" target="_blank" rel="noopener">' +
+      "Beluister de oefening rechtstreeks op SoundCloud</a></p>";
+    inhoud.appendChild(audioBlok);
+
+    var quote = document.createElement("p");
+    quote.className = "quote";
+    quote.textContent = "“Als jij weet hoe jij je wilt voelen, dan pas kun je praktische doelen eraan koppelen.”";
+    inhoud.appendChild(quote);
+
+    inhoud.appendChild(
+      maakVeldBlok(
+        "s2-reflectie",
+        "Schrijf hieronder alles op wat er in je opkomt naar aanleiding van de oefening.",
+        "Hoe voelde jij je toen je wakker werd? Onderweg naar je werk? Tijdens het werk? Weer thuis? " +
+          "Kwam er niets duidelijks naar boven? Stel jezelf dan de vraag: stel morgen is alles anders. " +
+          "Waaraan merk je als eerste dat er iets veranderd is? Wat merken anderen aan jou? En hoe voel jij je?"
+      )
+    );
+
+    var gevoelsdoelenTitel = document.createElement("p");
+    gevoelsdoelenTitel.innerHTML =
+      "<strong>Noteer hieronder minimaal 2 gevoelsdoelen.</strong> Het kan helpen om eerst je verlangens te omschrijven " +
+      'en die om te zetten in een gevoelsdoel. Bijvoorbeeld: verlang je naar meer rust, dan kan je doel zijn "Ik heb rust in mijn hoofd en lijf."';
+    inhoud.appendChild(gevoelsdoelenTitel);
+
+    for (var g = 1; g <= 4; g++) {
+      inhoud.appendChild(maakVeldBlok("s2-gevoelsdoel-" + g, "Gevoelsdoel " + g, null, false));
+    }
+
+    inhoud.appendChild(
+      maakVeldBlok(
+        "s2-werk-factoren",
+        "Welke WERK-factoren zorgen er nu voor dat jij je nog niet zo voelt als je zou willen?",
+        "Bijvoorbeeld: het contact met je leidinggevende verloopt niet goed, of je hebt geen plezier meer in je werk."
+      )
+    );
+
+    inhoud.appendChild(
+      maakVeldBlok(
+        "s2-persoonlijke-factoren",
+        "Welke PERSOONLIJKE factoren zorgen er nu voor dat jij je nog niet zo voelt als je zou willen?",
+        "Bijvoorbeeld: je voelt angst om een stap te zetten, of je neemt niet genoeg ruimte voor jezelf."
+      )
+    );
+
+    sectie.appendChild(inhoud);
+    return sectie;
+  }
+
+  // --- Stap 3: Tijd voor actie ---
+  function bouwStap3() {
+    var sectie = document.createElement("section");
+    sectie.className = "thema";
+
+    var titel = document.createElement("h2");
+    titel.className = "thema-titel";
+    titel.textContent = "TIJD VOOR ACTIE";
+    sectie.appendChild(titel);
+
+    var inhoud = document.createElement("div");
+    inhoud.className = "stap-inhoud";
+
+    var intro = document.createElement("p");
+    intro.textContent =
+      "Nu je helder hebt hoe jij je wilt voelen en welke factoren je daarbij in de weg staan, is het tijd om dit om te zetten in concrete acties. " +
+      "Richt je energie op zaken waar je invloed op hebt, en laat los wat buiten jouw macht ligt. Factoren waar je geen directe invloed op hebt vragen ook om een keuze: soms is dat accepteren en loslaten, soms een indirecte actie (niet de situatie veranderen, maar wel hoe jij ermee omgaat).";
+    inhoud.appendChild(intro);
+
+    var invloedGrid = document.createElement("div");
+    invloedGrid.className = "invloed-grid";
+    invloedGrid.innerHTML =
+      '<div class="invloed-kol"><h3>Cirkel van invloed: WEL invloed op</h3><ul>' +
+      "<li>Wat ik denk</li><li>Hoe ik voor mezelf zorg</li><li>Vragen stellen</li><li>Eigen grenzen stellen</li>" +
+      "<li>Wat en hoe ik iets zeg</li><li>Mijn mening uiten</li><li>Mijn gedrag</li><li>Met wie ik omga</li>" +
+      '</ul></div><div class="invloed-kol"><h3>GEEN invloed op</h3><ul>' +
+      "<li>Wat anderen denken</li><li>Wat anderen geloven</li><li>Het weer</li><li>De tijd</li>" +
+      "<li>Wat een ander zegt</li><li>Wat een ander (van je) wil</li><li>Hoe een ander zich gedraagt</li><li>Wat een ander van je vindt</li>" +
+      "</ul></div>";
+    inhoud.appendChild(invloedGrid);
+    var invloedBron = document.createElement("p");
+    invloedBron.className = "veld-hulp";
+    invloedBron.style.textAlign = "center";
+    invloedBron.textContent = "Bron: Cirkel van Invloed, S. Covey.";
+    inhoud.appendChild(invloedBron);
+
+    inhoud.appendChild(
+      maakVeldBlok(
+        "s3-wel-invloed",
+        "Pak de opdrachten van de eerdere stappen er nog eens bij: waar heb jij WEL invloed op?",
+        null
+      )
+    );
+
+    var gevoelsdoelen = [];
+    for (var i = 1; i <= 4; i++) {
+      var waarde = veldLezen("s2-gevoelsdoel-" + i, "");
+      if (waarde.trim()) gevoelsdoelen.push({ index: i, tekst: waarde });
+    }
+
+    var subdoelenTitel = document.createElement("p");
+    subdoelenTitel.innerHTML =
+      "<strong>Welke eerste (kleine) stappen kun jij nu zetten om jouw gevoelsdoel te bereiken?</strong> Kies per gevoelsdoel een of twee subdoelen: een concreet deelstapje, een actie, wanneer je die zet, en wie je erbij kan helpen.";
+    inhoud.appendChild(subdoelenTitel);
+
+    if (gevoelsdoelen.length === 0) {
+      gevoelsdoelen = [{ index: 0, tekst: null }];
+    }
+
+    gevoelsdoelen.forEach(function (gevoelsdoel) {
+      var blok = document.createElement("div");
+      blok.className = "actie-blok";
+
+      var label = document.createElement("p");
+      label.className = "gevoelsdoel-label";
+      if (gevoelsdoel.tekst) {
+        label.textContent = "Gevoelsdoel: " + gevoelsdoel.tekst;
+        blok.appendChild(label);
+      } else {
+        blok.appendChild(maakMiniVeld("s3-g0-gevoelsdoel", "Gevoelsdoel", false));
+      }
+
+      [1, 2].forEach(function (subdoelNr) {
+        var subTitel = document.createElement("p");
+        subTitel.className = "subdoel-titel";
+        subTitel.textContent = "Subdoel " + subdoelNr;
+        blok.appendChild(subTitel);
+
+        var prefix = "s3-g" + gevoelsdoel.index + "-subdoel" + subdoelNr;
+        var grid = document.createElement("div");
+        grid.className = "subdoel-grid";
+        grid.appendChild(maakMiniVeld(prefix, "Subdoel", false));
+        var actieVeld = maakMiniVeld(prefix + "-actie", "Hoe ga ik dit doen (acties)?", true);
+        actieVeld.className = "veld-mini";
+        grid.appendChild(actieVeld);
+        grid.appendChild(maakMiniVeld(prefix + "-wanneer", "Wanneer", false));
+        grid.appendChild(maakMiniVeld(prefix + "-hulp", "Wie kan mij hierbij helpen?", false));
+        blok.appendChild(grid);
+      });
+
+      inhoud.appendChild(blok);
+    });
+
+    inhoud.appendChild(
+      maakVeldBlok(
+        "s3-tot-slot",
+        "Hoe ga jij ervoor zorgen dat je hiermee verder gaat?",
+        "Welke afspraken maak je met jezelf, zodat je in beweging blijft?"
+      )
+    );
+
+    inhoud.appendChild(maakEvaluatieCta());
+
+    sectie.appendChild(inhoud);
+    return sectie;
+  }
+
+  // --- Bonus: de kracht van jouw talent (Intuïst®-methode; namen/kleuren
+  // als eenvoudige tekst-badges, bewust geen Intuïst-artwork nagemaakt). ---
+  var TALENTTYPES = [
+    { id: "verbinder", label: "Verbinder", kleur: "#d97757" },
+    { id: "rebel", label: "Rebel", kleur: "#2b2430" },
+    { id: "maker", label: "Maker", kleur: "#b08d1f" },
+    { id: "leider", label: "Leider", kleur: "#3f6b73" },
+    { id: "oplosser", label: "Oplosser", kleur: "#9b8bb4" },
+    { id: "optimist", label: "Optimist", kleur: "#e0836a" },
+    { id: "doener", label: "Doener", kleur: "#c98a3a" },
+    { id: "wijze", label: "Wijze", kleur: "#5b3a6e" },
+    { id: "levensgenieter", label: "Levensgenieter", kleur: "#e0b23c" },
+    { id: "held", label: "Held", kleur: "#c0524a" },
+    { id: "zorggever", label: "Zorggever", kleur: "#7a2e35" },
+    { id: "onderzoeker", label: "Onderzoeker", kleur: "#7ba7b0" }
+  ];
+
+  function bouwBonus() {
+    var sectie = document.createElement("section");
+    sectie.className = "thema";
+
+    var titel = document.createElement("h2");
+    titel.className = "thema-titel";
+    titel.textContent = "BONUS: DE KRACHT VAN JOUW TALENT";
+    sectie.appendChild(titel);
+
+    var inhoud = document.createElement("div");
+    inhoud.className = "stap-inhoud";
+
+    var intro = document.createElement("p");
+    intro.textContent =
+      "In haar werk als coach gebruikt Nynke de intuïst®-methode: 12 talenttypes die helpen om verlangens en uitdagingen simpel en herkenbaar te maken. " +
+      "Noteer bij elk talenttype wat het bij jou oproept, en geef aan of het voor jou een kracht, een verlangen of een uitdaging is.";
+    inhoud.appendChild(intro);
+
+    var grid = document.createElement("div");
+    grid.className = "talent-grid";
+    TALENTTYPES.forEach(function (type) {
+      var kaart = document.createElement("div");
+      kaart.className = "talent-kaart";
+
+      var naam = document.createElement("div");
+      naam.className = "talent-naam";
+      var bol = document.createElement("span");
+      bol.className = "talent-bol";
+      bol.style.background = type.kleur;
+      naam.appendChild(bol);
+      naam.appendChild(document.createTextNode(type.label));
+      kaart.appendChild(naam);
+
+      var textarea = document.createElement("textarea");
+      textarea.id = "bonus-" + type.id + "-tekst";
+      textarea.placeholder = "Talent, kracht en eventuele valkuil...";
+      textarea.value = veldLezen("bonus-" + type.id + "-tekst", "");
+      textarea.addEventListener("input", function () {
+        veldSchrijven("bonus-" + type.id + "-tekst", textarea.value);
+      });
+      kaart.appendChild(textarea);
+
+      var select = document.createElement("select");
+      select.id = "bonus-" + type.id + "-tag";
+      ["", "Kracht", "Verlangen", "Uitdaging"].forEach(function (optieTekst) {
+        var optie = document.createElement("option");
+        optie.value = optieTekst;
+        optie.textContent = optieTekst || "Kracht, verlangen of uitdaging?";
+        select.appendChild(optie);
+      });
+      select.value = veldLezen("bonus-" + type.id + "-tag", "");
+      select.addEventListener("change", function () {
+        veldSchrijven("bonus-" + type.id + "-tag", select.value);
+      });
+      kaart.appendChild(select);
+
+      grid.appendChild(kaart);
+    });
+    inhoud.appendChild(grid);
+
+    inhoud.appendChild(
+      maakVeldBlok("bonus-verlangen", "Verlangen: welk talenttype staat symbool voor jouw grootste verlangen, en waarom?")
+    );
+    inhoud.appendChild(
+      maakVeldBlok("bonus-uitdaging", "Uitdaging: wat is jouw grootste uitdaging, en welk talenttype hoort daarbij?")
+    );
+    inhoud.appendChild(
+      maakVeldBlok("bonus-kracht", "Kracht: welke talenttypes zijn nu al jouw kracht en helpen je verder?")
+    );
+    inhoud.appendChild(
+      maakVeldBlok(
+        "bonus-synthese",
+        "Beschrijf hoe deze drie talenttypes (kracht, verlangen, uitdaging) jou samen ondersteunen op weg naar meer werk- en levensgeluk."
+      )
+    );
+    inhoud.appendChild(
+      maakVeldBlok("bonus-reflectie", "En, hoe was dat om te doen? Hielp het, of vond je het lastig?")
+    );
+
+    inhoud.appendChild(maakEvaluatieCta());
+
+    sectie.appendChild(inhoud);
+    return sectie;
+  }
+
   // --- Alles opbouwen ---
   var container = document.getElementById("secties");
   var indicator = document.getElementById("stap-indicator");
@@ -613,6 +1189,14 @@
     container.appendChild(sectie);
     secties.push(sectie);
 
+    var bolletje = document.createElement("span");
+    bolletje.className = "stap-bolletje";
+    indicator.appendChild(bolletje);
+  });
+
+  [bouwStap2(), bouwStap3(), bouwBonus()].forEach(function (sectie) {
+    container.appendChild(sectie);
+    secties.push(sectie);
     var bolletje = document.createElement("span");
     bolletje.className = "stap-bolletje";
     indicator.appendChild(bolletje);

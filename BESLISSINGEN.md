@@ -340,3 +340,25 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   gebouwd.
 - **Knop op het rapportscherm** ("Ga naar Boost je werkgeluk") naast de
   PDF-downloadknop.
+
+## Wave 1, stap 7 — Stap 2/3/BONUS Boost + evaluatiepagina (2026-07-20)
+
+- **Stap 2 (Gevoelsdoelen), Stap 3 (Actie) en BONUS (Talenttypes)** alsnog
+  toegevoegd aan `public/opdrachten.html`, als 3 extra stappen in dezelfde
+  stap-navigatie (in totaal 5). Audio-oefening (SoundCloud) ingesloten via
+  iframe, met een gewone link ernaast als de embed niet laadt. Stap 3 leest
+  de gevoelsdoelen die in stap 2 zijn ingevuld (uit dezelfde localStorage,
+  sleutel `boost-opdrachten-velden`) en genereert daar automatisch een
+  actie-blok per gevoelsdoel voor.
+- **BONUS-talenttypes** als eenvoudige tekst-kaartjes met een kleurbolletje,
+  bewust géén Intuïst®-artwork nagemaakt (dat is hun merk/ontwerp).
+- **Evaluatieformulier op een aparte pagina** (`public/evaluatie.html`),
+  bewust wél naar een server: Nynke wil een e-mailmelding met de antwoorden.
+  Dit is dus een uitzondering op "niets naar een server" die voor de rest
+  van de opdrachtenpagina geldt (dat gaat over privacygevoelige
+  welzijnsdata; dit is feedback/review-tekst die ze zelf wil ontvangen).
+  Nieuwe server-route `/api/boost-evaluatie` (zelfde patroon als
+  `/api/verstuur-resultaten`: zod-validatie, rate limiting, generieke
+  foutmeldingen) stuurt door naar een nieuwe, aparte n8n-webhook
+  (`N8N_EVALUATIE_WEBHOOK_URL`, nog door Nynke aan te maken/te vullen) die
+  een e-mail naar contact@nynkeleistra.nl moet sturen.

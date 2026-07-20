@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Evaluatie: Boost je werkgeluk</title>
+<style>
+  :root {
+    --violet: #6b4a7a;
+    --violet-donker: #55394f;
+    --salie: #a9b797;
+    --amber: #e3b268;
+    --ecru: #faf5f1;
+    --oudroze: #c39d98;
+    --tekst: #2b2430;
+    --lijn: #cdbfc4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ecru);
+    color: var(--tekst);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+  header { text-align: center; padding: 2.5rem 1rem 1rem; }
+  header img { height: 56px; width: auto; }
+  h1 { color: var(--violet); font-size: 1.7rem; font-weight: 800; margin: 1rem 0 0.5rem; }
+  main { max-width: 640px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+  .intro { text-align: center; color: #5a4d53; margin-bottom: 2rem; }
+  .veld { margin-bottom: 1.4rem; }
+  .veld label { display: block; font-weight: 700; color: var(--violet-donker); margin-bottom: 0.4rem; }
+  .veld p.hulp { margin: 0 0 0.5rem; font-size: 0.85rem; color: #7a6b71; }
+  .veld input[type="text"],
+  .veld textarea,
+  .veld input[type="number"] {
+    width: 100%;
+    border: 1px solid var(--lijn);
+    border-radius: 8px;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+  .veld textarea { min-height: 90px; resize: vertical; }
+  .veld input[type="number"] { max-width: 6rem; }
+  .knop {
+    background: var(--violet);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 1.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .knop:hover { background: var(--violet-donker); }
+  .knop:disabled { opacity: 0.6; cursor: not-allowed; }
+  .foutmelding { color: #b3261e; font-size: 0.9rem; margin-top: 0.8rem; }
+  .bedankt { text-align: center; padding: 2rem 0; }
+  .bedankt h2 { color: var(--violet); }
+  footer {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    color: var(--oudroze);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--lijn);
+  }
+  footer a { color: var(--oudroze); }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/nynke-logo-pdf.png" alt="Nynke Leistra Coaching en Advies" />
+  <h1>Je hebt Boost je werkgeluk afgerond!</h1>
+</header>
+
+<main>
+  <p class="intro">
+    Ik ben natuurlijk erg benieuwd wat het je heeft opgeleverd. Daarnaast blijf
+    ik mijn aanbod doorontwikkelen en leer ik graag van jouw feedback. Wil je
+    een paar minuten nemen om onderstaande vragen in te vullen?
+  </p>
+
+  <form id="evaluatie-form">
+    <div class="veld">
+      <label for="naam">Naam</label>
+      <input id="naam" name="naam" type="text" />
+    </div>
+
+    <div class="veld">
+      <label for="verwachtingen">Voldeed de inhoud van het programma aan je verwachtingen?</label>
+      <textarea id="verwachtingen" name="verwachtingen"></textarea>
+    </div>
+
+    <div class="veld">
+      <label for="getwijfeld">Heb je getwijfeld om aan de slag te gaan met Regie op (werk)geluk?</label>
+      <p class="hulp">Zo ja: waarom heb je wel of niet getwijfeld?</p>
+      <textarea id="getwijfeld" name="getwijfeld"></textarea>
+    </div>
+
+    <div class="veld">
+      <label for="belangrijksteResultaat">Wat is het belangrijkste wat dit programma je heeft opgeleverd?</label>
+      <textarea id="belangrijksteResultaat" name="belangrijksteResultaat"></textarea>
+    </div>
+
+    <div class="veld">
+      <label for="tevredenheid">In welke mate ben je tevreden met dit online programma?</label>
+      <p class="hulp">1 = helemaal ontevreden, 10 = helemaal tevreden</p>
+      <input id="tevredenheid" name="tevredenheid" type="number" min="1" max="10" step="1" />
+    </div>
+
+    <div class="veld">
+      <label for="watMoetVeranderen">Wat moet er veranderen, zodat je een hoger cijfer zou scoren?</label>
+      <textarea id="watMoetVeranderen" name="watMoetVeranderen"></textarea>
+    </div>
+
+    <div class="veld">
+      <label for="eigenOmschrijving">
+        Stel je zou dit programma aan iemand uitleggen: hoe zou je Boost je werkgeluk in je eigen woorden omschrijven?
+      </label>
+      <textarea id="eigenOmschrijving" name="eigenOmschrijving"></textarea>
+    </div>
+
+    <div class="veld">
+      <label for="review">Zou je een review willen schrijven?</label>
+      <p class="hulp">
+        Een paar zinnen over jouw ervaring. Je mag hiervoor ook gewoon de
+        bovenstaande antwoorden achter elkaar plakken. Geen zin? Typ dan
+        gewoon "Nee".
+      </p>
+      <textarea id="review" name="review"></textarea>
+    </div>
+
+    <button class="knop" type="submit" id="verstuur-btn">Versturen</button>
+    <p class="foutmelding" id="foutmelding" hidden></p>
+  </form>
+
+  <div class="bedankt" id="bedankt" hidden>
+    <h2>Bedankt voor je tijd en het vertrouwen!</h2>
+    <p>
+      Mocht je nog vragen of opmerkingen hebben, dan kun je altijd een
+      mailtje sturen via
+      <a href="mailto:contact@nynkeleistra.nl">contact@nynkeleistra.nl</a>.
+    </p>
+    <p>Nynke Leistra</p>
+  </div>
+</main>
+
+<footer>
+  Boost je werkgeluk, Nynke Leistra Coaching en Advies © 2026<br />
+  <a href="https://www.nynkeleistra.nl">www.nynkeleistra.nl</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var form = document.getElementById("evaluatie-form");
+  var knop = document.getElementById("verstuur-btn");
+  var foutmelding = document.getElementById("foutmelding");
+  var bedankt = document.getElementById("bedankt");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    foutmelding.hidden = true;
+    knop.disabled = true;
+    knop.textContent = "Bezig...";
+
+    var tevredenheidRuw = document.getElementById("tevredenheid").value;
+    var payload = {
+      naam: document.getElementById("naam").value,
+      voldeedAanVerwachtingen: document.getElementById("verwachtingen").value,
+      getwijfeld: document.getElementById("getwijfeld").value,
+      belangrijksteResultaat: document.getElementById("belangrijksteResultaat").value,
+      tevredenheid: tevredenheidRuw ? parseInt(tevredenheidRuw, 10) : null,
+      watMoetVeranderen: document.getElementById("watMoetVeranderen").value,
+      eigenOmschrijving: document.getElementById("eigenOmschrijving").value,
+      review: document.getElementById("review").value,
+    };
+
+    fetch("/api/boost-evaluatie", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("mislukt");
+        form.hidden = true;
+        bedankt.hidden = false;
+      })
+      .catch(function () {
+        foutmelding.textContent = "Versturen is niet gelukt. Controleer je internetverbinding en probeer het opnieuw.";
+        foutmelding.hidden = false;
+        knop.disabled = false;
+        knop.textContent = "Versturen";
+      });
+  });
+})();
+</script>
+
+</body>
+</html>
