@@ -33,7 +33,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
   /**
    * Geeft de zojuist berekende thema-scores door aan de losstaande,
    * self-contained opdrachtenpagina (public/opdrachten.html, het werkboek
-   * "Als alles klopt") via localStorage — bewust geen URL-parameters, want
+   * "Als alles klopt") via localStorage, bewust geen URL-parameters, want
    * die belanden in server-/CDN-logs en dit zijn privacygevoelige
    * welzijnsscores. De opdrachtenpagina leest de sleutel uit en wist 'm
    * meteen weer.
@@ -45,7 +45,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
       );
       window.localStorage.setItem("boost-opdrachten-scores", JSON.stringify(scores));
     } catch {
-      // Geen opslag beschikbaar (bv. privénavigatie) — de opdrachtenpagina
+      // Geen opslag beschikbaar (bv. privénavigatie): de opdrachtenpagina
       // werkt dan gewoon met lege gele vakjes.
     }
     window.location.assign("/opdrachten.html");
@@ -97,7 +97,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         <p className="mt-2 text-zinc-600">{algemeen.overzichtIntro}</p>
       </div>
 
-      <div className="mt-8 rounded-xl border border-zinc-200 bg-zinc-50 p-6 text-center">
+      <div className="mt-8 rounded-xl border border-brand-salie/40 bg-brand-ecru p-6 text-center">
         <p className="text-sm font-medium text-zinc-500">Jouw totale VIT-score</p>
         <p
           className="mt-1 text-5xl font-bold"
@@ -165,7 +165,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         ))}
       </div>
 
-      <div className="mt-10 rounded-lg border border-teal-200 bg-teal-50 p-6">
+      <div className="mt-10 rounded-lg border border-brand-oudroze/50 bg-brand-ecru p-6">
         <h2 className="font-semibold text-zinc-900">{algemeen.afsluiting.titel}</h2>
         <p className="mt-2 text-zinc-700">{algemeen.afsluiting.tekst}</p>
       </div>
@@ -175,14 +175,14 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
           type="button"
           onClick={downloadPdf}
           disabled={pdfBezig}
-          className="h-12 w-full max-w-xs rounded-lg bg-teal-600 font-medium text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+          className="h-12 w-full max-w-xs rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {pdfBezig ? "Rapport wordt gemaakt..." : "Download rapport (PDF)"}
         </button>
         <button
           type="button"
           onClick={gaNaarBoost}
-          className="h-12 w-full max-w-xs rounded-lg bg-[#2c4a3e] font-medium text-white transition-colors hover:bg-[#22392f]"
+          className="h-12 w-full max-w-xs rounded-lg border-2 border-brand-violet font-medium text-brand-violet transition-colors hover:bg-brand-violet hover:text-white"
         >
           Ga naar Boost je werkgeluk
         </button>
@@ -191,7 +191,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         <p className="mt-3 text-center text-sm text-red-600">{pdfFoutmelding}</p>
       )}
 
-      <div className="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center">
+      <div className="mt-8 rounded-lg border border-brand-salie/40 bg-brand-ecru p-4 text-center">
         <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>
         <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
           {respondentCode}

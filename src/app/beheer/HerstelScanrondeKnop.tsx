@@ -18,7 +18,7 @@ export function HerstelScanrondeKnop({ scanrondeId }: { scanrondeId: string }) {
             if (resultaat.fout) setFout(resultaat.fout);
           })
         }
-        className="text-xs font-medium text-teal-700 underline hover:text-teal-800 disabled:opacity-50"
+        className="text-xs font-medium text-brand-violet underline hover:text-brand-violet-dark disabled:opacity-50"
       >
         {bezig ? "Bezig..." : "Herstellen"}
       </button>

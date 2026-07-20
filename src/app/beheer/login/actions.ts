@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { supabaseServerClient } from "@/lib/supabase/server";
 
 // Zelfde best-effort in-memory rate limiting als /api/verstuur-resultaten
-// (geen Redis in Wave 1) — hier strenger, want een login-route is gevoeliger
+// (geen Redis in Wave 1), hier strenger want een login-route is gevoeliger
 // (SECURITY.md regel 4).
 const RATE_LIMIT_VENSTER_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 5;

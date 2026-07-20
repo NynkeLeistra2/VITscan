@@ -29,7 +29,7 @@ export function WerkgelukWiel({ titel, segmenten, gemiddelde }: WerkgelukWielPro
 
   return (
     <div className="flex w-full flex-col items-center">
-      <h3 className="text-lg font-semibold text-zinc-900">{titel}</h3>
+      <h3 className="text-lg font-semibold text-brand-violet">{titel}</h3>
       <svg
         viewBox={`0 0 ${WIEL_SIZE} ${WIEL_SIZE}`}
         className="mt-2 w-full max-w-[540px] overflow-visible drop-shadow-md"

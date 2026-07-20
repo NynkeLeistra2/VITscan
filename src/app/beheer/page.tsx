@@ -29,7 +29,7 @@ function dagenTotDefinitief(gearchiveerdOp: string): number {
 
 export default async function BeheerPagina() {
   // Definitief opruimen van scanrondes die al langer dan de bewaartermijn
-  // in het archief staan — geen aparte cron in Wave 1, zie actions.ts.
+  // in het archief staan, geen aparte cron in Wave 1, zie actions.ts.
   await ruimVerlopenArchiefOp();
 
   const supabase = await supabaseServerClient();
@@ -54,7 +54,7 @@ export default async function BeheerPagina() {
   return (
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-zinc-900">Beheer — VIT-scan</h1>
+        <h1 className="text-2xl font-semibold text-zinc-900">Beheer: VIT-scan</h1>
         <form action={logout}>
           <button type="submit" className="text-sm text-zinc-500 underline hover:text-zinc-700">
             Uitloggen
@@ -73,7 +73,7 @@ export default async function BeheerPagina() {
         {organisaties.map((org) => {
           const actieveRondes = org.scanrondes.filter((ronde) => ronde.gearchiveerd_op === null);
           return (
-            <div key={org.id} className="rounded-lg border border-zinc-200 p-4">
+            <div key={org.id} className="rounded-lg border border-brand-salie/40 p-4">
               <p className="font-medium text-zinc-900">{org.naam}</p>
               {actieveRondes.length === 0 && (
                 <p className="mt-1 text-sm text-zinc-500">Nog geen scanronde.</p>
@@ -85,7 +85,7 @@ export default async function BeheerPagina() {
                       <p className="text-zinc-700">
                         {ronde.naam}
                         {ronde.email_verplicht && (
-                          <span className="ml-2 rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600">
+                          <span className="ml-2 rounded bg-brand-ecru px-1.5 py-0.5 text-xs text-zinc-600">
                             e-mail verplicht
                           </span>
                         )}
@@ -120,11 +120,11 @@ export default async function BeheerPagina() {
             {archief.map(({ organisatieNaam, ronde }) => (
               <li
                 key={ronde.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-zinc-200 p-3 text-sm"
+                className="flex items-center justify-between gap-2 rounded-lg border border-brand-salie/40 p-3 text-sm"
               >
                 <div>
                   <p className="text-zinc-700">
-                    {ronde.naam} <span className="text-zinc-400">— {organisatieNaam}</span>
+                    {ronde.naam} <span className="text-zinc-400">, {organisatieNaam}</span>
                   </p>
                   <p className="mt-1 text-xs text-zinc-500">
                     Definitief weg over {dagenTotDefinitief(ronde.gearchiveerd_op!)} dagen

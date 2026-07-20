@@ -16,7 +16,7 @@ export function ThemaDetail({ themaScore }: ThemaDetailProps) {
   const percentage = Math.max(0, Math.min(100, (themaScore.score / 10) * 100));
 
   return (
-    <div className="rounded-lg border border-zinc-200">
+    <div className="rounded-lg border border-brand-salie/40">
       <button
         type="button"
         onClick={() => setOpen((huidige) => !huidige)}
@@ -34,7 +34,7 @@ export function ThemaDetail({ themaScore }: ThemaDetailProps) {
             <span className="text-zinc-400">{open ? "−" : "+"}</span>
           </span>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-brand-salie/20">
           <div
             className="h-full rounded-full"
             style={{ width: `${percentage}%`, backgroundColor: kleur }}
@@ -43,7 +43,7 @@ export function ThemaDetail({ themaScore }: ThemaDetailProps) {
       </button>
 
       {open && (
-        <div className="border-t border-zinc-100 px-4 py-4 text-sm text-zinc-700">
+        <div className="border-t border-brand-salie/30 px-4 py-4 text-sm text-zinc-700">
           <p>{teksten.duiding}</p>
 
           <p className="mt-4 font-medium text-zinc-900">Om over na te denken</p>

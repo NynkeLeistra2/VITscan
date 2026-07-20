@@ -6,20 +6,21 @@
 <title>Als alles klopt: Boost je werkgeluk</title>
 <style>
   :root {
-    --donkergroen: #2c4a3e;
-    --roze: #dba99e;
-    --creme: #faf5ef;
-    --geel-rand: #d9a441;
-    --geel-vlak: #fff8e6;
-    --tekst: #24312b;
-    --lijn: #d8ccbc;
+    --violet: #6b4a7a;
+    --violet-donker: #55394f;
+    --salie: #a9b797;
+    --amber: #e3b268;
+    --ecru: #faf5f1;
+    --oudroze: #c39d98;
+    --tekst: #2b2430;
+    --lijn: #cdbfc4;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--creme);
+    background: var(--ecru);
     color: var(--tekst);
     font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     line-height: 1.5;
@@ -36,7 +37,7 @@
   }
 
   h1 {
-    color: var(--donkergroen);
+    color: var(--violet);
     font-size: 1.9rem;
     font-weight: 800;
     letter-spacing: 0.01em;
@@ -48,7 +49,7 @@
     margin: 0 auto 2.5rem;
     padding: 0 1.25rem;
     text-align: center;
-    color: #4b4038;
+    color: #5a4d53;
   }
 
   .melding {
@@ -57,7 +58,7 @@
     padding: 0.75rem 1.25rem;
     text-align: center;
     background: #fff8e6;
-    border: 1px solid var(--geel-rand);
+    border: 1px solid #d9a441;
     border-radius: 8px;
     font-size: 0.9rem;
     display: none;
@@ -65,15 +66,35 @@
 
   .melding.zichtbaar { display: block; }
 
+  /* Stap-indicator */
+  .stap-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .stap-bolletje {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--lijn);
+  }
+
+  .stap-bolletje.actief { background: var(--amber); }
+
   section.thema {
     max-width: 1000px;
-    margin: 0 auto 3.5rem;
+    margin: 0 auto 2rem;
     padding: 0 1rem;
+    display: none;
   }
+
+  section.thema.actief { display: block; }
 
   h2.thema-titel {
     text-align: center;
-    color: var(--donkergroen);
+    color: var(--violet);
     font-size: 1.4rem;
     font-weight: 800;
     letter-spacing: 0.02em;
@@ -86,12 +107,12 @@
     gap: 1.5rem;
     margin-bottom: 1.5rem;
     font-size: 0.85rem;
-    color: #4b4038;
+    color: #5a4d53;
   }
   .legenda span { display: inline-flex; align-items: center; gap: 0.4rem; }
   .bolletje { width: 0.8rem; height: 0.8rem; border-radius: 50%; display: inline-block; }
-  .bolletje.geel { background: var(--geel-vlak); border: 2px solid var(--geel-rand); }
-  .bolletje.groen { background: #eef4f1; border: 2px solid var(--donkergroen); }
+  .bolletje.geel { background: #fff8e6; border: 2px solid #d9a441; }
+  .bolletje.violet { background: #efe8f1; border: 2px solid var(--violet); }
 
   /* Desktop mindmap */
   .mindmap {
@@ -110,16 +131,17 @@
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: var(--roze);
-    border: 3px solid var(--donkergroen);
+    background: var(--oudroze);
+    border: 3px solid var(--violet);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     font-weight: 800;
-    color: var(--donkergroen);
+    color: var(--violet-donker);
     padding: 0.5rem;
     font-size: 0.95rem;
+    white-space: pre-line;
   }
 
   .node {
@@ -132,7 +154,7 @@
   .node .label {
     font-weight: 700;
     font-size: 0.85rem;
-    color: var(--donkergroen);
+    color: var(--violet-donker);
     margin-bottom: 0.35rem;
   }
 
@@ -152,8 +174,8 @@
     font-family: inherit;
   }
 
-  input.huidig { border: 2px solid var(--geel-rand); background: var(--geel-vlak); color: #6b5008; }
-  input.gewenst { border: 2px solid var(--donkergroen); background: #eef4f1; color: var(--donkergroen); }
+  input.huidig { border: 2px solid #d9a441; background: #fff8e6; color: #6b5008; }
+  input.gewenst { border: 2px solid var(--violet); background: #efe8f1; color: var(--violet-donker); }
 
   .wonder-blok {
     max-width: 640px;
@@ -178,13 +200,13 @@
 
   .wonder-item .kop-label {
     font-weight: 800;
-    color: var(--donkergroen);
+    color: var(--violet-donker);
   }
 
   .wonder-item p.vraag {
     margin: 0.6rem 0 0.4rem;
     font-size: 0.88rem;
-    color: #6b5f52;
+    color: #7a6b71;
   }
 
   .wonder-item textarea {
@@ -214,9 +236,44 @@
       border-radius: 10px;
       padding: 1rem;
     }
-    .kaart .label { font-weight: 800; color: var(--donkergroen); margin-bottom: 0.5rem; }
+    .kaart .label { font-weight: 800; color: var(--violet-donker); margin-bottom: 0.5rem; }
     .kaart .vakjes { justify-content: flex-start; }
   }
+
+  /* Stap-navigatie (vorige/volgende opdracht) */
+  .stap-navigatie {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .stap-navigatie button {
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .stap-navigatie .volgende {
+    background: var(--violet);
+    color: #fff;
+    margin-left: auto;
+  }
+  .stap-navigatie .volgende:hover { background: var(--violet-donker); }
+
+  .stap-navigatie .vorige {
+    background: transparent;
+    color: var(--violet);
+    border: 2px solid var(--violet);
+  }
+  .stap-navigatie .vorige:hover { background: #efe8f1; }
+
+  .stap-navigatie button[hidden] { display: none; }
 
   .acties {
     text-align: center;
@@ -224,8 +281,8 @@
   }
 
   button.print-knop {
-    background: var(--donkergroen);
-    color: #fff;
+    background: var(--amber);
+    color: var(--violet-donker);
     border: none;
     padding: 0.85rem 1.9rem;
     border-radius: 8px;
@@ -234,28 +291,28 @@
     cursor: pointer;
   }
 
-  button.print-knop:hover { background: #22392f; }
+  button.print-knop:hover { filter: brightness(0.94); }
 
   .acties p {
     margin-top: 0.6rem;
     font-size: 0.82rem;
-    color: #7a6f61;
+    color: #8a7b81;
   }
 
   footer {
     text-align: center;
     padding: 2rem 1rem 3rem;
-    color: #8a8072;
+    color: var(--oudroze);
     font-size: 0.85rem;
     border-top: 1px solid var(--lijn);
   }
-  footer a { color: #8a8072; }
+  footer a { color: var(--oudroze); }
 
   @media print {
-    .acties, .melding { display: none !important; }
+    .acties, .melding, .stap-navigatie, .stap-indicator { display: none !important; }
     .mindmap { display: none !important; }
     .kaarten { display: flex !important; flex-direction: column; gap: 0.75rem; }
-    section.thema { page-break-inside: avoid; margin-bottom: 1.5rem; }
+    section.thema { display: block !important; page-break-inside: avoid; margin-bottom: 1.5rem; }
     body { background: #fff; }
   }
 </style>
@@ -275,7 +332,7 @@
   <p>
     In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk
     ernaar: ben je tevreden, of mag het anders? Vul daarna in het
-    <strong>groene</strong> vakje in welk cijfer je zou geven als dat wonder
+    <strong>violette</strong> vakje in welk cijfer je zou geven als dat wonder
     gebeurd is. Er is geen goed of fout. Jij hebt de regie.
   </p>
 </div>
@@ -285,7 +342,14 @@
   probleem, vul de gele vakjes gewoon zelf in.
 </p>
 
+<div class="stap-indicator" id="stap-indicator"></div>
+
 <div id="secties"></div>
+
+<div class="stap-navigatie">
+  <button class="vorige" type="button" id="vorige-btn">Naar vorige opdracht</button>
+  <button class="volgende" type="button" id="volgende-btn">Naar volgende opdracht</button>
+</div>
 
 <div class="acties">
   <button class="print-knop" type="button" id="print-btn">Opslaan / printen als PDF</button>
@@ -343,6 +407,7 @@
 
   var HANDOFF_SLEUTEL = "boost-opdrachten-scores";
   var OPSLAG_SLEUTEL = "boost-opdrachten-antwoorden";
+  var STAP_SLEUTEL = "boost-opdrachten-stap";
 
   // --- Scan-scores ophalen (eenmalige overdracht, meteen weer wissen) ---
   var scanScores = {};
@@ -389,7 +454,7 @@
     opslaan();
   }
 
-  // --- Cijfer-vakjes (geel/groen) ---
+  // --- Cijfer-vakjes (geel/violet) ---
   function maakVakjes(item) {
     var wrap = document.createElement("div");
     wrap.className = "vakjes";
@@ -435,7 +500,7 @@
     mindmap.appendChild(midden);
 
     var n = thema.items.length;
-    var radius = 33; // % van de container (dichter bij de middencirkel)
+    var radius = 33; // % van de container, dichtbij de middencirkel
     thema.items.forEach(function (item, i) {
       var hoek = (i / n) * 2 * Math.PI - Math.PI / 2; // start bovenaan
       var x = 50 + radius * Math.cos(hoek);
@@ -510,9 +575,13 @@
 
   // --- Alles opbouwen ---
   var container = document.getElementById("secties");
-  THEMAS.forEach(function (thema) {
+  var indicator = document.getElementById("stap-indicator");
+  var secties = [];
+
+  THEMAS.forEach(function (thema, index) {
     var sectie = document.createElement("section");
     sectie.className = "thema";
+    sectie.dataset.stap = String(index);
 
     var titel = document.createElement("h2");
     titel.className = "thema-titel";
@@ -523,7 +592,7 @@
     legenda.className = "legenda";
     legenda.innerHTML =
       '<span><span class="bolletje geel"></span>Huidig (uit je scan)</span>' +
-      '<span><span class="bolletje groen"></span>Gewenst (als het wonder is gebeurd)</span>';
+      '<span><span class="bolletje violet"></span>Gewenst (als het wonder is gebeurd)</span>';
     sectie.appendChild(legenda);
 
     sectie.appendChild(bouwMindmap(thema));
@@ -531,7 +600,52 @@
     sectie.appendChild(bouwWonderBlok(thema));
 
     container.appendChild(sectie);
+    secties.push(sectie);
+
+    var bolletje = document.createElement("span");
+    bolletje.className = "stap-bolletje";
+    indicator.appendChild(bolletje);
   });
+
+  // --- Stap-navigatie (per thema, "opdracht") ---
+  var huidigeStap = 0;
+  try {
+    var opgeslagenStap = parseInt(window.localStorage.getItem(STAP_SLEUTEL) || "0", 10);
+    if (opgeslagenStap >= 0 && opgeslagenStap < secties.length) huidigeStap = opgeslagenStap;
+  } catch (e) {
+    huidigeStap = 0;
+  }
+
+  var vorigeBtn = document.getElementById("vorige-btn");
+  var volgendeBtn = document.getElementById("volgende-btn");
+  var bolletjes = indicator.querySelectorAll(".stap-bolletje");
+
+  function toonStap(index) {
+    huidigeStap = index;
+    secties.forEach(function (sectie, i) {
+      sectie.className = "thema" + (i === index ? " actief" : "");
+    });
+    bolletjes.forEach(function (bol, i) {
+      bol.className = "stap-bolletje" + (i === index ? " actief" : "");
+    });
+    vorigeBtn.hidden = index === 0;
+    volgendeBtn.hidden = index === secties.length - 1;
+    try {
+      window.localStorage.setItem(STAP_SLEUTEL, String(index));
+    } catch (e) {
+      /* niet fataal */
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  vorigeBtn.addEventListener("click", function () {
+    if (huidigeStap > 0) toonStap(huidigeStap - 1);
+  });
+  volgendeBtn.addEventListener("click", function () {
+    if (huidigeStap < secties.length - 1) toonStap(huidigeStap + 1);
+  });
+
+  toonStap(huidigeStap);
 
   document.getElementById("print-btn").addEventListener("click", function () {
     window.print();

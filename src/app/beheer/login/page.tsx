@@ -8,7 +8,7 @@ export default function BeheerLoginPagina() {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-6">
-      <h1 className="text-xl font-semibold text-zinc-900">Inloggen — beheer</h1>
+      <h1 className="text-xl font-semibold text-zinc-900">Inloggen: beheer</h1>
       <p className="mt-1 text-sm text-zinc-500">Alleen voor Nynke.</p>
 
       <form action={formAction} className="mt-6 space-y-4">
@@ -22,7 +22,7 @@ export default function BeheerLoginPagina() {
             type="email"
             required
             autoComplete="username"
-            className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
           />
         </div>
 
@@ -36,7 +36,7 @@ export default function BeheerLoginPagina() {
             type="password"
             required
             autoComplete="current-password"
-            className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
           />
         </div>
 
@@ -45,7 +45,7 @@ export default function BeheerLoginPagina() {
         <button
           type="submit"
           disabled={bezig}
-          className="h-12 w-full rounded-lg bg-teal-600 font-medium text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+          className="h-12 w-full rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           {bezig ? "Bezig..." : "Inloggen"}
         </button>

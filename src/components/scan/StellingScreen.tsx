@@ -50,7 +50,7 @@ export function StellingScreen({
             type="button"
             onClick={onVorige}
             disabled={bezig}
-            className="h-12 rounded-lg border border-zinc-300 px-6 font-medium text-zinc-700 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-12 rounded-lg border border-brand-salie/40 px-6 font-medium text-zinc-700 transition-colors hover:bg-brand-ecru disabled:cursor-not-allowed disabled:opacity-50"
           >
             Vorige
           </button>

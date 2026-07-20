@@ -16,7 +16,7 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
   );
 
   return (
-    <form action={formAction} className="mt-4 space-y-4 rounded-lg border border-zinc-200 p-4">
+    <form action={formAction} className="mt-4 space-y-4 rounded-lg border border-brand-salie/40 p-4">
       <div>
         <label className="text-sm font-medium text-zinc-700" htmlFor="organisatieId">
           Organisatie
@@ -26,7 +26,7 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
           name="organisatieId"
           value={organisatieId}
           onChange={(e) => setOrganisatieId(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         >
           {organisaties.map((org) => (
             <option key={org.id} value={org.id}>
@@ -46,7 +46,7 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
             id="nieuweOrganisatieNaam"
             name="nieuweOrganisatieNaam"
             type="text"
-            className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
           />
         </div>
       )}
@@ -61,7 +61,7 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
           type="text"
           required
           placeholder="Bijv. VIT-scan Q1 2026"
-          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         />
       </div>
 
@@ -74,28 +74,28 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
           name="teamNaam"
           type="text"
           placeholder="Laat leeg voor geen team-indeling"
-          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         />
       </div>
 
       <label className="flex items-center gap-2 text-sm text-zinc-700">
-        <input type="checkbox" name="emailVerplicht" className="h-4 w-4 rounded border-zinc-300 text-teal-600" />
+        <input type="checkbox" name="emailVerplicht" className="h-4 w-4 rounded border-brand-salie/40 text-brand-violet" />
         E-mail verplicht voor deze scanronde
       </label>
 
       {state.fout && <p className="text-sm text-red-600">{state.fout}</p>}
 
       {state.link && (
-        <div className="rounded-lg border border-teal-200 bg-teal-50 p-3">
-          <p className="text-sm text-teal-900">Klaar. Dit is de link voor deze klant:</p>
-          <p className="mt-1 break-all font-mono text-sm text-teal-950">{state.link}</p>
+        <div className="rounded-lg border border-brand-oudroze/50 bg-brand-ecru p-3">
+          <p className="text-sm text-brand-violet">Klaar. Dit is de link voor deze klant:</p>
+          <p className="mt-1 break-all font-mono text-sm text-brand-violet">{state.link}</p>
         </div>
       )}
 
       <button
         type="submit"
         disabled={bezig}
-        className="h-12 w-full rounded-lg bg-teal-600 font-medium text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+        className="h-12 w-full rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
       >
         {bezig ? "Bezig..." : "Scanronde aanmaken"}
       </button>

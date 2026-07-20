@@ -9,7 +9,7 @@ import { supabaseServerClient } from "@/lib/supabase/server";
 import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
 
 // PostgrestError serialiseert niet vanzelf leesbaar via console.error (het
-// object erft van Error, waarvan `message` niet-enumerable is) — daarom hier
+// object erft van Error, waarvan `message` niet-enumerable is), daarom hier
 // expliciet de velden uitlezen zodat de echte oorzaak (bv. RLS-foutcode
 // 42501) in de logs zichtbaar is i.p.v. "{}". Dit is een intern
 // beheerscherm (alleen voor Nynke, achter login), dus de technische details
@@ -180,7 +180,7 @@ export async function herstelScanronde(scanrondeId: string): Promise<{ fout: str
 /**
  * Ruimt scanrondes op die langer dan ARCHIEF_BEWAARTERMIJN_DAGEN geleden
  * gearchiveerd zijn (definitieve delete, cascade naar respondenten/
- * antwoorden). Geen aparte cron in Wave 1 — wordt bij elke load van
+ * antwoorden). Geen aparte cron in Wave 1: wordt bij elke load van
  * /beheer aangeroepen ("opruimen bij bezoek"), voldoende voor het lage
  * bezoekvolume van deze pagina.
  */

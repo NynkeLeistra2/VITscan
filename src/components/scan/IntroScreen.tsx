@@ -38,8 +38,8 @@ export function IntroScreen({
         className="h-12 w-auto self-start"
         priority
       />
-      <h1 className="mt-3 text-2xl font-semibold text-zinc-900">VIT-scan</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="mt-3 text-2xl font-semibold text-brand-violet">VIT-scan</h1>
+      <p className="mt-1 text-sm text-brand-oudroze">
         {organisatieNaam}
         {teamNaam ? ` · ${teamNaam}` : ""}
       </p>
@@ -55,7 +55,7 @@ export function IntroScreen({
           individuele antwoorden, alleen geanonimiseerde teamcijfers.
         </p>
         <p>
-          Een naam invullen is niet nodig — je herkent je rapport ook aan je
+          Een naam invullen is niet nodig, je herkent je rapport ook aan je
           persoonlijke code hieronder. Wil je wel je naam erop, dan kan dat.
           {emailVerplicht
             ? " We vragen straks ook je e-mailadres, zodat je het rapport ook per e-mail ontvangt."
@@ -73,7 +73,7 @@ export function IntroScreen({
           value={naam}
           onChange={(e) => onNaamWijzig(e.target.value)}
           placeholder="Bijv. Jan Jansen"
-          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         />
       </div>
 
@@ -87,11 +87,11 @@ export function IntroScreen({
           value={organisatie}
           onChange={(e) => onOrganisatieWijzig(e.target.value)}
           placeholder="Bijv. je werkgever, als die hierboven nog niet genoemd wordt"
-          className="mt-1 w-full rounded-lg border border-zinc-300 p-3 text-zinc-900 focus:border-teal-500 focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         />
       </div>
 
-      <div className="mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+      <div className="mt-6 rounded-lg border border-brand-salie/40 bg-brand-ecru p-4">
         <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>
         <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
           {respondentCode}
@@ -110,7 +110,7 @@ export function IntroScreen({
         type="button"
         onClick={onStart}
         disabled={bezig}
-        className="mt-8 h-12 w-full rounded-lg bg-teal-600 font-medium text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+        className="mt-8 h-12 w-full rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
       >
         {bezig ? "Bezig..." : "Start de scan"}
       </button>

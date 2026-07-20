@@ -31,8 +31,8 @@ export function AntwoordSchaal({ waarde, onWijzig, disabled }: AntwoordSchaalPro
               disabled={disabled}
               className={`flex h-14 min-w-0 flex-1 items-center justify-center rounded-lg border text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 sm:text-base ${
                 geselecteerd
-                  ? "border-teal-600 bg-teal-600 text-white shadow"
-                  : "border-zinc-300 bg-white text-zinc-700 hover:border-teal-400"
+                  ? "border-brand-violet bg-brand-violet text-white shadow"
+                  : "border-brand-salie/40 bg-white text-zinc-700 hover:border-brand-violet"
               }`}
             >
               {optie}

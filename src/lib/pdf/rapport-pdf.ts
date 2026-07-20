@@ -9,18 +9,17 @@ import { rasterizeWiel } from "./wiel-raster";
 /**
  * Server-only PDF-opbouw van het persoonlijk rapport. Zelfde diepte als het
  * scherm (RapportScreen): totaalscore + duiding, per thema score + duiding/
- * reflectievragen/aanbevelingen, afsluiting + persoonlijke code — geen losse
+ * reflectievragen/aanbevelingen, afsluiting + persoonlijke code, geen losse
  * stellingscores.
  *
- * Huisstijl: teal (zelfde als de site) als hoofdkleur, met een subtiele knipoog
- * naar Nynkes bestaande merkkleuren (donkergroen/goud) in dunne accentlijnen,
- * op uitdrukkelijk verzoek een stuk terughoudender dan de oude Lovable-PDF.
+ * Huisstijl (2026-07-20): zacht violet als hoofdkleur, amber en salie als
+ * accenten, zelfde palet als de rest van de app (zie globals.css).
  */
 
-const TEAL: [number, number, number] = [13, 148, 136]; // teal-600
-const TEAL_DARK: [number, number, number] = [15, 118, 110]; // teal-700
-const GOLD: [number, number, number] = [236, 189, 0]; // Nynkes goud-accent
-const BRAND_GREEN: [number, number, number] = [0, 52, 41]; // Nynkes donkergroen
+const VIOLET: [number, number, number] = [107, 74, 122]; // brand-violet #6b4a7a
+const VIOLET_DARK: [number, number, number] = [85, 57, 79]; // brand-violet-dark #55394f
+const AMBER: [number, number, number] = [227, 178, 104]; // brand-amber #e3b268
+const SALIE: [number, number, number] = [169, 183, 151]; // brand-salie #a9b797
 const TEXT_DARK: [number, number, number] = [39, 39, 42]; // zinc-800
 const TEXT_MUTED: [number, number, number] = [113, 113, 122]; // zinc-500
 const WHITE: [number, number, number] = [255, 255, 255];
@@ -53,9 +52,9 @@ const BOTTOM_MARGIN = 24;
 function drawPageChrome(ctx: PdfCtx) {
   const { pdf, pageWidth, pageHeight, logoIcoon } = ctx;
 
-  pdf.setFillColor(...TEAL);
+  pdf.setFillColor(...VIOLET);
   pdf.rect(0, 0, pageWidth, 8, "F");
-  pdf.setFillColor(...GOLD);
+  pdf.setFillColor(...AMBER);
   pdf.rect(0, 8, pageWidth, 1, "F");
 
   const iconSize = 8;
@@ -88,8 +87,8 @@ function checkPageBreak(ctx: PdfCtx, needed: number) {
   }
 }
 
-function drawGoldDivider(ctx: PdfCtx, y: number) {
-  ctx.pdf.setDrawColor(...GOLD);
+function drawAmberDivider(ctx: PdfCtx, y: number) {
+  ctx.pdf.setDrawColor(...AMBER);
   ctx.pdf.setLineWidth(0.4);
   ctx.pdf.line(ctx.margin, y, ctx.pageWidth - ctx.margin, y);
 }
@@ -97,7 +96,7 @@ function drawGoldDivider(ctx: PdfCtx, y: number) {
 function drawSectionTitel(ctx: PdfCtx, titel: string) {
   checkPageBreak(ctx, 14);
   const { pdf, margin, contentWidth } = ctx;
-  pdf.setFillColor(...TEAL_DARK);
+  pdf.setFillColor(...VIOLET_DARK);
   pdf.roundedRect(margin, ctx.y - 5.5, contentWidth, 9, 1.5, 1.5, "F");
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
@@ -112,9 +111,9 @@ function drawThemaHeader(ctx: PdfCtx, titel: string, score: number) {
   checkPageBreak(ctx, 10);
   const { pdf, margin } = ctx;
 
-  // Klein groen accentblokje i.p.v. een volle merkkleurbalk, subtiele knipoog
+  // Klein salie accentblokje i.p.v. een volle merkkleurbalk, subtiele knipoog
   // naar Nynkes bestaande huisstijl (op haar verzoek terughoudend gebruikt).
-  pdf.setFillColor(...BRAND_GREEN);
+  pdf.setFillColor(...SALIE);
   pdf.rect(margin, ctx.y - 4, 1.4, 6.5, "F");
 
   pdf.setFontSize(11);
@@ -212,12 +211,12 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
 
   pdf.setFontSize(20);
   pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(...TEAL_DARK);
+  pdf.setTextColor(...VIOLET_DARK);
   pdf.text(naam ? `Jouw VIT-scan resultaat, ${naam}` : "Jouw VIT-scan resultaat", pageWidth / 2, ctx.y, {
     align: "center",
   });
   ctx.y += 7;
-  drawGoldDivider(ctx, ctx.y);
+  drawAmberDivider(ctx, ctx.y);
   ctx.y += 8;
 
   drawParagraaf(ctx, algemeen.overzichtIntro);
@@ -225,7 +224,7 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
   // Totaalscore-box
   const boxHoogte = 28;
   checkPageBreak(ctx, boxHoogte + 4);
-  pdf.setFillColor(...TEAL);
+  pdf.setFillColor(...VIOLET);
   pdf.roundedRect(margin, ctx.y, ctx.contentWidth, boxHoogte, 3, 3, "F");
   pdf.setFontSize(22);
   pdf.setFont("helvetica", "bold");
@@ -255,7 +254,7 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
     checkPageBreak(ctx, wielHoogteMm + 12);
     pdf.setFontSize(12);
     pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...TEAL_DARK);
+    pdf.setTextColor(...VIOLET_DARK);
     pdf.text(WIEL_TITEL[deel.deelId] ?? deel.deelTitel, pageWidth / 2, ctx.y, { align: "center" });
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(...TEXT_DARK);
@@ -307,7 +306,7 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
   // Persoonlijke code
   checkPageBreak(ctx, 24);
   ctx.y += 4;
-  drawGoldDivider(ctx, ctx.y);
+  drawAmberDivider(ctx, ctx.y);
   ctx.y += 8;
   pdf.setFontSize(9.5);
   pdf.setFont("helvetica", "bold");
@@ -331,7 +330,7 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
 
   // Footer met contactgegevens (alleen op de laatste pagina)
   checkPageBreak(ctx, 24);
-  drawGoldDivider(ctx, ctx.y);
+  drawAmberDivider(ctx, ctx.y);
   ctx.y += 6;
   pdf.setFontSize(8);
   pdf.setTextColor(...TEXT_MUTED);

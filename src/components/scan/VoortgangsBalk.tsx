@@ -11,9 +11,9 @@ export function VoortgangsBalk({
 
   return (
     <div className="w-full">
-      <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-200">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-brand-salie/25">
         <div
-          className="h-full rounded-full bg-teal-600 transition-all"
+          className="h-full rounded-full bg-brand-amber transition-all"
           style={{ width: `${percentage}%` }}
         />
       </div>

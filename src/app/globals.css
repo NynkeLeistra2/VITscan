@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #faf5f1;
   --foreground: #171717;
 }
 
@@ -12,12 +12,21 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Huisstijl-kleuren (2026-07-20): niet gekoppeld aan scoreKleur/bepaalNiveau
+   in scoring-config.ts, die blijven een eigen functionele rood/oranje/groen-
+   schaal (zie CLAUDE.md, sectie Scoring). Deze tokens zijn puur voor de
+   "chrome": knoppen, achtergronden, randen, accenten. */
+@theme {
+  --color-brand-violet: #6b4a7a;
+  --color-brand-violet-dark: #55394f;
+  --color-brand-salie: #a9b797;
+  --color-brand-amber: #e3b268;
+  --color-brand-ecru: #faf5f1;
+  --color-brand-oudroze: #c39d98;
+  --color-brand-oudroze-dark: #dfb3ae;
 }
+
+/* Geen dark-mode override: de huisstijl is een vast licht (ecru) palet. */
 
 body {
   background: var(--background);
