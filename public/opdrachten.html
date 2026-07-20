@@ -329,6 +329,20 @@
     color: var(--violet-donker);
     margin: 0 0 0.8rem;
   }
+  .toevoeg-knop {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 2px dashed var(--violet);
+    color: var(--violet);
+    border-radius: 10px;
+    padding: 0.8rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+  }
+  .toevoeg-knop:hover { background: #efe8f1; }
   .subdoel-titel {
     font-weight: 700;
     color: var(--violet);
@@ -538,24 +552,6 @@
   <h1>Als alles klopt</h1>
 </header>
 
-<div class="intro">
-  <p>
-    Stel: er gebeurt vannacht een wonder. Je voelt volop werkgeluk, krijgt
-    energie van je werk en leven, en hebt weer echt zin om te beginnen.
-  </p>
-  <p>
-    In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk
-    ernaar: ben je tevreden, of mag het anders? Vul daarna in het
-    <strong>violette</strong> vakje in welk cijfer je zou geven als dat wonder
-    gebeurd is. Er is geen goed of fout. Jij hebt de regie.
-  </p>
-</div>
-
-<p class="melding" id="melding">
-  Er zijn geen scan-scores gevonden om automatisch in te vullen. Geen
-  probleem, vul de gele vakjes gewoon zelf in.
-</p>
-
 <div class="stap-indicator" id="stap-indicator"></div>
 
 <div id="secties"></div>
@@ -634,10 +630,7 @@
   } catch (e) {
     scanScores = {};
   }
-  if (Object.keys(scanScores).length === 0) {
-    var melding = document.getElementById("melding");
-    if (melding) melding.className = "melding zichtbaar";
-  }
+  var geenScanScores = Object.keys(scanScores).length === 0;
 
   // --- Eerder ingevulde antwoorden op deze pagina (los van de scan-overdracht) ---
   var opgeslagenAntwoorden = {};
@@ -995,32 +988,25 @@
       )
     );
 
-    var gevoelsdoelen = [];
-    for (var i = 1; i <= 4; i++) {
-      var waarde = veldLezen("s2-gevoelsdoel-" + i, "");
-      if (waarde.trim()) gevoelsdoelen.push({ index: i, tekst: waarde });
-    }
-
     var subdoelenTitel = document.createElement("p");
     subdoelenTitel.innerHTML =
       "<strong>Welke eerste (kleine) stappen kun jij nu zetten om jouw gevoelsdoel te bereiken?</strong> Kies per gevoelsdoel een of twee subdoelen: een concreet deelstapje, een actie, wanneer je die zet, en wie je erbij kan helpen.";
     inhoud.appendChild(subdoelenTitel);
 
-    if (gevoelsdoelen.length === 0) {
-      gevoelsdoelen = [{ index: 0, tekst: null }];
-    }
+    var blokkenContainer = document.createElement("div");
+    inhoud.appendChild(blokkenContainer);
 
-    gevoelsdoelen.forEach(function (gevoelsdoel) {
+    function maakActieBlok(idSuffix, gevoelsdoelTekst) {
       var blok = document.createElement("div");
       blok.className = "actie-blok";
 
-      var label = document.createElement("p");
-      label.className = "gevoelsdoel-label";
-      if (gevoelsdoel.tekst) {
-        label.textContent = "Gevoelsdoel: " + gevoelsdoel.tekst;
+      if (gevoelsdoelTekst) {
+        var label = document.createElement("p");
+        label.className = "gevoelsdoel-label";
+        label.textContent = "Gevoelsdoel: " + gevoelsdoelTekst;
         blok.appendChild(label);
       } else {
-        blok.appendChild(maakMiniVeld("s3-g0-gevoelsdoel", "Gevoelsdoel", false));
+        blok.appendChild(maakMiniVeld("s3-g" + idSuffix + "-gevoelsdoel", "Gevoelsdoel", false));
       }
 
       [1, 2].forEach(function (subdoelNr) {
@@ -1029,7 +1015,7 @@
         subTitel.textContent = "Subdoel " + subdoelNr;
         blok.appendChild(subTitel);
 
-        var prefix = "s3-g" + gevoelsdoel.index + "-subdoel" + subdoelNr;
+        var prefix = "s3-g" + idSuffix + "-subdoel" + subdoelNr;
         var grid = document.createElement("div");
         grid.className = "subdoel-grid";
         grid.appendChild(maakMiniVeld(prefix, "Subdoel", false));
@@ -1041,8 +1027,45 @@
         blok.appendChild(grid);
       });
 
-      inhoud.appendChild(blok);
+      return blok;
+    }
+
+    // Gevoelsdoelen 1 t/m 4 uit stap 2 (indien ingevuld) krijgen automatisch
+    // een actie-blok, met de tekst als vaste label.
+    var vasteGevoelsdoelen = [];
+    for (var i = 1; i <= 4; i++) {
+      var waarde = veldLezen("s2-gevoelsdoel-" + i, "");
+      if (waarde.trim()) vasteGevoelsdoelen.push({ idSuffix: i, tekst: waarde });
+    }
+    vasteGevoelsdoelen.forEach(function (gevoelsdoel) {
+      blokkenContainer.appendChild(maakActieBlok(gevoelsdoel.idSuffix, gevoelsdoel.tekst));
     });
+
+    // Extra, zelf toe te voegen gevoelsdoelen (los van stap 2), met een
+    // invulbaar Gevoelsdoel-veld. Aantal wordt onthouden zodat ze bij
+    // terugkomst blijven staan.
+    var extraAantal = parseInt(veldLezen("s3-extra-aantal", "0"), 10) || 0;
+    if (vasteGevoelsdoelen.length === 0 && extraAantal === 0) {
+      extraAantal = 1;
+    }
+    for (var e = 1; e <= extraAantal; e++) {
+      blokkenContainer.appendChild(maakActieBlok("extra" + e, null));
+    }
+
+    var toevoegKnop = document.createElement("button");
+    toevoegKnop.type = "button";
+    toevoegKnop.className = "toevoeg-knop";
+    toevoegKnop.textContent = "+ Nog een gevoelsdoel toevoegen";
+    toevoegKnop.addEventListener("click", function () {
+      extraAantal += 1;
+      veldSchrijven("s3-extra-aantal", String(extraAantal));
+      var nieuwBlok = maakActieBlok("extra" + extraAantal, null);
+      blokkenContainer.appendChild(nieuwBlok);
+      var eersteVeld = nieuwBlok.querySelector("input, textarea");
+      if (eersteVeld) eersteVeld.focus();
+      nieuwBlok.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    inhoud.appendChild(toevoegKnop);
 
     inhoud.appendChild(
       maakVeldBlok(
@@ -1051,8 +1074,6 @@
         "Welke afspraken maak je met jezelf, zodat je in beweging blijft?"
       )
     );
-
-    inhoud.appendChild(maakEvaluatieCta());
 
     sectie.appendChild(inhoud);
     return sectie;
@@ -1174,6 +1195,21 @@
     titel.className = "thema-titel";
     titel.textContent = thema.titel;
     sectie.appendChild(titel);
+
+    var intro = document.createElement("div");
+    intro.className = "intro";
+    intro.innerHTML =
+      "<p>Stel: er gebeurt vannacht een wonder. Je voelt volop werkgeluk, krijgt energie van je werk en leven, en hebt weer echt zin om te beginnen.</p>" +
+      "<p>In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk ernaar: ben je tevreden, of mag het anders? Vul daarna in het <strong>violette</strong> vakje in welk cijfer je zou geven als dat wonder gebeurd is. Er is geen goed of fout. Jij hebt de regie.</p>";
+    sectie.appendChild(intro);
+
+    if (geenScanScores) {
+      var melding = document.createElement("p");
+      melding.className = "melding zichtbaar";
+      melding.textContent =
+        "Er zijn geen scan-scores gevonden om automatisch in te vullen. Geen probleem, vul de gele vakjes gewoon zelf in.";
+      sectie.appendChild(melding);
+    }
 
     var legenda = document.createElement("div");
     legenda.className = "legenda";
