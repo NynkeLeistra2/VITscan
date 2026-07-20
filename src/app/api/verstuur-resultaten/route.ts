@@ -6,7 +6,7 @@ import { genereerRapportPdf } from "@/lib/pdf/rapport-pdf";
 import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
 
 // Kleur-emoji per band, in dezelfde volgorde als algemeen.totaalscoreNiveaus
-// (laag naar hoog) — overgenomen uit de oude Lovable-workflow (surveyData.ts
+// (laag naar hoog), overgenomen uit de oude Lovable-workflow (surveyData.ts
 // recommendations) zodat de bestaande n8n-workflow dit veld kan blijven lezen.
 const NIVEAU_KLEUR_EMOJI = ["🔴", "🟠", "🟡", "🟢", "🟣"];
 
@@ -15,7 +15,7 @@ const NIVEAU_KLEUR_EMOJI = ["🔴", "🟠", "🟡", "🟢", "🟣"];
  * n8n-workflow (zie project_vit_scan_email_webhook_scope in het geheugen):
  * die mailt het rapport naar de respondent (als die een e-mailadres
  * achterliet) en zet de resultaten in haar Google Sheet. Altijd server-side
- * (SECURITY.md regel 1) — de webhook-URL staat alleen in
+ * (SECURITY.md regel 1). De webhook-URL staat alleen in
  * `N8N_RESULTATEN_WEBHOOK_URL` (env, nooit client-side/`NEXT_PUBLIC_`).
  *
  * Dit is een secundaire integratie: als de webhook faalt, mag dat het eigen
@@ -40,15 +40,14 @@ const RequestSchema = z.object({
   email: z.string().trim().email().max(320).nullable().optional().transform((v) => (v ? v : null)),
   respondentCode: z.string().trim().min(1).max(100),
   openVraagAntwoord: z.string().trim().max(5000).nullable().optional().transform((v) => (v ? v : null)),
-  // Alleen relevant bij scanrondes zonder vaste organisatiekoppeling (bv. een
-  // algemene workshop-link) — de medewerker vult dan zelf in voor welk
-  // bedrijf de scan is, puur om in de n8n-webhook/Google Sheet te zetten.
-  // Wordt niet in Supabase bewaard.
+  // De organisatienaam die al bij de scanronde hoort (context.organisatieNaam),
+  // puur om in de n8n-webhook/Google Sheet te zetten. Wordt niet in Supabase
+  // bewaard.
   organisatie: z.string().trim().max(200).nullable().optional().transform((v) => (v ? v : null)),
 });
 
 // Zelfde best-effort in-memory rate limiting als /api/rapport-pdf (zie daar
-// voor de beperkingen — geen Redis in Wave 1).
+// voor de beperkingen, geen Redis in Wave 1).
 const RATE_LIMIT_VENSTER_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 10;
 const rateLimitStore = new Map<string, { count: number; resetOp: number }>();
@@ -109,7 +108,7 @@ export async function POST(request: NextRequest) {
 
     // `answers` en `recommendation` in het exacte formaat van de oude
     // Lovable-workflow (zie werkgeluk-kompas-main/src/components/ResultsPage.tsx
-    // en surveyData.ts) — die velden ontbraken hier, terwijl de bestaande
+    // en surveyData.ts), die velden ontbraken hier terwijl de bestaande
     // n8n-workflow (e-mail + Google Sheet) er mogelijk stappen op baseert.
     const answers = Object.entries(input.antwoorden).map(([questionId, score]) => ({
       questionId,
@@ -135,33 +134,9 @@ export async function POST(request: NextRequest) {
       tips,
     };
 
-    // START-call: maakt de rij in Google Sheets aan. Moet vóór de END-call
-    // hieronder (die de rij zoekt en vult), en met exact hetzelfde
-    // e-mailadres — vandaar dat `name`/`email` hier dezelfde variabelen zijn
-    // als in de END-payload verderop (zie n8n-scan-koppeling-spec.md).
-    // Dit is de vroegst mogelijke plek waarop naam én e-mail allebei bekend
-    // zijn: e-mail wordt pas op het laatste scherm ingevuld, niet bij de
-    // intro.
-    const startPayload = {
-      step: "start",
-      name: input.naam,
-      email: input.email,
-      bedrijf: input.organisatie,
-    };
-
-    const startResponse = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(startPayload),
-    });
-
-    if (!startResponse.ok) {
-      // Niet fataal: de END-call hieronder wordt alsnog geprobeerd. Als de
-      // START-call faalde vindt n8n straks geen rij, maar dat is niet erger
-      // dan de situatie van vóór deze fix.
-      console.error("n8n-webhook (start) gaf een foutstatus:", startResponse.status);
-    }
-
+    // Eén enkele call bij afronden, met de volledige resultaten + PDF. De
+    // n8n-workflow doet zelf de upsert (rij aanmaken/vullen in één stap),
+    // dus er is geen aparte START-call meer nodig.
     const payload = {
       step: "end",
       name: input.naam,

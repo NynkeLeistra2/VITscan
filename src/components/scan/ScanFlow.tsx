@@ -176,7 +176,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
         emailVoorOpslag || null
       );
       // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
-      // afgewacht/geblokkeerd op — een storing hierin mag de respondent
+      // afgewacht/geblokkeerd op, een storing hierin mag de respondent
       // nooit het zicht op het eigen rapport ontnemen.
       fetch("/api/verstuur-resultaten", {
         method: "POST",
@@ -187,9 +187,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
           email: emailVoorOpslag || null,
           respondentCode: sessie!.respondentCode,
           openVraagAntwoord: sessie!.openVraagAntwoord,
-          // Wat de medewerker zelf invult wint; anders de organisatie die al
-          // vaststaat via de scanronde (zie context.organisatieNaam).
-          organisatie: sessie!.organisatie.trim() || context.organisatieNaam || null,
+          organisatie: context.organisatieNaam || null,
         }),
       }).catch(() => {});
       bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true });
@@ -220,8 +218,6 @@ export function ScanFlow({ context }: ScanFlowProps) {
         respondentCode={sessie.respondentCode}
         naam={sessie.naam}
         onNaamWijzig={(naam) => bijwerken({ naam })}
-        organisatie={sessie.organisatie}
-        onOrganisatieWijzig={(organisatie) => bijwerken({ organisatie })}
         emailVerplicht={context.emailVerplicht}
         onStart={start}
         bezig={bezig}
