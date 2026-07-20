@@ -30,6 +30,27 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
   const [pdfBezig, setPdfBezig] = useState(false);
   const [pdfFoutmelding, setPdfFoutmelding] = useState<string | null>(null);
 
+  /**
+   * Geeft de zojuist berekende thema-scores door aan de losstaande,
+   * self-contained opdrachtenpagina (public/opdrachten.html, het werkboek
+   * "Als alles klopt") via localStorage — bewust geen URL-parameters, want
+   * die belanden in server-/CDN-logs en dit zijn privacygevoelige
+   * welzijnsscores. De opdrachtenpagina leest de sleutel uit en wist 'm
+   * meteen weer.
+   */
+  function gaNaarBoost() {
+    try {
+      const scores = Object.fromEntries(
+        resultaat.themaScores.map((thema) => [thema.themaId, thema.score])
+      );
+      window.localStorage.setItem("boost-opdrachten-scores", JSON.stringify(scores));
+    } catch {
+      // Geen opslag beschikbaar (bv. privénavigatie) — de opdrachtenpagina
+      // werkt dan gewoon met lege gele vakjes.
+    }
+    window.location.assign("/opdrachten.html");
+  }
+
   async function downloadPdf() {
     setPdfFoutmelding(null);
     setPdfBezig(true);
@@ -149,7 +170,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         <p className="mt-2 text-zinc-700">{algemeen.afsluiting.tekst}</p>
       </div>
 
-      <div className="mt-8 flex flex-col items-center">
+      <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <button
           type="button"
           onClick={downloadPdf}
@@ -158,10 +179,17 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         >
           {pdfBezig ? "Rapport wordt gemaakt..." : "Download rapport (PDF)"}
         </button>
-        {pdfFoutmelding && (
-          <p className="mt-3 text-sm text-red-600">{pdfFoutmelding}</p>
-        )}
+        <button
+          type="button"
+          onClick={gaNaarBoost}
+          className="h-12 w-full max-w-xs rounded-lg bg-[#2c4a3e] font-medium text-white transition-colors hover:bg-[#22392f]"
+        >
+          Ga naar Boost je werkgeluk
+        </button>
       </div>
+      {pdfFoutmelding && (
+        <p className="mt-3 text-center text-sm text-red-600">{pdfFoutmelding}</p>
+      )}
 
       <div className="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-center">
         <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>

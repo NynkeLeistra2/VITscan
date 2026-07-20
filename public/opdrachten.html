@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Als alles klopt — Boost je werkgeluk</title>
+<style>
+  :root {
+    --donkergroen: #2c4a3e;
+    --roze: #dba99e;
+    --creme: #faf5ef;
+    --geel-rand: #d9a441;
+    --geel-vlak: #fff8e6;
+    --tekst: #24312b;
+    --lijn: #d8ccbc;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--creme);
+    color: var(--tekst);
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1rem;
+  }
+
+  header img {
+    height: 56px;
+    width: auto;
+  }
+
+  h1 {
+    color: var(--donkergroen);
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .intro {
+    max-width: 620px;
+    margin: 0 auto 2.5rem;
+    padding: 0 1.25rem;
+    text-align: center;
+    color: #4b4038;
+  }
+
+  .melding {
+    max-width: 620px;
+    margin: 0 auto 2rem;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+    background: #fff8e6;
+    border: 1px solid var(--geel-rand);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: none;
+  }
+
+  .melding.zichtbaar { display: block; }
+
+  section.thema {
+    max-width: 1000px;
+    margin: 0 auto 3.5rem;
+    padding: 0 1rem;
+  }
+
+  h2.thema-titel {
+    text-align: center;
+    color: var(--donkergroen);
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.75rem;
+  }
+
+  .legenda {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: #4b4038;
+  }
+  .legenda span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .bolletje { width: 0.8rem; height: 0.8rem; border-radius: 50%; display: inline-block; }
+  .bolletje.geel { background: var(--geel-vlak); border: 2px solid var(--geel-rand); }
+  .bolletje.groen { background: #eef4f1; border: 2px solid var(--donkergroen); }
+
+  /* Desktop mindmap */
+  .mindmap {
+    position: relative;
+    width: 100%;
+    max-width: 820px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+  }
+
+  .cirkel-midden {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: var(--roze);
+    border: 3px solid var(--donkergroen);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 800;
+    color: var(--donkergroen);
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 168px;
+    text-align: center;
+  }
+
+  .node .label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--donkergroen);
+    margin-bottom: 0.35rem;
+  }
+
+  .vakjes {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: center;
+  }
+
+  .vakjes input {
+    width: 2.5rem;
+    height: 2.5rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 6px;
+    font-family: inherit;
+  }
+
+  input.huidig { border: 2px solid var(--geel-rand); background: var(--geel-vlak); color: #6b5008; }
+  input.gewenst { border: 2px solid var(--donkergroen); background: #eef4f1; color: var(--donkergroen); }
+
+  .wonder-blok {
+    max-width: 640px;
+    margin: 2.5rem auto 0;
+  }
+
+  .wonder-item {
+    background: #fff;
+    border: 1px solid var(--lijn);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .wonder-item .kop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .wonder-item .kop-label {
+    font-weight: 800;
+    color: var(--donkergroen);
+  }
+
+  .wonder-item p.vraag {
+    margin: 0.6rem 0 0.4rem;
+    font-size: 0.88rem;
+    color: #6b5f52;
+  }
+
+  .wonder-item textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid var(--lijn);
+    border-radius: 8px;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+  }
+
+  /* Mobiel: kaartweergave i.p.v. cirkel */
+  .kaarten { display: none; }
+
+  @media (max-width: 760px) {
+    .mindmap { display: none; }
+    .kaarten {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .kaart {
+      background: #fff;
+      border: 1px solid var(--lijn);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .kaart .label { font-weight: 800; color: var(--donkergroen); margin-bottom: 0.5rem; }
+    .kaart .vakjes { justify-content: flex-start; }
+  }
+
+  .acties {
+    text-align: center;
+    margin: 2.5rem 0 3.5rem;
+  }
+
+  button.print-knop {
+    background: var(--donkergroen);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 1.9rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  button.print-knop:hover { background: #22392f; }
+
+  .acties p {
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    color: #7a6f61;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    color: #8a8072;
+    font-size: 0.85rem;
+    border-top: 1px solid var(--lijn);
+  }
+  footer a { color: #8a8072; }
+
+  @media print {
+    .acties, .melding { display: none !important; }
+    .mindmap { display: none !important; }
+    .kaarten { display: flex !important; flex-direction: column; gap: 0.75rem; }
+    section.thema { page-break-inside: avoid; margin-bottom: 1.5rem; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/nynke-logo-pdf.png" alt="Nynke Leistra Coaching en Advies" />
+  <h1>Als alles klopt</h1>
+</header>
+
+<div class="intro">
+  <p>
+    Stel: er gebeurt vannacht een wonder. Je voelt volop werkgeluk, krijgt
+    energie van je werk en leven, en hebt weer echt zin om te beginnen.
+  </p>
+  <p>
+    In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk
+    ernaar: ben je tevreden, of mag het anders? Vul daarna in het
+    <strong>groene</strong> vakje in welk cijfer je zou geven als dat wonder
+    gebeurd is. Er is geen goed of fout — jij hebt de regie.
+  </p>
+</div>
+
+<p class="melding" id="melding">
+  Er zijn geen scan-scores gevonden om automatisch in te vullen. Geen
+  probleem — vul de gele vakjes gewoon zelf in.
+</p>
+
+<div id="secties"></div>
+
+<div class="acties">
+  <button class="print-knop" type="button" id="print-btn">Opslaan / printen als PDF</button>
+  <p>Alles wat je hier invult blijft alleen in je eigen browser — er wordt niets naar een server gestuurd.</p>
+</div>
+
+<footer>
+  Boost je werkgeluk — Nynke Leistra Coaching en Advies © 2026<br />
+  <a href="https://www.nynkeleistra.nl">www.nynkeleistra.nl</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // Vaste structuur uit het werkboek "Als alles klopt". Losstaand van de
+  // scan-app (bewust: dit bestand is self-contained), dus bij een
+  // toekomstige wijziging van de 19 thema's in vit-scan-stellingen.json
+  // moet deze lijst er handmatig op aangepast worden.
+  var THEMAS = [
+    {
+      deelId: "werkenergie",
+      titel: "WERKENERGIE",
+      cirkelLabel: "WERK",
+      items: [
+        { id: "plezier", label: "Plezier" },
+        { id: "voldoening", label: "Voldoening" },
+        { id: "competentie", label: "Competenties" },
+        { id: "uitdaging", label: "Uitdaging" },
+        { id: "autonomie", label: "Autonomie" },
+        { id: "waardering", label: "Waardering" },
+        { id: "zingeving", label: "Zingeving" },
+        { id: "vertrouwen", label: "Vertrouwen" },
+        { id: "verbinding", label: "Verbinding" },
+        { id: "duidelijkheid", label: "Duidelijkheid" },
+        { id: "fysieke_werkomgeving", label: "Fysieke werkomgeving" }
+      ]
+    },
+    {
+      deelId: "persoonlijk_welzijn",
+      titel: "PERSOONLIJK WELZIJN",
+      cirkelLabel: "PERSOONLIJK\nWELZIJN",
+      items: [
+        { id: "balans", label: "Balans" },
+        { id: "fysieke_gezondheid", label: "Fysieke gezondheid" },
+        { id: "mentale_gezondheid", label: "Mentale gezondheid" },
+        { id: "ontspanning", label: "Ontspanning / vrije tijd" },
+        { id: "financien", label: "Financiën" },
+        { id: "persoonlijke_ontwikkeling", label: "Persoonlijke ontwikkeling" },
+        { id: "familie_relaties", label: "Familie en relaties" },
+        { id: "huis_leefomgeving", label: "Huis en leefomgeving" }
+      ]
+    }
+  ];
+
+  var HANDOFF_SLEUTEL = "boost-opdrachten-scores";
+  var OPSLAG_SLEUTEL = "boost-opdrachten-antwoorden";
+
+  // --- Scan-scores ophalen (eenmalige overdracht, meteen weer wissen) ---
+  var scanScores = {};
+  try {
+    var ruw = window.localStorage.getItem(HANDOFF_SLEUTEL);
+    if (ruw) {
+      scanScores = JSON.parse(ruw) || {};
+    }
+    window.localStorage.removeItem(HANDOFF_SLEUTEL);
+  } catch (e) {
+    scanScores = {};
+  }
+  if (Object.keys(scanScores).length === 0) {
+    var melding = document.getElementById("melding");
+    if (melding) melding.className = "melding zichtbaar";
+  }
+
+  // --- Eerder ingevulde antwoorden op deze pagina (los van de scan-overdracht) ---
+  var opgeslagenAntwoorden = {};
+  try {
+    var ruwOpgeslagen = window.localStorage.getItem(OPSLAG_SLEUTEL);
+    if (ruwOpgeslagen) opgeslagenAntwoorden = JSON.parse(ruwOpgeslagen) || {};
+  } catch (e) {
+    opgeslagenAntwoorden = {};
+  }
+
+  function opslaan() {
+    try {
+      window.localStorage.setItem(OPSLAG_SLEUTEL, JSON.stringify(opgeslagenAntwoorden));
+    } catch (e) {
+      /* geen opslag beschikbaar (bv. privénavigatie) — niet fataal */
+    }
+  }
+
+  function veldWaarde(id, veld, standaard) {
+    var opgeslagen = opgeslagenAntwoorden[id] && opgeslagenAntwoorden[id][veld];
+    if (opgeslagen !== undefined && opgeslagen !== null && opgeslagen !== "") return opgeslagen;
+    return standaard === undefined ? "" : standaard;
+  }
+
+  function bijwerken(id, veld, waarde) {
+    if (!opgeslagenAntwoorden[id]) opgeslagenAntwoorden[id] = {};
+    opgeslagenAntwoorden[id][veld] = waarde;
+    opslaan();
+  }
+
+  // --- Cijfer-vakjes (geel/groen) ---
+  function maakVakjes(item) {
+    var wrap = document.createElement("div");
+    wrap.className = "vakjes";
+
+    var huidig = document.createElement("input");
+    huidig.type = "number";
+    huidig.min = "1";
+    huidig.max = "10";
+    huidig.step = "0.1";
+    huidig.className = "huidig";
+    huidig.setAttribute("aria-label", item.label + " — huidig cijfer");
+    var scanWaarde = scanScores[item.id];
+    huidig.value = veldWaarde(item.id, "huidig", scanWaarde !== undefined ? scanWaarde : "");
+    huidig.addEventListener("input", function () {
+      bijwerken(item.id, "huidig", huidig.value);
+    });
+
+    var gewenst = document.createElement("input");
+    gewenst.type = "number";
+    gewenst.min = "1";
+    gewenst.max = "10";
+    gewenst.step = "0.1";
+    gewenst.className = "gewenst";
+    gewenst.setAttribute("aria-label", item.label + " — gewenst cijfer");
+    gewenst.value = veldWaarde(item.id, "gewenst", "");
+    gewenst.addEventListener("input", function () {
+      bijwerken(item.id, "gewenst", gewenst.value);
+    });
+
+    wrap.appendChild(huidig);
+    wrap.appendChild(gewenst);
+    return wrap;
+  }
+
+  // --- Desktop mindmap: items gelijkmatig rond een cirkel ---
+  function bouwMindmap(thema) {
+    var mindmap = document.createElement("div");
+    mindmap.className = "mindmap";
+
+    var midden = document.createElement("div");
+    midden.className = "cirkel-midden";
+    midden.textContent = thema.cirkelLabel;
+    mindmap.appendChild(midden);
+
+    var n = thema.items.length;
+    var radius = 42; // % van de container
+    thema.items.forEach(function (item, i) {
+      var hoek = (i / n) * 2 * Math.PI - Math.PI / 2; // start bovenaan
+      var x = 50 + radius * Math.cos(hoek);
+      var y = 50 + radius * Math.sin(hoek);
+
+      var node = document.createElement("div");
+      node.className = "node";
+      node.style.left = x + "%";
+      node.style.top = y + "%";
+
+      var label = document.createElement("div");
+      label.className = "label";
+      label.textContent = item.label;
+      node.appendChild(label);
+      node.appendChild(maakVakjes(item));
+
+      mindmap.appendChild(node);
+    });
+
+    return mindmap;
+  }
+
+  // --- Mobiele kaartweergave ---
+  function bouwKaarten(thema) {
+    var lijst = document.createElement("div");
+    lijst.className = "kaarten";
+    thema.items.forEach(function (item) {
+      var kaart = document.createElement("div");
+      kaart.className = "kaart";
+      var label = document.createElement("div");
+      label.className = "label";
+      label.textContent = item.label;
+      kaart.appendChild(label);
+      kaart.appendChild(maakVakjes(item));
+      lijst.appendChild(kaart);
+    });
+    return lijst;
+  }
+
+  // --- Wonder-reflectie tekstvelden ---
+  function bouwWonderBlok(thema) {
+    var blok = document.createElement("div");
+    blok.className = "wonder-blok";
+    thema.items.forEach(function (item) {
+      var wrap = document.createElement("div");
+      wrap.className = "wonder-item";
+
+      var kop = document.createElement("div");
+      kop.className = "kop";
+      var koplabel = document.createElement("span");
+      koplabel.className = "kop-label";
+      koplabel.textContent = item.label;
+      kop.appendChild(koplabel);
+      wrap.appendChild(kop);
+
+      var vraag = document.createElement("p");
+      vraag.className = "vraag";
+      vraag.textContent = "Als dat wonder is gebeurd — wat is er precies veranderd, en hoe voel jij je?";
+      wrap.appendChild(vraag);
+
+      var textarea = document.createElement("textarea");
+      textarea.value = veldWaarde(item.id, "tekst", "");
+      textarea.addEventListener("input", function () {
+        bijwerken(item.id, "tekst", textarea.value);
+      });
+      wrap.appendChild(textarea);
+
+      blok.appendChild(wrap);
+    });
+    return blok;
+  }
+
+  // --- Alles opbouwen ---
+  var container = document.getElementById("secties");
+  THEMAS.forEach(function (thema) {
+    var sectie = document.createElement("section");
+    sectie.className = "thema";
+
+    var titel = document.createElement("h2");
+    titel.className = "thema-titel";
+    titel.textContent = thema.titel;
+    sectie.appendChild(titel);
+
+    var legenda = document.createElement("div");
+    legenda.className = "legenda";
+    legenda.innerHTML =
+      '<span><span class="bolletje geel"></span>Huidig (uit je scan)</span>' +
+      '<span><span class="bolletje groen"></span>Gewenst (als het wonder is gebeurd)</span>';
+    sectie.appendChild(legenda);
+
+    sectie.appendChild(bouwMindmap(thema));
+    sectie.appendChild(bouwKaarten(thema));
+    sectie.appendChild(bouwWonderBlok(thema));
+
+    container.appendChild(sectie);
+  });
+
+  document.getElementById("print-btn").addEventListener("click", function () {
+    window.print();
+  });
+})();
+</script>
+
+</body>
+</html>
