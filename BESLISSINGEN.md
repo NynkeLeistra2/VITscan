@@ -393,3 +393,17 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   (Actie) en BONUS tonen nu "Boost je werkgeluk" boven aan de pagina.
 - **Knoplabel bij Actie → BONUS**: "Naar volgende opdracht" wordt "Naar
   bonus" op de voorlaatste stap, zodat duidelijk is wat je te wachten staat.
+- **Vercel-koppeling was losgeraakt**: de deploy voor bovenstaande wijzigingen
+  kwam niet op gang, ook niet na een push — bleek dat de GitHub-koppeling in
+  Vercel (Project → Settings → Git) niet meer actief was, zonder foutmelding
+  of deployment-poging. Nynke heeft 'm opnieuw gekoppeld; daarna alsnog een
+  (lege) commit gepusht om de eerste deploy op de hersteld koppeling te
+  triggeren. Reconnecten alleen pakt gemiste commits niet met terugwerkende
+  kracht op.
+- **"Gevoelsdoel"-invoerveld bij zelf toegevoegde actie-blokken** (Stap 4,
+  de blokken zonder vast gevoelsdoel uit stap 2) had geen styling: het
+  label was niet vetgedrukt en het tekstvak raakte de labeltekst. Kwam
+  doordat dit ene mini-veld als enige geen CSS-klasse kreeg (de generieke
+  `maakMiniVeld()`-helper zet die alleen bij meerregelige velden). Eigen
+  klasse `gevoelsdoel-veld` toegevoegd met dezelfde opmaak (vet label,
+  ruimte eronder, volle breedte) als de rest van de velden in dat blok.

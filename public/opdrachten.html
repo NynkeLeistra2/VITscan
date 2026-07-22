@@ -309,6 +309,20 @@
     color: var(--violet-donker);
     margin: 0 0 0.8rem;
   }
+  .actie-blok .gevoelsdoel-veld label {
+    display: block;
+    font-weight: 800;
+    color: var(--violet-donker);
+    margin-bottom: 0.4rem;
+  }
+  .actie-blok .gevoelsdoel-veld input[type="text"] {
+    width: 100%;
+    border: 1px solid var(--lijn);
+    border-radius: 8px;
+    padding: 0.65rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
   .toevoeg-knop {
     display: block;
     width: 100%;
@@ -984,7 +998,9 @@
         label.textContent = "Gevoelsdoel: " + gevoelsdoelTekst;
         blok.appendChild(label);
       } else {
-        blok.appendChild(maakMiniVeld("s3-g" + idSuffix + "-gevoelsdoel", "Gevoelsdoel", false));
+        var gevoelsdoelVeld = maakMiniVeld("s3-g" + idSuffix + "-gevoelsdoel", "Gevoelsdoel", false);
+        gevoelsdoelVeld.className = "gevoelsdoel-veld";
+        blok.appendChild(gevoelsdoelVeld);
       }
 
       [1, 2].forEach(function (subdoelNr) {
