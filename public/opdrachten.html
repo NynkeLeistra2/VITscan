@@ -288,34 +288,14 @@
     font-size: 1.05rem;
   }
 
-  .invloed-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+  .invloed-afbeelding {
+    display: block;
     max-width: 640px;
+    width: 100%;
+    height: auto;
     margin: 0 auto 1.5rem;
-  }
-  @media (max-width: 560px) {
-    .invloed-grid { grid-template-columns: 1fr; }
-  }
-  .invloed-kol {
-    background: #fff;
-    border: 1px solid var(--lijn);
     border-radius: 10px;
-    padding: 1rem 1.1rem;
   }
-  .invloed-kol h3 {
-    margin: 0 0 0.6rem;
-    font-size: 0.9rem;
-    color: var(--violet-donker);
-  }
-  .invloed-kol ul {
-    margin: 0;
-    padding-left: 1.1rem;
-    font-size: 0.85rem;
-    color: #5a4d53;
-  }
-  .invloed-kol li { margin-bottom: 0.25rem; }
 
   .actie-blok {
     background: #fff;
@@ -549,7 +529,7 @@
 
 <header>
   <img src="/nynke-logo-pdf.png" alt="Nynke Leistra Coaching en Advies" />
-  <h1>Als alles klopt</h1>
+  <h1 id="stap-titel">Als alles klopt</h1>
 </header>
 
 <div class="stap-indicator" id="stap-indicator"></div>
@@ -963,17 +943,11 @@
       "Richt je energie op zaken waar je invloed op hebt, en laat los wat buiten jouw macht ligt. Factoren waar je geen directe invloed op hebt vragen ook om een keuze: soms is dat accepteren en loslaten, soms een indirecte actie (niet de situatie veranderen, maar wel hoe jij ermee omgaat).";
     inhoud.appendChild(intro);
 
-    var invloedGrid = document.createElement("div");
-    invloedGrid.className = "invloed-grid";
-    invloedGrid.innerHTML =
-      '<div class="invloed-kol"><h3>Cirkel van invloed: WEL invloed op</h3><ul>' +
-      "<li>Wat ik denk</li><li>Hoe ik voor mezelf zorg</li><li>Vragen stellen</li><li>Eigen grenzen stellen</li>" +
-      "<li>Wat en hoe ik iets zeg</li><li>Mijn mening uiten</li><li>Mijn gedrag</li><li>Met wie ik omga</li>" +
-      '</ul></div><div class="invloed-kol"><h3>GEEN invloed op</h3><ul>' +
-      "<li>Wat anderen denken</li><li>Wat anderen geloven</li><li>Het weer</li><li>De tijd</li>" +
-      "<li>Wat een ander zegt</li><li>Wat een ander (van je) wil</li><li>Hoe een ander zich gedraagt</li><li>Wat een ander van je vindt</li>" +
-      "</ul></div>";
-    inhoud.appendChild(invloedGrid);
+    var invloedAfbeelding = document.createElement("img");
+    invloedAfbeelding.className = "invloed-afbeelding";
+    invloedAfbeelding.src = "/cirkel-van-invloed.png";
+    invloedAfbeelding.alt = "Cirkel van invloed: waar je wel en geen invloed op hebt";
+    inhoud.appendChild(invloedAfbeelding);
     var invloedBron = document.createElement("p");
     invloedBron.className = "veld-hulp";
     invloedBron.style.textAlign = "center";
@@ -995,6 +969,10 @@
 
     var blokkenContainer = document.createElement("div");
     inhoud.appendChild(blokkenContainer);
+    var vasteBlokkenContainer = document.createElement("div");
+    var extraBlokkenContainer = document.createElement("div");
+    blokkenContainer.appendChild(vasteBlokkenContainer);
+    blokkenContainer.appendChild(extraBlokkenContainer);
 
     function maakActieBlok(idSuffix, gevoelsdoelTekst) {
       var blok = document.createElement("div");
@@ -1030,26 +1008,62 @@
       return blok;
     }
 
-    // Gevoelsdoelen 1 t/m 4 uit stap 2 (indien ingevuld) krijgen automatisch
-    // een actie-blok, met de tekst als vaste label.
-    var vasteGevoelsdoelen = [];
-    for (var i = 1; i <= 4; i++) {
-      var waarde = veldLezen("s2-gevoelsdoel-" + i, "");
-      if (waarde.trim()) vasteGevoelsdoelen.push({ idSuffix: i, tekst: waarde });
-    }
-    vasteGevoelsdoelen.forEach(function (gevoelsdoel) {
-      blokkenContainer.appendChild(maakActieBlok(gevoelsdoel.idSuffix, gevoelsdoel.tekst));
-    });
-
     // Extra, zelf toe te voegen gevoelsdoelen (los van stap 2), met een
     // invulbaar Gevoelsdoel-veld. Aantal wordt onthouden zodat ze bij
     // terugkomst blijven staan.
     var extraAantal = parseInt(veldLezen("s3-extra-aantal", "0"), 10) || 0;
-    if (vasteGevoelsdoelen.length === 0 && extraAantal === 0) {
+    var standaardExtraToegevoegd = false;
+
+    function extraBlokIsLeeg(idSuffix) {
+      var ids = ["gevoelsdoel"];
+      [1, 2].forEach(function (subdoelNr) {
+        var prefix = "subdoel" + subdoelNr;
+        ids.push(prefix, prefix + "-actie", prefix + "-wanneer", prefix + "-hulp");
+      });
+      return ids.every(function (suffix) {
+        return !veldLezen("s3-g" + idSuffix + "-" + suffix, "").trim();
+      });
+    }
+
+    // Gevoelsdoelen 1 t/m 4 uit stap 2 (indien ingevuld) krijgen automatisch
+    // een actie-blok, met de tekst als vaste label. Opnieuw opgebouwd bij elk
+    // bezoek aan deze stap (i.p.v. alleen bij het laden van de pagina), zodat
+    // een gevoelsdoel dat je zonder herladen net op stap 2 hebt ingevuld hier
+    // ook meteen verschijnt. Elk blok gebruikt stabiele veld-id's per
+    // idSuffix, dus opnieuw opbouwen verliest geen al ingevulde subdoelen.
+    function ververVasteGevoelsdoelen() {
+      vasteBlokkenContainer.innerHTML = "";
+      var vasteGevoelsdoelen = [];
+      for (var i = 1; i <= 4; i++) {
+        var waarde = veldLezen("s2-gevoelsdoel-" + i, "");
+        if (waarde.trim()) vasteGevoelsdoelen.push({ idSuffix: i, tekst: waarde });
+      }
+      vasteGevoelsdoelen.forEach(function (gevoelsdoel) {
+        vasteBlokkenContainer.appendChild(maakActieBlok(gevoelsdoel.idSuffix, gevoelsdoel.tekst));
+      });
+
+      // Het automatisch toegevoegde lege startblok (zie hieronder) is alleen
+      // nodig zolang er nog geen enkel gevoelsdoel is. Verschijnt er alsnog
+      // een vast gevoelsdoel uit stap 2 en is dat startblok nog leeg, dan
+      // ruimen we het op i.p.v. het naast de echte blokken te laten staan.
+      if (standaardExtraToegevoegd && vasteGevoelsdoelen.length > 0 && extraBlokIsLeeg("extra1")) {
+        var startBlok = extraBlokkenContainer.firstElementChild;
+        if (startBlok) extraBlokkenContainer.removeChild(startBlok);
+        standaardExtraToegevoegd = false;
+        extraAantal = 0;
+        veldSchrijven("s3-extra-aantal", "0");
+      }
+
+      return vasteGevoelsdoelen.length;
+    }
+    var vasteAantal = ververVasteGevoelsdoelen();
+
+    if (vasteAantal === 0 && extraAantal === 0) {
       extraAantal = 1;
+      standaardExtraToegevoegd = true;
     }
     for (var e = 1; e <= extraAantal; e++) {
-      blokkenContainer.appendChild(maakActieBlok("extra" + e, null));
+      extraBlokkenContainer.appendChild(maakActieBlok("extra" + e, null));
     }
 
     var toevoegKnop = document.createElement("button");
@@ -1060,7 +1074,7 @@
       extraAantal += 1;
       veldSchrijven("s3-extra-aantal", String(extraAantal));
       var nieuwBlok = maakActieBlok("extra" + extraAantal, null);
-      blokkenContainer.appendChild(nieuwBlok);
+      extraBlokkenContainer.appendChild(nieuwBlok);
       var eersteVeld = nieuwBlok.querySelector("input, textarea");
       if (eersteVeld) eersteVeld.focus();
       nieuwBlok.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1076,6 +1090,7 @@
     );
 
     sectie.appendChild(inhoud);
+    sectie.ververVasteGevoelsdoelen = ververVasteGevoelsdoelen;
     return sectie;
   }
 
@@ -1249,18 +1264,27 @@
 
   var vorigeBtn = document.getElementById("vorige-btn");
   var volgendeBtn = document.getElementById("volgende-btn");
+  var titelEl = document.getElementById("stap-titel");
   var bolletjes = indicator.querySelectorAll(".stap-bolletje");
 
   function toonStap(index) {
     huidigeStap = index;
     secties.forEach(function (sectie, i) {
-      sectie.className = "thema" + (i === index ? " actief" : "");
+      var isActief = i === index;
+      sectie.className = "thema" + (isActief ? " actief" : "");
+      if (isActief && typeof sectie.ververVasteGevoelsdoelen === "function") {
+        sectie.ververVasteGevoelsdoelen();
+      }
     });
     bolletjes.forEach(function (bol, i) {
       bol.className = "stap-bolletje" + (i === index ? " actief" : "");
     });
+    // "Als alles klopt" is de naam van opdracht 1 (de twee mindmap-stappen),
+    // niet van het hele programma.
+    titelEl.textContent = index < THEMAS.length ? "Als alles klopt" : "Boost je werkgeluk";
     vorigeBtn.hidden = index === 0;
     volgendeBtn.hidden = index === secties.length - 1;
+    volgendeBtn.textContent = index === secties.length - 2 ? "Naar bonus" : "Naar volgende opdracht";
     try {
       window.localStorage.setItem(STAP_SLEUTEL, String(index));
     } catch (e) {

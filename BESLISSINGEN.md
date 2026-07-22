@@ -362,3 +362,34 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   foutmeldingen) stuurt door naar een nieuwe, aparte n8n-webhook
   (`N8N_EVALUATIE_WEBHOOK_URL`, nog door Nynke aan te maken/te vullen) die
   een e-mail naar contact@nynkeleistra.nl moet sturen.
+
+## Wave 1, stap 7 — Doorlopende test + fixes Boost-flow (2026-07-22)
+
+- **Bug: gevoelsdoelen verschenen pas na page-reload op Stap 4 (Actie).** De
+  stap-secties van `public/opdrachten.html` worden één keer bij het laden
+  van de pagina opgebouwd; `toonStap()` wisselde alleen zichtbaarheid, dus
+  een gevoelsdoel dat je zonder herladen net op Stap 2 had ingevuld, stond
+  nog niet in de al gebouwde actie-blokken van Stap 4. Opgelost door de
+  vaste gevoelsdoel-blokken te isoleren in een eigen container
+  (`vasteBlokkenContainer`, los van de zelf toe te voegen `extraBlokkenContainer`)
+  en die opnieuw op te bouwen (`ververVasteGevoelsdoelen()`) telkens als de
+  gebruiker naar die stap navigeert. Veld-id's per gevoelsdoel blijven
+  stabiel, dus opnieuw opbouwen verliest geen al ingevulde subdoelen.
+  Tegelijk het automatisch toegevoegde lege startblok (verschijnt alleen
+  als er nog geen enkel gevoelsdoel is) laten opruimen zodra er alsnog een
+  vast gevoelsdoel bijkomt en dat startblok nog leeg is.
+- **SoundCloud-oefening stond op Private** (bezoekers kregen "You have not
+  provided a valid SoundCloud URL" te zien) en de **n8n-evaluatiewebhook gaf
+  404** (workflow stond nog op inactief) — beide door Nynke zelf in
+  SoundCloud/n8n gefixed, geen code-wijziging nodig. Evaluatieformulier
+  end-to-end getest met een echte testinzending (server-log ging van 502
+  naar 200).
+- **Cirkel-van-Invloed-tekstlijst vervangen door afbeelding**
+  (`public/cirkel-van-invloed.png`, aangeleverd door Nynke) op Stap 4
+  ("Tijd voor actie"), i.p.v. de twee losse WEL/GEEN-invloed-lijstjes.
+- **Titel "Als alles klopt" alleen bij opdracht 1** (de twee mindmap-stappen
+  Werkenergie/Persoonlijk Welzijn) — dat is de naam van die ene opdracht uit
+  het werkboek, niet van het hele programma. Stap 2 (Gevoelsdoelen), Stap 3
+  (Actie) en BONUS tonen nu "Boost je werkgeluk" boven aan de pagina.
+- **Knoplabel bij Actie → BONUS**: "Naar volgende opdracht" wordt "Naar
+  bonus" op de voorlaatste stap, zodat duidelijk is wat je te wachten staat.
