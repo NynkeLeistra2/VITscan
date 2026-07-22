@@ -407,3 +407,31 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   `maakMiniVeld()`-helper zet die alleen bij meerregelige velden). Eigen
   klasse `gevoelsdoel-veld` toegevoegd met dezelfde opmaak (vet label,
   ruimte eronder, volle breedte) als de rest van de velden in dat blok.
+
+## Wave 1, stap 7 — Echte Intuïst®-kaartjes in BONUS (2026-07-22)
+
+- **Eerdere beslissing (stap 7, 2026-07-20) teruggedraaid**: toen bewust
+  géén Intuïst-artwork nagemaakt vanwege merk-/auteursrecht. Nynke heeft nu
+  expliciet bevestigd dat haar Intuïst-licentie digitale/publieke
+  reproductie van de kaartjes toestaat, dus alsnog de echte kaartafbeeldingen
+  gebruikt i.p.v. de tekst-kaartjes met kleurbolletje.
+- **Bron**: 12 losse foto's van de fysieke kaarten (WhatsApp-camera, door
+  Nynke aangeleverd), niet uit de PDF geknipt (geen PDF-tools beschikbaar
+  in deze omgeving). Eén kaart is gewijzigd t.o.v. de oude PDF-grid: "Held"
+  is in Nynkes huidige kaartenset vervangen door "Doorzetter".
+- **Nabewerking met `sharp`** (al aanwezig in `node_modules` als transitieve
+  dependency, geen nieuwe package nodig): rechtgezet (de meeste foto's waren
+  zijwaarts, op één na die al recht stond — per kaart gecontroleerd, niet
+  blind dezelfde rotatie toegepast), witruimte weggesneden (`trim`), licht
+  gescherpt. Verwerkingsscript niet gecommit (eenmalig gebruikt, resultaat
+  staat in `public/talenttypes/`).
+- **Formaat**: eerste versie als PNG (~17MB totaal voor 12 kaarten) was veel
+  te zwaar voor de mobiel-eerst eis uit CLAUDE.md. Verkleind naar max
+  900px breed en geëxporteerd als JPEG (kwaliteit 82) — ~0,5MB totaal, geen
+  zichtbaar kwaliteitsverlies op het scherm omdat de kaarten in de grid
+  nooit breder dan ~350px getoond worden.
+- **`talent-bol`/`talent-naam`-CSS (kleurbolletje + tekstlabel) vervangen**
+  door `talent-afbeelding` (de kaartfoto zelf bevat de naam al, dus geen
+  apart tekstlabel meer nodig). `TALENTTYPES`-array in `opdrachten.html`
+  heeft geen `kleur`-veld meer, alleen `id`/`label` (label blijft staan
+  voor de `alt`-tekst van de afbeelding).

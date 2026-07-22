@@ -408,19 +408,12 @@
     border-radius: 10px;
     padding: 1rem;
   }
-  .talent-naam {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 800;
-    color: var(--violet-donker);
+  .talent-afbeelding {
+    display: block;
+    width: 100%;
+    height: auto;
     margin-bottom: 0.6rem;
-  }
-  .talent-bol {
-    width: 0.9rem;
-    height: 0.9rem;
-    border-radius: 50%;
-    display: inline-block;
+    border-radius: 6px;
   }
   .talent-kaart textarea {
     width: 100%;
@@ -1110,21 +1103,21 @@
     return sectie;
   }
 
-  // --- Bonus: de kracht van jouw talent (Intuïst®-methode; namen/kleuren
-  // als eenvoudige tekst-badges, bewust geen Intuïst-artwork nagemaakt). ---
+  // --- Bonus: de kracht van jouw talent (Intuïst®-methode). Kaartafbeeldingen
+  // in public/talenttypes/, met toestemming van Nynkes Intuïst-licentie. ---
   var TALENTTYPES = [
-    { id: "verbinder", label: "Verbinder", kleur: "#d97757" },
-    { id: "rebel", label: "Rebel", kleur: "#2b2430" },
-    { id: "maker", label: "Maker", kleur: "#b08d1f" },
-    { id: "leider", label: "Leider", kleur: "#3f6b73" },
-    { id: "oplosser", label: "Oplosser", kleur: "#9b8bb4" },
-    { id: "optimist", label: "Optimist", kleur: "#e0836a" },
-    { id: "doener", label: "Doener", kleur: "#c98a3a" },
-    { id: "wijze", label: "Wijze", kleur: "#5b3a6e" },
-    { id: "levensgenieter", label: "Levensgenieter", kleur: "#e0b23c" },
-    { id: "held", label: "Held", kleur: "#c0524a" },
-    { id: "zorggever", label: "Zorggever", kleur: "#7a2e35" },
-    { id: "onderzoeker", label: "Onderzoeker", kleur: "#7ba7b0" }
+    { id: "verbinder", label: "Verbinder" },
+    { id: "rebel", label: "Rebel" },
+    { id: "maker", label: "Maker" },
+    { id: "leider", label: "Leider" },
+    { id: "oplosser", label: "Oplosser" },
+    { id: "optimist", label: "Optimist" },
+    { id: "doener", label: "Doener" },
+    { id: "wijze", label: "Wijze" },
+    { id: "levensgenieter", label: "Levensgenieter" },
+    { id: "doorzetter", label: "Doorzetter" },
+    { id: "zorggever", label: "Zorggever" },
+    { id: "onderzoeker", label: "Onderzoeker" }
   ];
 
   function bouwBonus() {
@@ -1151,14 +1144,11 @@
       var kaart = document.createElement("div");
       kaart.className = "talent-kaart";
 
-      var naam = document.createElement("div");
-      naam.className = "talent-naam";
-      var bol = document.createElement("span");
-      bol.className = "talent-bol";
-      bol.style.background = type.kleur;
-      naam.appendChild(bol);
-      naam.appendChild(document.createTextNode(type.label));
-      kaart.appendChild(naam);
+      var afbeelding = document.createElement("img");
+      afbeelding.className = "talent-afbeelding";
+      afbeelding.src = "/talenttypes/" + type.id + ".jpg";
+      afbeelding.alt = type.label;
+      kaart.appendChild(afbeelding);
 
       var textarea = document.createElement("textarea");
       textarea.id = "bonus-" + type.id + "-tekst";
