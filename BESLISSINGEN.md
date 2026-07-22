@@ -462,3 +462,14 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   (de delete-policy op `scanrondes` bestaat al sinds 0008); de server action
   staat dit alleen toe op rijen met `gearchiveerd_op is not null`, zodat een
   actieve scanronde hier nooit per ongeluk via kan verdwijnen.
+- **Bug: knop deed zichtbaar niets (geen foutmelding, ook geen verwijdering).**
+  Bleek dat migratie `0008_beheer_delete_policy.sql` — hoewel al sinds stap 5
+  in de repo — nooit echt in Supabase gedraaid was. Archiveren/herstellen
+  gebruikt een UPDATE-policy (0009) en werkte daardoor altijd al; een
+  écht DELETE op `scanrondes` was tot nu toe nooit uitgeprobeerd. Zonder
+  bijpassende policy laat RLS een DELETE gewoon 0 rijen raken, zonder
+  foutmelding — vandaar de stille no-op. Opgelost door 0008 alsnog
+  handmatig te draaien. **Les:** een migratiebestand in de repo hebben is
+  geen garantie dat hij ook echt toegepast is; bij nieuwe functionaliteit
+  die een nieuw type databasetoegang gebruikt (hier: DELETE i.p.v. UPDATE)
+  expliciet checken/laten bevestigen dat de bijbehorende policy al actief is.
