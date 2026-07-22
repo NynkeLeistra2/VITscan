@@ -200,6 +200,47 @@ export async function ruimVerlopenArchiefOp(): Promise<void> {
   }
 }
 
+/**
+ * Verwijdert een organisatie, maar alleen als hij geen enkele scanronde
+ * heeft (ook niet gearchiveerd) — anders zou dit via de FK-cascade (0001)
+ * ook alle teams/scanrondes en hun respondenten/antwoorden meenemen, zonder
+ * het herstelvangnet dat scanronde-archivering wel heeft. Fail closed: bij
+ * twijfel niet verwijderen (SECURITY.md).
+ */
+export async function verwijderOrganisatie(organisatieId: string): Promise<{ fout: string | null }> {
+  const supabase = await supabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
+  }
+
+  const { count, error: telError } = await supabase
+    .from("scanrondes")
+    .select("id", { count: "exact", head: true })
+    .eq("organisatie_id", organisatieId);
+  if (telError) {
+    console.error("Controleren scanrondes mislukt:", foutDetail(telError));
+    return { fout: `Verwijderen is niet gelukt. ${foutDetail(telError)}` };
+  }
+  if (count && count > 0) {
+    return {
+      fout: "Deze organisatie heeft nog scanrondes en kan daarom niet verwijderd worden.",
+    };
+  }
+
+  const { error } = await supabase.from("organisaties").delete().eq("id", organisatieId);
+  if (error) {
+    console.error("Verwijderen organisatie mislukt:", foutDetail(error));
+    return { fout: `Verwijderen is niet gelukt. ${foutDetail(error)}` };
+  }
+
+  revalidatePath("/beheer");
+  return { fout: null };
+}
+
 export async function logout(): Promise<void> {
   const supabase = await supabaseServerClient();
   await supabase.auth.signOut();

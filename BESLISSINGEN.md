@@ -435,3 +435,20 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   apart tekstlabel meer nodig). `TALENTTYPES`-array in `opdrachten.html`
   heeft geen `kleur`-veld meer, alleen `id`/`label` (label blijft staan
   voor de `alt`-tekst van de afbeelding).
+
+## Wave 1, stap 7 — Lege organisatie verwijderen in /beheer (2026-07-22)
+
+- **Aanleiding:** twee organisaties zonder scanrondes stonden zonder nut in
+  het overzicht ("Nynke Leistra Coaching en Advies", "Test organisatie"),
+  en er was nog geen manier om een organisatie zelf te verwijderen (alleen
+  scanrondes hadden al een verwijder-knop, met archief/hersteltermijn).
+- **Bewust géén archief/hersteltermijn zoals bij scanrondes**: organisaties
+  cascaden (0001) naar teams → scanrondes → respondenten/antwoorden, dus een
+  ongeluk hier is veel groter dan bij één scanronde. In plaats daarvan staat
+  de verwijder-knop alléén bij organisaties zonder enige scanronde (ook niet
+  gearchiveerd), en checkt de server action dit nogmaals vóór het
+  verwijderen (fail closed) — een organisatie met data kan dus sowieso niet
+  via deze knop weg.
+- **Migratie `0011_organisatie_delete_policy.sql`**: delete-policy op
+  `organisaties` voor rol `authenticated`, zelfde patroon als 0008 bij
+  scanrondes. Handmatig door Nynke gedraaid in de Supabase SQL Editor.

@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { BeheerForm } from "./BeheerForm";
 import { VerwijderScanrondeKnop } from "./VerwijderScanrondeKnop";
+import { VerwijderOrganisatieKnop } from "./VerwijderOrganisatieKnop";
 import { HerstelScanrondeKnop } from "./HerstelScanrondeKnop";
 import { logout, ruimVerlopenArchiefOp } from "./actions";
 import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
@@ -90,7 +91,12 @@ export default async function BeheerPagina() {
           const actieveRondes = org.scanrondes.filter((ronde) => ronde.gearchiveerd_op === null);
           return (
             <div key={org.id} className="rounded-lg border border-brand-salie/40 p-4">
-              <p className="font-medium text-zinc-900">{org.naam}</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-medium text-zinc-900">{org.naam}</p>
+                {org.scanrondes.length === 0 && (
+                  <VerwijderOrganisatieKnop organisatieId={org.id} organisatieNaam={org.naam} />
+                )}
+              </div>
               {actieveRondes.length === 0 && (
                 <p className="mt-1 text-sm text-zinc-500">Nog geen scanronde.</p>
               )}
