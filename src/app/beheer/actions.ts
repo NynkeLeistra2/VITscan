@@ -201,6 +201,38 @@ export async function ruimVerlopenArchiefOp(): Promise<void> {
 }
 
 /**
+ * Verwijdert een al gearchiveerde scanronde meteen definitief, i.p.v. te
+ * wachten tot ARCHIEF_BEWAARTERMIJN_DAGEN verstreken is (ruimVerlopenArchiefOp
+ * doet dat automatisch). `.is("gearchiveerd_op", null, ...)`-achtige check
+ * hier omgekeerd: de `.not("gearchiveerd_op", "is", null)`-voorwaarde zorgt
+ * dat dit nooit een nog actieve scanronde kan raken, ook niet als iemand de
+ * scanrondeId van buitenaf zou meegeven (fail closed, SECURITY.md).
+ */
+export async function verwijderScanrondeDefinitief(scanrondeId: string): Promise<{ fout: string | null }> {
+  const supabase = await supabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
+  }
+
+  const { error } = await supabase
+    .from("scanrondes")
+    .delete()
+    .eq("id", scanrondeId)
+    .not("gearchiveerd_op", "is", null);
+  if (error) {
+    console.error("Definitief verwijderen scanronde mislukt:", foutDetail(error));
+    return { fout: `Verwijderen is niet gelukt. ${foutDetail(error)}` };
+  }
+
+  revalidatePath("/beheer");
+  return { fout: null };
+}
+
+/**
  * Verwijdert een organisatie, maar alleen als hij geen enkele scanronde
  * heeft (ook niet gearchiveerd) — anders zou dit via de FK-cascade (0001)
  * ook alle teams/scanrondes en hun respondenten/antwoorden meenemen, zonder

@@ -452,3 +452,13 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
 - **Migratie `0011_organisatie_delete_policy.sql`**: delete-policy op
   `organisaties` voor rol `authenticated`, zelfde patroon als 0008 bij
   scanrondes. Handmatig door Nynke gedraaid in de Supabase SQL Editor.
+- **Bleek in de praktijk**: de twee organisaties uit de aanleiding waren toch
+  niet leeg, ze hadden allebei nog gearchiveerde scanrondes hangen (o.a.
+  "NL2026", "WORKSHOP", "Boost"), dus de verwijder-knop verscheen terecht
+  niet. Nynke wilde die meteen definitief weg i.p.v. de automatische
+  opruiming na 30 dagen afwachten, dus **"Nu definitief verwijderen"**-knop
+  toegevoegd bij het archiefblok (`VerwijderDefinitiefKnop.tsx`,
+  `verwijderScanrondeDefinitief` in `actions.ts`). Geen nieuwe migratie nodig
+  (de delete-policy op `scanrondes` bestaat al sinds 0008); de server action
+  staat dit alleen toe op rijen met `gearchiveerd_op is not null`, zodat een
+  actieve scanronde hier nooit per ongeluk via kan verdwijnen.

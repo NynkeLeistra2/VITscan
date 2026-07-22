@@ -4,6 +4,7 @@ import { BeheerForm } from "./BeheerForm";
 import { VerwijderScanrondeKnop } from "./VerwijderScanrondeKnop";
 import { VerwijderOrganisatieKnop } from "./VerwijderOrganisatieKnop";
 import { HerstelScanrondeKnop } from "./HerstelScanrondeKnop";
+import { VerwijderDefinitiefKnop } from "./VerwijderDefinitiefKnop";
 import { logout, ruimVerlopenArchiefOp } from "./actions";
 import { ARCHIEF_BEWAARTERMIJN_DAGEN } from "./constants";
 
@@ -166,7 +167,7 @@ export default async function BeheerPagina() {
             {archief.map(({ organisatieNaam, ronde }) => (
               <li
                 key={ronde.id}
-                className="flex items-center justify-between gap-2 rounded-lg border border-brand-salie/40 p-3 text-sm"
+                className="flex items-start justify-between gap-2 rounded-lg border border-brand-salie/40 p-3 text-sm"
               >
                 <div>
                   <p className="text-zinc-700">
@@ -177,7 +178,10 @@ export default async function BeheerPagina() {
                     Definitief weg over {dagenTotDefinitief(ronde.gearchiveerd_op!)} dagen
                   </p>
                 </div>
-                <HerstelScanrondeKnop scanrondeId={ronde.id} />
+                <div className="flex flex-col items-end gap-2">
+                  <HerstelScanrondeKnop scanrondeId={ronde.id} />
+                  <VerwijderDefinitiefKnop scanrondeId={ronde.id} scanrondeNaam={ronde.naam} />
+                </div>
               </li>
             ))}
           </ul>
