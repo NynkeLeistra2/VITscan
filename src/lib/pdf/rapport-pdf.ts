@@ -4,7 +4,7 @@ import path from "node:path";
 import { berekenScores } from "@/lib/scoring";
 import { algemeen, totaalscoreTeksten, themaTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
-import { rasterizeWiel } from "./wiel-raster";
+import { tekenWiel } from "./wiel-tekenen";
 
 /**
  * Server-only PDF-opbouw van het persoonlijk rapport. Zelfde diepte als het
@@ -231,6 +231,14 @@ export function genereerRapportPdf({
     ctx.y += 6;
   }
 
+  // Code altijd op het voorblad: zonder naam is dit de enige identificatie
+  // van de respondent, mét naam staat 'ie er nog klein bij.
+  pdf.setFontSize(9);
+  pdf.setFont("courier", "normal");
+  pdf.setTextColor(...TEXT_MUTED);
+  pdf.text(`Code: ${respondentCode}`, pageWidth / 2, ctx.y, { align: "center" });
+  ctx.y += 6;
+
   drawAmberDivider(ctx, ctx.y);
   ctx.y += 8;
 
@@ -255,37 +263,30 @@ export function genereerRapportPdf({
   drawLijst(ctx, "Om over na te denken", totaalTeksten.reflectievragen);
   drawLijst(ctx, "Wat kun je doen", totaalTeksten.aanbevelingen);
 
-  // Wielen
+  // Wielen: elk op een eigen pagina en verticaal gecentreerd, zo groot en
+  // scherp mogelijk (pure jsPDF-vectortekening, geen rasterlimiet).
+  const wielBreedteMm = 150;
+  const wielTitelBlokHoogte = 18; // titelregel + gap tot het wiel
   for (const deel of resultaat.deelScores) {
     const segmenten = resultaat.themaScores
       .filter((t) => t.deelId === deel.deelId)
       .map((t) => ({ themaId: t.themaId, label: t.themaTitel, score: t.score }));
 
-    const wielBreedteMm = 85;
-    const wielPixels = 800;
-    const png = rasterizeWiel(segmenten, deel.score, wielPixels);
-    const wielHoogteMm = wielBreedteMm; // vierkant
+    addNewPage(ctx);
+    const blokHoogte = wielTitelBlokHoogte + wielBreedteMm;
+    const beschikbareHoogte = pageHeight - BOTTOM_MARGIN - START_Y;
+    ctx.y = START_Y + Math.max(0, (beschikbareHoogte - blokHoogte) / 2);
 
-    checkPageBreak(ctx, wielHoogteMm + 12);
-    pdf.setFontSize(12);
+    pdf.setFontSize(20);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(...VIOLET_DARK);
     pdf.text(WIEL_TITEL[deel.deelId] ?? deel.deelTitel, pageWidth / 2, ctx.y, { align: "center" });
     pdf.setFont("helvetica", "normal");
     pdf.setTextColor(...TEXT_DARK);
-    ctx.y += 5;
+    ctx.y += wielTitelBlokHoogte;
 
-    pdf.addImage(
-      `data:image/png;base64,${png.toString("base64")}`,
-      "PNG",
-      (pageWidth - wielBreedteMm) / 2,
-      ctx.y,
-      wielBreedteMm,
-      wielHoogteMm,
-      `wiel-${deel.deelId}`,
-      "MEDIUM"
-    );
-    ctx.y += wielHoogteMm + 8;
+    tekenWiel(pdf, segmenten, deel.score, (pageWidth - wielBreedteMm) / 2, ctx.y, wielBreedteMm);
+    ctx.y += wielBreedteMm + 8;
   }
 
   // Per thema
@@ -336,12 +337,8 @@ export function genereerRapportPdf({
   pdf.setFontSize(8.5);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_MUTED);
-  const codeUitleg = pdf.splitTextToSize(
-    "Bewaar deze code. Bij een vervolgmeting kun je 'm gebruiken om je resultaten te laten koppelen, in overleg met Nynke.",
-    ctx.contentWidth - 40
-  );
-  pdf.text(codeUitleg, pageWidth / 2, ctx.y, { align: "center" });
-  ctx.y += codeUitleg.length * 4.2 + 6;
+  pdf.text("Bewaar deze code.", pageWidth / 2, ctx.y, { align: "center" });
+  ctx.y += 4.2 + 6;
 
   // Footer met contactgegevens (alleen op de laatste pagina)
   checkPageBreak(ctx, 24);
