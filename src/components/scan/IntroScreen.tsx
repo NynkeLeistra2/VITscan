@@ -80,10 +80,7 @@ export function IntroScreen({
         <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
           {respondentCode}
         </p>
-        <p className="mt-1 text-xs text-zinc-500">
-          Bewaar deze code. Bij een vervolgmeting kun je &apos;m gebruiken om je
-          resultaten te laten koppelen, in overleg met Nynke.
-        </p>
+        <p className="mt-1 text-xs text-zinc-500">Bewaar deze code.</p>
       </div>
 
       {foutmelding && (
