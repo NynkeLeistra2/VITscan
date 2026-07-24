@@ -169,9 +169,15 @@ export interface RapportPdfInput {
   antwoorden: Record<string, number>;
   naam: string | null;
   respondentCode: string;
+  organisatieNaam?: string | null;
 }
 
-export function genereerRapportPdf({ antwoorden, naam, respondentCode }: RapportPdfInput): Buffer {
+export function genereerRapportPdf({
+  antwoorden,
+  naam,
+  respondentCode,
+  organisatieNaam,
+}: RapportPdfInput): Buffer {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
 
@@ -216,6 +222,15 @@ export function genereerRapportPdf({ antwoorden, naam, respondentCode }: Rapport
     align: "center",
   });
   ctx.y += 7;
+
+  if (organisatieNaam) {
+    pdf.setFontSize(11);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...TEXT_MUTED);
+    pdf.text(organisatieNaam, pageWidth / 2, ctx.y, { align: "center" });
+    ctx.y += 6;
+  }
+
   drawAmberDivider(ctx, ctx.y);
   ctx.y += 8;
 

@@ -12,6 +12,7 @@ interface RapportScreenProps {
   antwoorden: Record<string, number>;
   respondentCode: string;
   naam: string;
+  organisatieNaam: string;
 }
 
 const WIEL_TITEL: Record<string, string> = {
@@ -24,7 +25,12 @@ function bestandsnaamUitHeader(contentDisposition: string | null, fallback: stri
   return match?.[1] ?? fallback;
 }
 
-export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScreenProps) {
+export function RapportScreen({
+  antwoorden,
+  respondentCode,
+  naam,
+  organisatieNaam,
+}: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
   const [pdfBezig, setPdfBezig] = useState(false);
@@ -65,6 +71,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
           antwoorden,
           naam: naam.trim() || null,
           respondentCode,
+          organisatie: organisatieNaam.trim() || null,
         }),
       });
 

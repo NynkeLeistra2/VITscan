@@ -206,6 +206,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
         antwoorden={sessie.antwoorden}
         respondentCode={sessie.respondentCode}
         naam={sessie.naam.trim()}
+        organisatieNaam={context.organisatieNaam}
       />
     );
   }

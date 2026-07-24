@@ -14,6 +14,11 @@ function mockAntwoorden(): Record<string, number> {
 
 export default function PreviewRapportPage() {
   return (
-    <RapportScreen antwoorden={mockAntwoorden()} respondentCode="PREVIEW-01" naam="" />
+    <RapportScreen
+      antwoorden={mockAntwoorden()}
+      respondentCode="PREVIEW-01"
+      naam=""
+      organisatieNaam=""
+    />
   );
 }

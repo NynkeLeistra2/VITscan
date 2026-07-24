@@ -32,6 +32,13 @@ const RequestSchema = z.object({
     .optional()
     .transform((v) => (v ? v : null)),
   respondentCode: z.string().trim().min(1).max(100),
+  organisatie: z
+    .string()
+    .trim()
+    .max(200)
+    .nullable()
+    .optional()
+    .transform((v) => (v ? v : null)),
 });
 
 // Best-effort in-memory rate limiting per IP. Geen persistente store (Wave 1
@@ -80,7 +87,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const pdfBuffer = genereerRapportPdf(input);
+    const pdfBuffer = genereerRapportPdf({
+      antwoorden: input.antwoorden,
+      naam: input.naam,
+      respondentCode: input.respondentCode,
+      organisatieNaam: input.organisatie,
+    });
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {

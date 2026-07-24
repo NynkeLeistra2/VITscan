@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
       antwoorden: input.antwoorden,
       naam: input.naam,
       respondentCode: input.respondentCode,
+      organisatieNaam: input.organisatie,
     });
 
     // Veldnamen (step/name/categoryAverages/subcategoryAverages/pdfs.results)
