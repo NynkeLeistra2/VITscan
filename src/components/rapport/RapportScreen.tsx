@@ -51,7 +51,7 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
       // Geen opslag beschikbaar (bv. privénavigatie): de opdrachtenpagina
       // werkt dan gewoon met lege gele vakjes en zonder terugknop.
     }
-    window.location.assign("/opdrachten.html");
+    window.location.assign("/boost-intro.html");
   }
 
   async function downloadPdf() {
