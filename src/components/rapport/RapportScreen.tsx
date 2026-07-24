@@ -44,9 +44,12 @@ export function RapportScreen({ antwoorden, respondentCode, naam }: RapportScree
         resultaat.themaScores.map((thema) => [thema.themaId, thema.score])
       );
       window.localStorage.setItem("boost-opdrachten-scores", JSON.stringify(scores));
+      // Alleen de huidige (rapport-)URL, geen scores of andere persoonsgegevens,
+      // zodat de opdrachtenpagina een knop "Terug naar je rapport" kan tonen.
+      window.localStorage.setItem("boost-rapport-url", window.location.href);
     } catch {
       // Geen opslag beschikbaar (bv. privénavigatie): de opdrachtenpagina
-      // werkt dan gewoon met lege gele vakjes.
+      // werkt dan gewoon met lege gele vakjes en zonder terugknop.
     }
     window.location.assign("/opdrachten.html");
   }

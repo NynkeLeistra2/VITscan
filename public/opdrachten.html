@@ -83,6 +83,20 @@
 
   .stap-bolletje.actief { background: var(--amber); }
 
+  .naar-eerste-btn {
+    display: block;
+    margin: -1rem auto 1.5rem;
+    background: none;
+    border: none;
+    color: var(--violet);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .naar-eerste-btn:hover { color: var(--violet-donker); }
+  .naar-eerste-btn[hidden] { display: none; }
+
   section.thema {
     max-width: 1000px;
     margin: 0 auto 2rem;
@@ -510,6 +524,20 @@
 
   button.print-knop:hover { filter: brightness(0.94); }
 
+  button.terug-knop {
+    background: transparent;
+    color: var(--violet);
+    border: 2px solid var(--violet);
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+  }
+  button.terug-knop:hover { background: #efe8f1; }
+  button.terug-knop[hidden] { display: none; }
+
   .acties p {
     margin-top: 0.6rem;
     font-size: 0.82rem;
@@ -526,7 +554,7 @@
   footer a { color: var(--oudroze); }
 
   @media print {
-    .acties, .melding, .stap-navigatie, .stap-indicator { display: none !important; }
+    .acties, .melding, .stap-navigatie, .stap-indicator, .naar-eerste-btn { display: none !important; }
     .mindmap { display: none !important; }
     .kaarten { display: flex !important; flex-direction: column; gap: 0.75rem; }
     section.thema { display: block !important; page-break-inside: avoid; margin-bottom: 1.5rem; }
@@ -542,6 +570,7 @@
 </header>
 
 <div class="stap-indicator" id="stap-indicator"></div>
+<button class="naar-eerste-btn" type="button" id="naar-eerste-btn" hidden>← Terug naar opdracht 1</button>
 
 <div id="secties"></div>
 
@@ -551,6 +580,8 @@
 </div>
 
 <div class="acties">
+  <button class="terug-knop" type="button" id="terug-btn" hidden>Terug naar je rapport</button>
+  <br />
   <button class="print-knop" type="button" id="print-btn">Opslaan / printen als PDF</button>
   <p>Alles wat je hier invult blijft alleen in je eigen browser. Er wordt niets naar een server gestuurd.</p>
 </div>
@@ -607,6 +638,7 @@
   var HANDOFF_SLEUTEL = "boost-opdrachten-scores";
   var OPSLAG_SLEUTEL = "boost-opdrachten-antwoorden";
   var STAP_SLEUTEL = "boost-opdrachten-stap";
+  var RAPPORT_URL_SLEUTEL = "boost-rapport-url";
 
   // --- Scan-scores ophalen (eenmalige overdracht, meteen weer wissen) ---
   var scanScores = {};
@@ -620,6 +652,20 @@
     scanScores = {};
   }
   var geenScanScores = Object.keys(scanScores).length === 0;
+
+  // --- Terugknop naar het rapport (alleen tonen als we die URL kennen) ---
+  try {
+    var rapportUrl = window.localStorage.getItem(RAPPORT_URL_SLEUTEL);
+    if (rapportUrl) {
+      var terugBtn = document.getElementById("terug-btn");
+      terugBtn.hidden = false;
+      terugBtn.addEventListener("click", function () {
+        window.location.assign(rapportUrl);
+      });
+    }
+  } catch (e) {
+    /* geen opslag beschikbaar: terugknop blijft verborgen */
+  }
 
   // --- Eerder ingevulde antwoorden op deze pagina (los van de scan-overdracht) ---
   var opgeslagenAntwoorden = {};
@@ -1272,6 +1318,7 @@
 
   var vorigeBtn = document.getElementById("vorige-btn");
   var volgendeBtn = document.getElementById("volgende-btn");
+  var naarEersteBtn = document.getElementById("naar-eerste-btn");
   var titelEl = document.getElementById("stap-titel");
   var bolletjes = indicator.querySelectorAll(".stap-bolletje");
 
@@ -1293,6 +1340,7 @@
     vorigeBtn.hidden = index === 0;
     volgendeBtn.hidden = index === secties.length - 1;
     volgendeBtn.textContent = index === secties.length - 2 ? "Naar bonus" : "Naar volgende opdracht";
+    naarEersteBtn.hidden = index === 0;
     try {
       window.localStorage.setItem(STAP_SLEUTEL, String(index));
     } catch (e) {
@@ -1306,6 +1354,9 @@
   });
   volgendeBtn.addEventListener("click", function () {
     if (huidigeStap < secties.length - 1) toonStap(huidigeStap + 1);
+  });
+  naarEersteBtn.addEventListener("click", function () {
+    toonStap(0);
   });
 
   toonStap(huidigeStap);
