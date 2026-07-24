@@ -42,6 +42,50 @@ const STELLING_STAPPEN: StellingStap[] = themaLijst().flatMap((thema) =>
 const OPEN_VRAAG_STAP = STELLING_STAPPEN.length + 1;
 const AFGEROND_STAP = STELLING_STAPPEN.length + 2;
 
+const RETRY_WACHTTIJD_MS = 700;
+
+async function verstuurNaarN8n(payload: Record<string, unknown>): Promise<void> {
+  const response = await fetch("/api/verstuur-resultaten", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) throw new Error(`status ${response.status}`);
+}
+
+/**
+ * Vuur-en-vergeet doorsturen naar n8n, met één automatische herhaling na een
+ * korte wachttijd: een koude Cloudflare Worker-instantie kan de eerste keer
+ * tegen de CPU-tijdslimiet aanlopen (zie ONTWIKKELLOG), een tweede, inmiddels
+ * warme poging lukt dan meestal wel. Blokkeert nooit `afronden()` — de
+ * respondent ziet zijn rapport altijd meteen, deze functie wordt bewust niet
+ * afgewacht door de aanroeper.
+ */
+async function verstuurResultatenMetRetry(payload: Record<string, unknown>): Promise<void> {
+  try {
+    await verstuurNaarN8n(payload);
+    return;
+  } catch {
+    // eerste poging mislukt, val door naar de herhaling hieronder
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, RETRY_WACHTTIJD_MS));
+
+  try {
+    await verstuurNaarN8n(payload);
+  } catch {
+    // Ook de herhaling mislukt: geen respondent-blokkerende actie meer
+    // mogelijk, wel een kort seintje naar een extreem lichte logroute zodat
+    // dit zichtbaar wordt in Cloudflare Workers Logs (zie
+    // /api/verstuur-resultaten-mislukt — bewust geen zware imports daar).
+    fetch("/api/verstuur-resultaten-mislukt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ respondentCode: payload.respondentCode }),
+    }).catch(() => {});
+  }
+}
+
 interface ScanFlowProps {
   context: ScanrondeContext;
 }
@@ -177,18 +221,15 @@ export function ScanFlow({ context }: ScanFlowProps) {
       );
       // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
       // afgewacht/geblokkeerd op, een storing hierin mag de respondent
-      // nooit het zicht op het eigen rapport ontnemen.
-      fetch("/api/verstuur-resultaten", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          antwoorden: sessie!.antwoorden,
-          naam: sessie!.naam.trim() || null,
-          email: emailVoorOpslag || null,
-          respondentCode: sessie!.respondentCode,
-          openVraagAntwoord: sessie!.openVraagAntwoord,
-          organisatie: context.organisatieNaam || null,
-        }),
+      // nooit het zicht op het eigen rapport ontnemen. Eén automatische
+      // herhaling bij falen, zie verstuurResultatenMetRetry hierboven.
+      verstuurResultatenMetRetry({
+        antwoorden: sessie!.antwoorden,
+        naam: sessie!.naam.trim() || null,
+        email: emailVoorOpslag || null,
+        respondentCode: sessie!.respondentCode,
+        openVraagAntwoord: sessie!.openVraagAntwoord,
+        organisatie: context.organisatieNaam || null,
       }).catch(() => {});
       bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true });
     } catch {
