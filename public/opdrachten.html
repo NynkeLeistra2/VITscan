@@ -918,6 +918,14 @@
     var inhoud = document.createElement("div");
     inhoud.className = "stap-inhoud";
 
+    var waaromIntro = document.createElement("p");
+    waaromIntro.innerHTML =
+      "<strong>Waarom noemen we dit gevoelsdoelen?</strong> Een gewoon doel zegt wat je wilt bereiken. " +
+      "Een gevoelsdoel begint bij hoe je je wilt voelen. Als je eerst weet welk gevoel je zoekt, bijvoorbeeld " +
+      "rust, energie of trots, kun je daar veel gerichter praktische doelen aan koppelen. Gevoelsdoelen komen " +
+      "van binnenuit; ze zijn echt van jou. Daardoor geloof je er sneller in en houd je ze makkelijker vast.";
+    inhoud.appendChild(waaromIntro);
+
     var intro = document.createElement("p");
     intro.textContent =
       "In deze module doen we iets wat je misschien niet gewend bent: een ademhalings- en visualisatieoefening. " +
@@ -1269,7 +1277,8 @@
     intro.className = "intro";
     intro.innerHTML =
       "<p>Stel: er gebeurt vannacht een wonder. Je voelt volop werkgeluk, krijgt energie van je werk en leven, en hebt weer echt zin om te beginnen.</p>" +
-      "<p>In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk ernaar: ben je tevreden, of mag het anders? Vul daarna in het <strong>violette</strong> vakje in welk cijfer je zou geven als dat wonder gebeurd is. Er is geen goed of fout. Jij hebt de regie.</p>";
+      "<p>In het <strong>gele</strong> vakje staat je huidige score uit de scan. Kijk ernaar: ben je tevreden, of mag het anders? Vul daarna in het <strong>violette</strong> vakje in welk cijfer je zou geven als dat wonder gebeurd is. Er is geen goed of fout. Jij hebt de regie.</p>" +
+      "<p><strong>Belangrijk:</strong> het gaat hier om wat jij zelf belangrijk vindt. Er is geen goed of fout cijfer. Misschien is een 7 op een bepaald thema voor jou al helemaal prima, terwijl een collega op datzelfde thema pas tevreden is met een 9. Ga daarom af op je eigen gevoel: waar ben jij tevreden mee, en waar niet?</p>";
     sectie.appendChild(intro);
 
     if (geenScanScores) {
