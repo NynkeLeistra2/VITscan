@@ -101,7 +101,8 @@ export async function POST(request: NextRequest) {
         "Content-Length": String(pdfBuffer.length),
       },
     });
-  } catch {
+  } catch (error) {
+    console.error("Fout bij genereren PDF:", error);
     // Generieke foutmelding — geen stack traces/interne details naar de
     // gebruiker (SECURITY.md regel 7, fail closed).
     return NextResponse.json({ error: "Het genereren van de PDF is niet gelukt." }, { status: 500 });

@@ -1,0 +1,26 @@
+{
+  // Cloudflare-migratietest, bewust "-preview" in de naam: dit is nog niet
+  // de productie-worker, alleen om te testen of de app op Cloudflare draait.
+  // De VIT-scan blijft live op Vercel tot expliciet akkoord voor cutover.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "vit-scan-preview",
+  "compatibility_date": "2026-07-24",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      // Self-reference service binding, vereist door OpenNext voor caching/
+      // revalidatie-aanroepen vanuit de worker naar zichzelf.
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "vit-scan-preview"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 }
+  }
+}

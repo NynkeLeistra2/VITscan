@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare (opennextjs-cloudflare build-output + lokale wrangler-state)
+/.open-next/
+/.wrangler/
+
 # los Lovable/Vite-project, niet onderdeel van de VIT-scan app
 /werkgeluk-kompas-main
 

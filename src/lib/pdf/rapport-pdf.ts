@@ -1,10 +1,9 @@
 import { jsPDF } from "jspdf";
-import fs from "node:fs";
-import path from "node:path";
 import { berekenScores } from "@/lib/scoring";
 import { algemeen, totaalscoreTeksten, themaTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
+import { LOGO_OFFICIEEL_BASE64, LOGO_ICOON_BASE64 } from "./logos";
 
 /**
  * Server-only PDF-opbouw van het persoonlijk rapport. Zelfde diepte als het
@@ -28,11 +27,6 @@ const WIEL_TITEL: Record<string, string> = {
   werkenergie: "Werkgelukwiel",
   persoonlijk_welzijn: "Levenswiel",
 };
-
-function leesLogoBase64(bestandsnaam: string): string {
-  const buffer = fs.readFileSync(path.join(process.cwd(), "public", bestandsnaam));
-  return buffer.toString("base64");
-}
 
 interface PdfCtx {
   pdf: jsPDF;
@@ -192,8 +186,8 @@ export function genereerRapportPdf({
     pageHeight,
     margin,
     contentWidth: pageWidth - margin * 2,
-    logoOfficieel: leesLogoBase64("nynke-logo-pdf.png"),
-    logoIcoon: leesLogoBase64("nynke-logo-n.png"),
+    logoOfficieel: LOGO_OFFICIEEL_BASE64,
+    logoIcoon: LOGO_ICOON_BASE64,
     pageNumber: 1,
     y: START_Y,
   };
