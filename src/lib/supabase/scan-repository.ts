@@ -55,14 +55,12 @@ export async function slaAntwoordenOp(
 
 export async function rondRespondentAf(
   respondentId: string,
-  openVraagAntwoord: string,
   email: string | null
 ): Promise<void> {
   const { error } = await supabase
     .from("respondenten")
     .update({
       afgerond_op: new Date().toISOString(),
-      open_vraag_antwoord: openVraagAntwoord || null,
       email,
     })
     .eq("id", respondentId);

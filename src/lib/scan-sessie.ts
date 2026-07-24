@@ -9,12 +9,11 @@ export interface ScanSessie {
   naam: string;
   /** stelling_key -> waarde (1-10) */
   antwoorden: Record<string, number>;
-  openVraagAntwoord: string;
   email: string;
   /** Standaard aan: mensen kunnen 'm uitzetten als ze geen rapport per e-mail willen. */
   emailOptIn: boolean;
   afgerond: boolean;
-  /** Index in de platte stappenlijst (0 = intro, 1 per stelling, dan open vraag/afgerond), zodat herladen hervat waar je was. */
+  /** Index in de platte stappenlijst (0 = intro, 1 per stelling, dan e-mailstap/afgerond), zodat herladen hervat waar je was. */
   stapIndex: number;
 }
 
@@ -60,7 +59,6 @@ export function nieuweSessie(): ScanSessie {
     stellingenVersie: STELLINGEN_VERSIE,
     naam: "",
     antwoorden: {},
-    openVraagAntwoord: "",
     email: "",
     emailOptIn: true,
     afgerond: false,

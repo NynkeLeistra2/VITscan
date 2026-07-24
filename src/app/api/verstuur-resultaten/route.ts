@@ -39,7 +39,6 @@ const RequestSchema = z.object({
   naam: z.string().trim().max(200).nullable().optional().transform((v) => (v ? v : null)),
   email: z.string().trim().email().max(320).nullable().optional().transform((v) => (v ? v : null)),
   respondentCode: z.string().trim().min(1).max(100),
-  openVraagAntwoord: z.string().trim().max(5000).nullable().optional().transform((v) => (v ? v : null)),
   // De organisatienaam die al bij de scanronde hoort (context.organisatieNaam),
   // puur om in de n8n-webhook/Google Sheet te zetten. Wordt niet in Supabase
   // bewaard.
@@ -154,7 +153,6 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       // Aanvullende, nieuwe velden (geen equivalent in de oude workflow):
       respondentCode: input.respondentCode,
-      openVraagAntwoord: input.openVraagAntwoord,
       deelScores: resultaat.deelScores,
       themaScores: resultaat.themaScores,
       antwoorden: input.antwoorden,

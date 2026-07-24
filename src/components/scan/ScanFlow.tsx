@@ -16,7 +16,7 @@ import {
 import type { ScanrondeContext } from "@/lib/supabase/scanronde";
 import { IntroScreen } from "./IntroScreen";
 import { StellingScreen } from "./StellingScreen";
-import { OpenVraagScreen } from "./OpenVraagScreen";
+import { EmailOptInScreen } from "./EmailOptInScreen";
 import { VoortgangsBalk } from "./VoortgangsBalk";
 import { RapportScreen } from "@/components/rapport/RapportScreen";
 
@@ -39,7 +39,7 @@ const STELLING_STAPPEN: StellingStap[] = themaLijst().flatMap((thema) =>
     laatsteVanThema: i === thema.stellingen.length - 1,
   }))
 );
-const OPEN_VRAAG_STAP = STELLING_STAPPEN.length + 1;
+const EMAIL_STAP = STELLING_STAPPEN.length + 1;
 const AFGEROND_STAP = STELLING_STAPPEN.length + 2;
 
 const RETRY_WACHTTIJD_MS = 700;
@@ -133,7 +133,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
   }
 
   /** Navigatie die niet via het antwoord-auto-advance loopt (Vorige-knop,
-   * open vraag): annuleert een eventueel nog lopende auto-advance-timer,
+   * e-mailstap): annuleert een eventueel nog lopende auto-advance-timer,
    * anders schiet je na "Vorige" alsnog een stap verder. */
   function gaNaarStap(stapIndex: number) {
     if (autoVolgendeTimer.current) {
@@ -184,7 +184,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
     setFoutmelding(null);
     const stap = STELLING_STAPPEN[huidigeStapIndex - 1];
     const volgendeStap =
-      huidigeStapIndex < STELLING_STAPPEN.length ? huidigeStapIndex + 1 : OPEN_VRAAG_STAP;
+      huidigeStapIndex < STELLING_STAPPEN.length ? huidigeStapIndex + 1 : EMAIL_STAP;
 
     if (!stap.laatsteVanThema) {
       bijwerken({ stapIndex: volgendeStap });
@@ -214,11 +214,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
       await slaAntwoordenOp(sessie!.respondentId, sessie!.antwoorden);
       const emailVoorOpslag =
         context.emailVerplicht || sessie!.emailOptIn ? sessie!.email.trim() : "";
-      await rondRespondentAf(
-        sessie!.respondentId,
-        sessie!.openVraagAntwoord,
-        emailVoorOpslag || null
-      );
+      await rondRespondentAf(sessie!.respondentId, emailVoorOpslag || null);
       // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
       // afgewacht/geblokkeerd op, een storing hierin mag de respondent
       // nooit het zicht op het eigen rapport ontnemen. Eén automatische
@@ -228,7 +224,6 @@ export function ScanFlow({ context }: ScanFlowProps) {
         naam: sessie!.naam.trim() || null,
         email: emailVoorOpslag || null,
         respondentCode: sessie!.respondentCode,
-        openVraagAntwoord: sessie!.openVraagAntwoord,
         organisatie: context.organisatieNaam || null,
       }).catch(() => {});
       bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true });
@@ -268,21 +263,19 @@ export function ScanFlow({ context }: ScanFlowProps) {
     );
   }
 
-  if (sessie.stapIndex === OPEN_VRAAG_STAP) {
+  if (sessie.stapIndex === EMAIL_STAP) {
     return (
       <div className="flex flex-1 flex-col">
         <div className="mx-auto w-full max-w-xl px-6 pt-6">
           <VoortgangsBalk
-            huidigeStapNummer={OPEN_VRAAG_STAP}
-            totaalStappen={OPEN_VRAAG_STAP}
+            huidigeStapNummer={EMAIL_STAP}
+            totaalStappen={EMAIL_STAP}
           />
           {foutmelding && (
             <p className="mt-3 text-sm text-red-600">{foutmelding}</p>
           )}
         </div>
-        <OpenVraagScreen
-          waarde={sessie.openVraagAntwoord}
-          onWijzig={(waarde) => bijwerken({ openVraagAntwoord: waarde })}
+        <EmailOptInScreen
           email={sessie.email}
           onEmailWijzig={(email) => bijwerken({ email })}
           emailOptIn={sessie.emailOptIn}
@@ -303,7 +296,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
       <div className="mx-auto w-full max-w-3xl px-6 pt-6">
         <VoortgangsBalk
           huidigeStapNummer={sessie.stapIndex}
-          totaalStappen={OPEN_VRAAG_STAP}
+          totaalStappen={EMAIL_STAP}
         />
         {foutmelding && (
           <p className="mt-3 text-sm text-red-600">{foutmelding}</p>

@@ -2,9 +2,7 @@ import { ScanFooter } from "./ScanFooter";
 
 const EMAIL_PATROON = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface OpenVraagScreenProps {
-  waarde: string;
-  onWijzig: (waarde: string) => void;
+interface EmailOptInScreenProps {
   email: string;
   onEmailWijzig: (email: string) => void;
   emailOptIn: boolean;
@@ -15,9 +13,7 @@ interface OpenVraagScreenProps {
   bezig: boolean;
 }
 
-export function OpenVraagScreen({
-  waarde,
-  onWijzig,
+export function EmailOptInScreen({
   email,
   onEmailWijzig,
   emailOptIn,
@@ -26,29 +22,16 @@ export function OpenVraagScreen({
   onVorige,
   onVerder,
   bezig,
-}: OpenVraagScreenProps) {
+}: EmailOptInScreenProps) {
   const wilEmail = emailVerplicht || emailOptIn;
   const emailGeldig = EMAIL_PATROON.test(email.trim());
   const kanVerder = !wilEmail || emailGeldig;
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-6 py-8">
-      <h2 className="text-xl font-semibold text-zinc-900">
-        Wat wil je nog kwijt?
-      </h2>
-      <p className="mt-1 text-sm text-zinc-500">
-        Optioneel, laat leeg als je niets wilt toevoegen.
-      </p>
+      <h2 className="text-xl font-semibold text-zinc-900">Bijna klaar</h2>
 
-      <textarea
-        value={waarde}
-        onChange={(e) => onWijzig(e.target.value)}
-        rows={6}
-        className="mt-4 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
-        placeholder="Typ hier je toelichting..."
-      />
-
-      <div className="mt-8 border-t border-brand-salie/40 pt-6">
+      <div className="mt-4">
         {!emailVerplicht && (
           <label className="flex items-start gap-3">
             <input
