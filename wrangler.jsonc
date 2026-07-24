@@ -19,6 +19,16 @@
       "service": "vit-scan-preview"
     }
   ],
+  "r2_buckets": [
+    {
+      // Persistente incremental cache i.p.v. de standaard in-memory cache,
+      // voorkomt cold-start-inconsistenties (zie het eenmalige 404'tje bij
+      // het eerste testen). Bindingnaam moet exact zo heten, verwacht door
+      // @opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache.
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "vit-scan-preview-opennext-cache"
+    }
+  ],
   "observability": {
     "enabled": true,
     "logs": { "head_sampling_rate": 1 }
