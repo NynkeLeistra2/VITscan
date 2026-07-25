@@ -36,7 +36,7 @@ export function IntroScreen({
       />
       <h1 className="mt-3 text-2xl font-semibold text-brand-violet">VIT-scan</h1>
       {(organisatieNaam || teamNaam) && (
-        <p className="mt-1 text-sm text-brand-oudroze">
+        <p className="mt-1 text-lg font-bold text-brand-violet-dark">
           {organisatieNaam}
           {teamNaam ? ` · ${teamNaam}` : ""}
         </p>
