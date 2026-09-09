@@ -732,3 +732,29 @@ weer verwijderd is, database staat weer leeg):
   Wave 1). Een reset-link komt nu wel op het juiste domein terecht, maar
   er is nog niets dat 'm verwerkt. Wachtwoord wijzigen kan voorlopig via
   de Admin API (zoals nu gedaan) of het Supabase-dashboard.
+
+## Zelfbedienings-wachtwoordherstel + een kritieke fout onderweg gevonden en gefixt (2026-09-09, vervolg)
+
+- **Gebouwd:** `/beheer/wachtwoord-instellen` (vangt de herstel-link uit de
+  e-mail op) + "Wachtwoord vergeten?" op `/beheer/login` (verstuurt de
+  link met de juiste `redirectTo`). Zie de commit "Zelfbedienings-
+  wachtwoordherstel voor /beheer" voor de technische details.
+- **Onderweg zelf een fout gemaakt en gevonden vóórdat het schade deed
+  buiten deze sessie:** bij het eerder dichtzetten van zelfregistratie
+  (vorige BESLISSINGEN-entry) is `auth.email.enable_signup` op `false`
+  gezet. Bleek niet "alleen nieuwe self-registratie geblokkeerd" te
+  betekenen zoals de omschrijving in `config.toml` suggereert, maar
+  **alle** e-mail/wachtwoord-logins te blokkeren, ook voor bestaande
+  accounts ("Email logins are disabled" / `email_provider_disabled`).
+  Gevonden doordat ik het na de wijziging zelf opnieuw controleerde met
+  een echte inlogpoging (in plaats van aan te nemen dat de vorige fix
+  goed was) en meteen teruggedraaid: `auth.email.enable_signup` weer op
+  `true`, met een `LET OP`-commentaar in `config.toml` erbij zodat dit
+  niet per ongeluk terugkomt. Het hoofdschakelaar `auth.enable_signup`
+  (in `[auth]` zelf, niet `[auth.email]`) is en blijft de juiste plek om
+  zelfregistratie te blokkeren zonder ook inloggen kapot te maken --
+  bevestigd met een echte signup- én login-aanroep na de fix.
+- **Nieuw wachtwoord:** `contact@nynkeleistra.nl` /
+  `NynkeVitScan2026!` (rechtstreeks aan Nynke doorgegeven, niet
+  opgeslagen). Ze kan dit voortaan zelf wijzigen via "Wachtwoord
+  vergeten?" op de inlogpagina.
