@@ -473,3 +473,92 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   geen garantie dat hij ook echt toegepast is; bij nieuwe functionaliteit
   die een nieuw type databasetoegang gebruikt (hier: DELETE i.p.v. UPDATE)
   expliciet checken/laten bevestigen dat de bijbehorende policy al actief is.
+
+## Wave 1, stap 7 — Boost je werkgeluk aan/uit per scanronde (2026-08-17)
+
+- **Aanleiding:** Nynke wil, voordat de Cloudflare-migratie wordt opgepakt,
+  vanuit `/beheer` kunnen instellen of de knop "Ga naar Boost je werkgeluk"
+  na het rapport getoond wordt — niet elke klant/scanronde krijgt dit
+  onderdeel aangeboden.
+- **Patroon gevolgd van `email_verplicht`:** nieuwe kolom
+  `scanrondes.boost_ingeschakeld boolean not null default true`
+  (`supabase/migrations/0012_scanronde_boost_ingeschakeld.sql`, nog door
+  Nynke te draaien in de Supabase SQL Editor — zelfde werkwijze als eerdere
+  migraties). Default `true` zodat bestaande scanrondes de knop blijven
+  tonen zoals voorheen.
+- **Verschil met `email_verplicht`:** die was tot nu toe alleen instelbaar
+  bij het aanmaken van een scanronde. Voor Boost was expliciet ook een
+  toggle voor **bestaande** scanrondes nodig, dus naast de checkbox in
+  `BeheerForm.tsx` (aanmaken) is er een losse server action
+  `zetBoostIngeschakeld` (`beheer/actions.ts`) en een client-toggle
+  `BoostToggle.tsx` die meteen opslaat bij wijzigen (geen apart
+  opslaan-knopje), met optimistic update en terugdraaien bij een
+  foutmelding.
+- **Doorgeven aan het rapport:** `ScanrondeContext.boostIngeschakeld` (nieuw
+  veld, gevuld in `haalScanrondeContext`) stroomt via `ScanFlow` naar
+  `RapportScreen`, die de knop nu conditioneel rendert. `src/lib/supabase/
+  types.ts` (het handgeschreven schema-bestand, zie stap 2) is bijgewerkt
+  met de nieuwe kolom; zonder die aanpassing faalt de typecheck op de
+  `.select()`-aanroepen in `/beheer` en `scanronde.ts`.
+- **Nog niet gedaan:** de migratie zelf toepassen op de live database (moet
+  door Nynke, zoals gebruikelijk) — tot die tijd faalt `.update({
+  boost_ingeschakeld })`/de select met `boost_ingeschakeld` in productie
+  met een "column does not exist"-fout.
+
+## Verhuizing naar nieuw EU-project en schrijfrechten dichtzetten (2026-09-09)
+
+- **Aanleiding:** `Opdrachten Claude Code/opdracht-verhuizen-en-schrijfrechten.md`.
+  Het huidige Supabase-project staat in eu-central-2 (Zürich) en heeft open
+  INSERT/UPDATE-policies op `respondenten`/`antwoorden` voor iedereen met de
+  publieke anon-sleutel: uitlezen kan niet (geen SELECT-policy), maar
+  overschrijven/wissen wel. Regio's zijn niet te wijzigen, dus een nieuw
+  project was nodig.
+- **Regio:** in de opdracht stond eu-central-1 (Frankfurt); Nynke heeft
+  bewust gekozen voor eu-west-1 (Ierland) voor het nieuwe project. Beide EU,
+  dus geen privacy-issue (CLAUDE.md-regel "data in EU" blijft gerespecteerd).
+- **Geen datadump:** het oude project blijft draaien als terugvaloptie, maar
+  de data komt niet mee. Het nieuwe project start leeg. Daarom zijn
+  `supabase/migrations/0001` t/m `0012` (het oude schema, inclusief de open
+  policies) vervangen door een nieuwe set (`0001` t/m `0004`) die de
+  beveiligde eindvorm in één keer neerzet, in plaats van eerst de oude opzet
+  te bouwen en die daarna te repareren. De oude bestanden blijven zichtbaar
+  in de git-historie.
+- **Toegangstoken i.p.v. respondent-id:** `respondenten.toegangstoken uuid
+  default gen_random_uuid() unique` is vanaf nu het enige dat toegang geeft
+  tot een respondent-rij. `respondent_code` blijft bestaan als leesbaar
+  label (bv. "dappere-dolfijn-17"), maar geeft geen toegang meer.
+  `upsert_respondent` is vervangen door twee functies met een harde knip:
+  `start_respondent` (maakt de rij pas aan ná het introscherm — bij klikken
+  op starten, niet bij het laden van de pagina — en geeft het token terug;
+  weigert op een gearchiveerde scanronde; rate-limited op ip-adres uit de
+  request-headers) en `upsert_antwoorden`/`rond_respondent_af` (nemen het
+  token aan, doen niets bij een onjuist token of een al afgeronde scan).
+  Het token verlaat de browser nooit richting een link, logregel of de
+  n8n-webhook (gecontroleerd in `ScanFlow.tsx` en de API-routes).
+- **Geen publieke SELECT meer op `organisaties`/`teams`/`scanrondes`:** die
+  maakte Nynkes klantenlijst opvraagbaar voor iedereen met de anon-sleutel.
+  Vervangen door `haal_scan_context(scanronde_id, team_id)`, die alleen de
+  velden teruggeeft die de introscreen nodig heeft voor precies die ene
+  ronde/team-combinatie. Lezen via de tabellen zelf is nu alleen voor
+  Nynkes ingelogde sessie (`to authenticated`, met een expliciete
+  `auth.uid() is not null`-toets in de policy, niet alleen op de rol
+  vertrouwd).
+- **AVG-verwijderrecht:** `verwijder_respondent(scanronde_id,
+  respondent_code)`, alleen voor `authenticated`, met de identiteitscheck
+  in de functie zelf (SECURITY DEFINER omzeilt RLS, dus de grant alleen is
+  niet genoeg).
+- **Bewaartermijn technisch afgedwongen:** `ruim_verlopen_respondenten_op()`
+  draait elke nacht via `pg_cron` en verwijdert afgeronde scans 3 maanden na
+  afronden, niet-afgeronde/lege respondenten na 30 dagen. Vóór het
+  verwijderen telt de functie het aantal deelnemers en de gemiddelde score
+  per thema (alleen van afgeronde respondenten) op bij
+  `scanronde_samenvattingen`/`scanronde_thema_samenvattingen` — geen namen,
+  mails, codes of losse antwoorden. `scanrondes.bewaartermijn_verlengd_tot`
+  + `verleng_bewaartermijn(scanronde_id, 1 of 3)` laten Nynke een scanronde
+  (tijdelijk) uitzonderen; de knop hiervoor in `/beheer` volgt in fase 3,
+  samen met de rest van de frontend-aanpassing.
+- **Nog niet gedaan:** deze migraties zijn nog niet tegen het nieuwe project
+  gedraaid (verbindingsgegevens volgen), de frontend gebruikt nog steeds
+  het oude `respondentId`-patroon rechtstreeks op de tabellen (fase 3), en
+  `individuele_gegevens_bewaren` (kolom staat er, logica niet) is nog niet
+  gebouwd.
