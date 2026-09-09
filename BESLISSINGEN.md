@@ -605,3 +605,45 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   (`supabase db push`, via `db query --linked` gecontroleerd: RLS aan op
   alle 8 tabellen, geen policy op respondenten/antwoorden/
   rate_limit_start_respondent, en de juiste execute-rechten per functie).
+
+## Fase 3: frontend, domein en de twee andere plekken (2026-09-09, vervolg)
+
+- **Mismatch gevonden en gefixt:** `.env.local` wees nog naar het oude
+  Zürich-project (`zynkejkdpwniweevvkqc`), niet naar het gelinkte nieuwe
+  project (`zcgpkkpietpocqvggevs`). Rechtgezet met de echte
+  publishable-key van het nieuwe project (opgehaald via `supabase
+  projects api-keys`). Dezelfde twee variabelen op de Cloudflare-worker
+  (`vit-scan-preview`, los geconfigureerd als secrets, dus niet via
+  `.env.local`) zijn met `wrangler secret put` ook bijgewerkt.
+- **`.vercel`-map verwijderd.** Stond al in `.gitignore`, dus nooit in git
+  getrackt geweest -- puur lokale opruiming. De `VERCEL_OIDC_TOKEN`-regel
+  in `.env.local` (hoorde bij het inmiddels verwijderde Vercel-project,
+  `prj_TICkrHHNaPWwbBJA4F1zHEC3UOob`) is om dezelfde reden verwijderd.
+- **Domein/DNS:** `nynkeleistra.nl` wordt beheerd bij **Strato**
+  (nameservers `docks01.rzone.de`/`shades18.rzone.de`, SOA
+  `hostmaster.strato-rz.de` -- gecontroleerd met een DNS-lookup, niet
+  aangenomen). `scan.nynkeleistra.nl` heeft op dit moment **geen enkel
+  DNS-record** (geen A, geen CNAME) -- het subdomein heeft dus nooit echt
+  naar Vercel gewezen via DNS; wat er stond was hoogstens een
+  domeininstelling binnen het (nu verwijderde) Vercel-project zelf.
+  `nynkeleistra.nl` staat nog niet als zone in het Cloudflare-account
+  (gecontroleerd via de API). Voor deze koppeling is nog nodig:
+  1. het domein als (partiële/CNAME-only) zone toevoegen in Cloudflare --
+     dit kan ik niet zelf, mijn wrangler-token heeft alleen `zone:read`,
+     geen schrijfrecht;
+  2. in Cloudflare een Custom Domain instellen op de worker;
+  3. de CNAME die Cloudflare daarbij geeft, bij Strato aanmaken.
+  Nog een aandachtspunt: de worker heet nu bewust `vit-scan-preview` (zie
+  `wrangler.jsonc`) -- vóór de domeinkoppeling is een moment om te kiezen
+  of dat een productienaam wordt.
+- **Keep-alive workflow (`NynkeLeistra2/databasequery-`):** gecontroleerd,
+  pingt twee Supabase-projecten; "project 1" is `zynkejkdpwniweevvkqc`
+  (het oude VIT-scan-project). Aangepast naar `zcgpkkpietpocqvggevs` in
+  een lokale kloon, **nog niet gepusht** -- de GitHub Actions-secret
+  `SUPABASE_ANON_KEY_1` moet Nynke zelf bijwerken (geen toegang tot die
+  secret vanuit hier), dus de code-wijziging wacht tot dat ook gebeurt.
+- **n8n-workflow:** geen wijziging nodig -- die ontvangt alleen de
+  webhook-payload van onze eigen `/api/verstuur-resultaten` en heeft geen
+  eigen Supabase-koppeling.
+- **Frontend naar het token:** zie de commit "Frontend naar het
+  toegangstoken (fase 3), Boost-toggle afgerond".
