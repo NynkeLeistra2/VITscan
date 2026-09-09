@@ -707,3 +707,28 @@ weer verwijderd is, database staat weer leeg):
 - **Nog altijd niet gedaan (vraagt een handmatige doorloop door Nynke
   zelf):** de volledige scan van begin tot eind als deelnemer, met
   controle dat het rapport ook echt in de mailbox aankomt.
+
+## Auth-config gecorrigeerd + gevonden gat: zelfregistratie stond open (2026-09-09, vervolg)
+
+- **Aanleiding:** wachtwoord wijzigen via het Supabase-dashboard stuurde
+  Nynke naar `localhost`. Oorzaak: `supabase/config.toml` (door
+  `supabase init` aangemaakt) stond nog op de standaard lokale-
+  ontwikkelwaarden, nooit voor dit project gecorrigeerd.
+- **Erbij gevonden, niet gevraagd maar wel relevant:** `enable_signup`
+  stond nog op `true` (zowel de hoofdschakelaar als
+  `auth.email.enable_signup`) -- dat betekende dat de Auth-API zelf nog
+  open stond voor zelfregistratie met de publieke sleutel, ook al heeft
+  de app geen registratieformulier. Bij het oude project stond dit
+  expliciet uit. Nu ook hier uit, gecontroleerd met een echte
+  signup-aanroep ("Signups not allowed for this instance").
+- **Werkwijze:** eerst `supabase config pull` om de échte huidige
+  instellingen binnen te halen, dan alleen de 4 bedoelde velden
+  aangepast, pas daarna gepusht. Blind de hele init-template pushen (het
+  eerste dat voor de hand lag) zou zonder deze tussenstap ook
+  e-mailbevestiging en MFA op de remote hebben uitgezet en de
+  OTP-lengte hebben verzwakt -- niets van dat was gevraagd of bedoeld.
+- **Nog een gat, nog niet gedicht:** er is geen pagina in de app die een
+  password-reset-link kan afhandelen (geen self-service reset-flow in
+  Wave 1). Een reset-link komt nu wel op het juiste domein terecht, maar
+  er is nog niets dat 'm verwerkt. Wachtwoord wijzigen kan voorlopig via
+  de Admin API (zoals nu gedaan) of het Supabase-dashboard.
