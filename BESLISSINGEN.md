@@ -686,3 +686,24 @@ weer verwijderd is, database staat weer leeg):
   `/beheer` zelf, en de drie authenticated-only functies
   (`verwijder_respondent`, `verleng_bewaartermijn`, `zet_start_limiet`) in
   de praktijk met een echte ingelogde sessie.
+
+## Fase 4: beheerder-account en de laatste tests (2026-09-09, vervolg)
+
+- **Inlog-account aangemaakt** in het nieuwe project via de Supabase Admin
+  API (`fortemcoaching@gmail.com`, tijdelijk wachtwoord rechtstreeks aan
+  Nynke gegeven, niet ergens opgeslagen).
+- **Met een echte ingelogde sessie getest** (niet alleen via de rol-grant
+  gecontroleerd, ook echt aangeroepen en de uitkomst in de database
+  gecontroleerd): `zet_start_limiet`, `verleng_bewaartermijn` en
+  `verwijder_respondent` werken voor `authenticated` en zijn geweigerd
+  voor `anon` ("permission denied", geen foutmelding die iets verklapt).
+- **`/beheer` echt in de browser doorlopen:** inloggen werkt, de
+  organisatie/scanronde die als testdata bestond kwam correct in het
+  scherm (bevestigt de nieuwe authenticated-leesrechten), "Verwijderen"
+  (archiveren) op een scanronde werkt en is in de database gecontroleerd.
+- Alle testdata weer verwijderd, inclusief de rij in
+  `rate_limit_start_respondent` -- het nieuwe project staat weer helemaal
+  leeg.
+- **Nog altijd niet gedaan (vraagt een handmatige doorloop door Nynke
+  zelf):** de volledige scan van begin tot eind als deelnemer, met
+  controle dat het rapport ook echt in de mailbox aankomt.
