@@ -1,10 +1,11 @@
 {
-  // Cloudflare-migratietest, bewust "-preview" in de naam: dit is nog niet
-  // de productie-worker, alleen om te testen of de app op Cloudflare draait.
-  // De VIT-scan blijft live op Vercel tot expliciet akkoord voor cutover.
+  // Vanaf hier de echte worker (was "vit-scan-preview" tijdens het testen
+  // van de Cloudflare-migratie, zie git-historie). Draait voorlopig op het
+  // eigen workers.dev-adres, nog geen custom domain (scan.nynkeleistra.nl
+  // staat nog niet gekoppeld -- zie BESLISSINGEN.md).
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "name": "vit-scan-preview",
+  "name": "vit-scan",
   "compatibility_date": "2026-07-24",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -14,9 +15,10 @@
   "services": [
     {
       // Self-reference service binding, vereist door OpenNext voor caching/
-      // revalidatie-aanroepen vanuit de worker naar zichzelf.
+      // revalidatie-aanroepen vanuit de worker naar zichzelf. Moet exact de
+      // "name" hierboven zijn.
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "vit-scan-preview"
+      "service": "vit-scan"
     }
   ],
   "r2_buckets": [
@@ -26,7 +28,7 @@
       // het eerste testen). Bindingnaam moet exact zo heten, verwacht door
       // @opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache.
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "vit-scan-preview-opennext-cache"
+      "bucket_name": "vit-scan-opennext-cache"
     }
   ],
   "observability": {
