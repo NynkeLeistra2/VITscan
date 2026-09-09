@@ -13,6 +13,7 @@ interface RapportScreenProps {
   respondentCode: string;
   naam: string;
   organisatieNaam: string;
+  boostIngeschakeld: boolean;
 }
 
 const WIEL_TITEL: Record<string, string> = {
@@ -30,6 +31,7 @@ export function RapportScreen({
   respondentCode,
   naam,
   organisatieNaam,
+  boostIngeschakeld,
 }: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
@@ -189,13 +191,15 @@ export function RapportScreen({
         >
           {pdfBezig ? "Rapport wordt gemaakt..." : "Download rapport (PDF)"}
         </button>
-        <button
-          type="button"
-          onClick={gaNaarBoost}
-          className="h-12 w-full max-w-xs rounded-lg border-2 border-brand-violet font-medium text-brand-violet transition-colors hover:bg-brand-violet hover:text-white"
-        >
-          Ga naar Boost je werkgeluk
-        </button>
+        {boostIngeschakeld && (
+          <button
+            type="button"
+            onClick={gaNaarBoost}
+            className="h-12 w-full max-w-xs rounded-lg border-2 border-brand-violet font-medium text-brand-violet transition-colors hover:bg-brand-violet hover:text-white"
+          >
+            Ga naar Boost je werkgeluk
+          </button>
+        )}
       </div>
       {pdfFoutmelding && (
         <p className="mt-3 text-center text-sm text-red-600">{pdfFoutmelding}</p>

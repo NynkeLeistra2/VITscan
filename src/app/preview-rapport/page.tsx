@@ -19,6 +19,7 @@ export default function PreviewRapportPage() {
       respondentCode="PREVIEW-01"
       naam=""
       organisatieNaam=""
+      boostIngeschakeld={true}
     />
   );
 }

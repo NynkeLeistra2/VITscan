@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { BeheerForm } from "./BeheerForm";
+import { BoostToggle } from "./BoostToggle";
 import { VerwijderScanrondeKnop } from "./VerwijderScanrondeKnop";
 import { VerwijderOrganisatieKnop } from "./VerwijderOrganisatieKnop";
 import { HerstelScanrondeKnop } from "./HerstelScanrondeKnop";
@@ -12,6 +13,7 @@ interface Scanronde {
   id: string;
   naam: string;
   email_verplicht: boolean;
+  boost_ingeschakeld: boolean;
   gearchiveerd_op: string | null;
 }
 
@@ -42,7 +44,9 @@ export default async function BeheerPagina() {
 
   const { data } = await supabase
     .from("organisaties")
-    .select("id, naam, teams(id, naam), scanrondes(id, naam, email_verplicht, gearchiveerd_op)")
+    .select(
+      "id, naam, teams(id, naam), scanrondes(id, naam, email_verplicht, boost_ingeschakeld, gearchiveerd_op)"
+    )
     .order("naam");
 
   const organisaties = (data ?? []) as OrganisatieMetLijsten[];
@@ -51,7 +55,7 @@ export default async function BeheerPagina() {
   // niet onder een van de organisaties hierboven, dus apart opgehaald.
   const { data: dataZonderOrg } = await supabase
     .from("scanrondes")
-    .select("id, naam, email_verplicht, gearchiveerd_op")
+    .select("id, naam, email_verplicht, boost_ingeschakeld, gearchiveerd_op")
     .is("organisatie_id", null)
     .order("naam");
   const scanrondesZonderOrg = (dataZonderOrg ?? []) as Scanronde[];
@@ -115,6 +119,7 @@ export default async function BeheerPagina() {
                       </p>
                       <VerwijderScanrondeKnop scanrondeId={ronde.id} scanrondeNaam={ronde.naam} />
                     </div>
+                    <BoostToggle scanrondeId={ronde.id} ingeschakeld={ronde.boost_ingeschakeld} />
                     <LinkRegel url={`${origin}/scan/${ronde.id}`} label="Algemene link" />
                     {org.teams.map((team) => (
                       <LinkRegel
@@ -147,6 +152,7 @@ export default async function BeheerPagina() {
                     </p>
                     <VerwijderScanrondeKnop scanrondeId={ronde.id} scanrondeNaam={ronde.naam} />
                   </div>
+                  <BoostToggle scanrondeId={ronde.id} ingeschakeld={ronde.boost_ingeschakeld} />
                   <LinkRegel url={`${origin}/scan/${ronde.id}`} label="Algemene link" />
                 </li>
               ))}

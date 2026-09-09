@@ -86,6 +86,16 @@ export function BeheerForm({ organisaties }: BeheerFormProps) {
         E-mail verplicht voor deze scanronde
       </label>
 
+      <label className="flex items-center gap-2 text-sm text-zinc-700">
+        <input
+          type="checkbox"
+          name="boostIngeschakeld"
+          defaultChecked
+          className="h-4 w-4 rounded border-brand-salie/40 text-brand-violet"
+        />
+        Boost je werkgeluk aanbieden na het rapport
+      </label>
+
       {state.fout && <p className="text-sm text-red-600">{state.fout}</p>}
 
       {state.link && (

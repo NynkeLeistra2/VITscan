@@ -121,3 +121,23 @@ Deze hoeven niet opnieuw aangemaakt te worden.
    auth, alleen voor haarzelf).
 4. (Later, bewust apart gepland) Cloudflare-migratie: `@resvg/resvg-js` vervangen door de
    WASM-variant en de hele PDF-flow opnieuw testen voordat dit live gaat.
+
+## Status per 2026-08-17
+
+**NB:** dit logbestand liep sinds 2026-07-16 achter — zie `git log` en `BESLISSINGEN.md` voor
+alles wat er tussentijds is gebeurd (o.a. bedrijfsnaam op voorblad, persoonlijke code-tekst
+aangepast, open vraag verwijderd uit de scanflow, Cloudflare Workers-migratie al voorbereid en
+in preview getest met R2-cache, Werkgelukwiel/levenswiel nu als PDF-vector i.p.v. resvg).
+
+**Boost je werkgeluk aan/uit per scanronde (nieuw, deze sessie):** gebouwd, nog niet gedeployed
+of getest in de browser. Zie `BESLISSINGEN.md` (stap 7, 2026-08-17) voor de volledige toelichting.
+Kort: nieuwe kolom `scanrondes.boost_ingeschakeld` (migratie 0012, **nog door Nynke te draaien**
+in de Supabase SQL Editor), checkbox bij het aanmaken van een scanronde, en een losse toggle
+(`BoostToggle.tsx`) bij bestaande scanrondes in `/beheer` die meteen opslaat. `RapportScreen`
+toont de knop nu conditioneel. Typecheck en lint zijn schoon; `next dev`/browsertest en de
+migratie zelf zijn de eerstvolgende stappen.
+
+**Volgende stap na akkoord/testen van Boost-toggle:** de eerder aangekondigde
+Cloudflare-migratiebeoordeling (zie `prompts-claude-code.md` in de planningsmap
+`C:\Users\nynke\Claude\Projects\VIT-SCAN`) — al deels voorbereid blijkens de git-historie
+hierboven, dus eerst navragen wat daarvan al klaar/getest is voordat dat traject verder gaat.

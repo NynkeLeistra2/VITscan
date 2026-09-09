@@ -55,7 +55,11 @@ export interface Database {
           gestart_op: string | null;
           gesloten_op: string | null;
           email_verplicht: boolean;
+          boost_ingeschakeld: boolean;
           gearchiveerd_op: string | null;
+          individuele_gegevens_bewaren: boolean;
+          start_limiet_per_ip: number | null;
+          bewaartermijn_verlengd_tot: string | null;
           created_at: string;
         };
         Insert: {
@@ -65,7 +69,11 @@ export interface Database {
           gestart_op?: string | null;
           gesloten_op?: string | null;
           email_verplicht?: boolean;
+          boost_ingeschakeld?: boolean;
           gearchiveerd_op?: string | null;
+          individuele_gegevens_bewaren?: boolean;
+          start_limiet_per_ip?: number | null;
+          bewaartermijn_verlengd_tot?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["scanrondes"]["Insert"]>;
@@ -79,12 +87,16 @@ export interface Database {
           },
         ];
       };
+      // Geen enkele policy (zie supabase/migrations/0001_init_schema.sql) --
+      // dus geen .from("respondenten") in de app, altijd via de functies
+      // hieronder. Deze Row/Insert-vorm staat er alleen voor volledigheid.
       respondenten: {
         Row: {
           id: string;
           scanronde_id: string;
           team_id: string | null;
           respondent_code: string;
+          toegangstoken: string;
           email: string | null;
           naam: string | null;
           stellingen_versie: string;
@@ -98,6 +110,7 @@ export interface Database {
           scanronde_id: string;
           team_id?: string | null;
           respondent_code: string;
+          toegangstoken?: string;
           email?: string | null;
           naam?: string | null;
           stellingen_versie: string;
@@ -153,21 +166,45 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
-      upsert_respondent: {
+      // Geen token nog beschikbaar op dit moment (intro, vóór starten) --
+      // werkt op de twee id's die al in de link staan. Geeft null-achtige
+      // (geen rijen) terug bij een ongeldige/gearchiveerde combinatie.
+      haal_scan_context: {
         Args: {
-          p_respondent_id: string;
+          p_scanronde_id: string;
+          p_team_id?: string | null;
+        };
+        Returns: {
+          scanronde_naam: string;
+          organisatie_naam: string | null;
+          team_naam: string | null;
+          email_verplicht: boolean;
+          boost_ingeschakeld: boolean;
+        }[];
+      };
+      // Maakt de respondent aan en geeft het toegangstoken terug -- dat
+      // token is vanaf hier het enige dat de browser gebruikt.
+      start_respondent: {
+        Args: {
           p_scanronde_id: string;
           p_team_id: string | null;
           p_respondent_code: string;
           p_stellingen_versie: string;
           p_naam?: string | null;
         };
-        Returns: void;
+        Returns: string;
       };
       upsert_antwoorden: {
         Args: {
-          p_respondent_id: string;
+          p_token: string;
           p_antwoorden: Record<string, number>;
+        };
+        Returns: void;
+      };
+      rond_respondent_af: {
+        Args: {
+          p_token: string;
+          p_email?: string | null;
         };
         Returns: void;
       };

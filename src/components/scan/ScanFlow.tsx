@@ -9,7 +9,7 @@ import {
   type ScanSessie,
 } from "@/lib/scan-sessie";
 import {
-  maakOfWerkRespondentBij,
+  startRespondent,
   rondRespondentAf,
   slaAntwoordenOp,
 } from "@/lib/supabase/scan-repository";
@@ -147,15 +147,17 @@ export function ScanFlow({ context }: ScanFlowProps) {
     setFoutmelding(null);
     setBezig(true);
     try {
-      await maakOfWerkRespondentBij({
-        respondentId: sessie!.respondentId,
+      // Pas hier ontstaat de respondent-rij (en het token) -- niet bij het
+      // laden van de introscreen, zodat herladen op dit scherm geen lege
+      // rijen achterlaat.
+      const toegangstoken = await startRespondent({
         scanrondeId: context.scanrondeId,
         teamId: context.teamId,
         respondentCode: sessie!.respondentCode,
         stellingenVersie: sessie!.stellingenVersie,
         naam: sessie!.naam.trim() || null,
       });
-      bijwerken({ stapIndex: 1 });
+      bijwerken({ toegangstoken, stapIndex: 1 });
     } catch {
       setFoutmelding(
         "Het is niet gelukt om te starten. Controleer je internetverbinding en probeer het opnieuw."
@@ -196,7 +198,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
       const antwoordenVoorThema = Object.fromEntries(
         stap.thema.stellingen.map((s) => [s.key, antwoorden[s.key]])
       );
-      await slaAntwoordenOp(sessie!.respondentId, antwoordenVoorThema);
+      await slaAntwoordenOp(sessie!.toegangstoken!, antwoordenVoorThema);
       bijwerken({ stapIndex: volgendeStap });
     } catch {
       setFoutmelding(
@@ -211,10 +213,10 @@ export function ScanFlow({ context }: ScanFlowProps) {
     setFoutmelding(null);
     setBezig(true);
     try {
-      await slaAntwoordenOp(sessie!.respondentId, sessie!.antwoorden);
+      await slaAntwoordenOp(sessie!.toegangstoken!, sessie!.antwoorden);
       const emailVoorOpslag =
         context.emailVerplicht || sessie!.emailOptIn ? sessie!.email.trim() : "";
-      await rondRespondentAf(sessie!.respondentId, emailVoorOpslag || null);
+      await rondRespondentAf(sessie!.toegangstoken!, emailVoorOpslag || null);
       // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
       // afgewacht/geblokkeerd op, een storing hierin mag de respondent
       // nooit het zicht op het eigen rapport ontnemen. Eén automatische
@@ -243,6 +245,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
         respondentCode={sessie.respondentCode}
         naam={sessie.naam.trim()}
         organisatieNaam={context.organisatieNaam}
+        boostIngeschakeld={context.boostIngeschakeld}
       />
     );
   }

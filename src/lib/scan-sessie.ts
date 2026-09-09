@@ -2,7 +2,12 @@ import { genereerRespondentCode } from "./respondent-code";
 import { STELLINGEN_VERSIE } from "./stellingen";
 
 export interface ScanSessie {
-  respondentId: string;
+  /**
+   * Null tot startRespondent() geslaagd is (klik op "beginnen"): pas dan
+   * bestaat er een respondent-rij en dus een token. Vóór dat moment is er
+   * niets om mee te schrijven, alleen lokale antwoorden in deze sessie.
+   */
+  toegangstoken: string | null;
   respondentCode: string;
   stellingenVersie: string;
   /** Optioneel: zodat de medewerker zichzelf op het rapport herkent i.p.v. alleen de respondent-code. */
@@ -32,7 +37,13 @@ export function laadSessie(
   if (!ruw) return null;
 
   try {
-    const sessie = JSON.parse(ruw) as ScanSessie;
+    const sessie = JSON.parse(ruw) as ScanSessie & { respondentId?: string };
+    // Sessie van vóór de verhuizing naar het nieuwe project: had een
+    // respondent-id (rechtstreeks, geen token) dat verwijst naar een rij in
+    // de oude database. Die rij bestaat straks niet meer -- niets aan te
+    // hervatten, dus behandel als "geen sessie" zodat er een nieuwe met een
+    // echt token wordt gestart.
+    if ("respondentId" in sessie && !("toegangstoken" in sessie)) return null;
     // Sessies opgeslagen vóór introductie van het naamveld hebben dit nog niet.
     return { ...sessie, naam: sessie.naam ?? "" };
   } catch {
@@ -54,7 +65,7 @@ export function opslaanSessie(
 
 export function nieuweSessie(): ScanSessie {
   return {
-    respondentId: crypto.randomUUID(),
+    toegangstoken: null,
     respondentCode: genereerRespondentCode(),
     stellingenVersie: STELLINGEN_VERSIE,
     naam: "",

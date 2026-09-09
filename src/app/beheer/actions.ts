@@ -28,6 +28,7 @@ const FormSchema = z.object({
   nieuweOrganisatieNaam: z.string().trim().max(200).optional(),
   scanrondeNaam: z.string().trim().min(1).max(200),
   emailVerplicht: z.boolean(),
+  boostIngeschakeld: z.boolean(),
   teamNaam: z.string().trim().max(200).optional(),
 });
 
@@ -58,6 +59,7 @@ export async function maakScanrondeAan(
     nieuweOrganisatieNaam: formData.get("nieuweOrganisatieNaam") || undefined,
     scanrondeNaam: formData.get("scanrondeNaam"),
     emailVerplicht: formData.get("emailVerplicht") === "on",
+    boostIngeschakeld: formData.get("boostIngeschakeld") === "on",
     teamNaam: formData.get("teamNaam") || undefined,
   });
 
@@ -95,6 +97,7 @@ export async function maakScanrondeAan(
       organisatie_id: organisatieId,
       naam: input.scanrondeNaam,
       email_verplicht: input.emailVerplicht,
+      boost_ingeschakeld: input.boostIngeschakeld,
     })
     .select("id")
     .single();
@@ -267,6 +270,32 @@ export async function verwijderOrganisatie(organisatieId: string): Promise<{ fou
   if (error) {
     console.error("Verwijderen organisatie mislukt:", foutDetail(error));
     return { fout: `Verwijderen is niet gelukt. ${foutDetail(error)}` };
+  }
+
+  revalidatePath("/beheer");
+  return { fout: null };
+}
+
+export async function zetBoostIngeschakeld(
+  scanrondeId: string,
+  ingeschakeld: boolean
+): Promise<{ fout: string | null }> {
+  const supabase = await supabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { fout: "Je bent niet (meer) ingelogd. Log opnieuw in." };
+  }
+
+  const { error } = await supabase
+    .from("scanrondes")
+    .update({ boost_ingeschakeld: ingeschakeld })
+    .eq("id", scanrondeId);
+  if (error) {
+    console.error("Wijzigen Boost je werkgeluk mislukt:", foutDetail(error));
+    return { fout: `Wijzigen is niet gelukt. ${foutDetail(error)}` };
   }
 
   revalidatePath("/beheer");
