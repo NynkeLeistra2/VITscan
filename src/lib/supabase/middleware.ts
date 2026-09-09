@@ -41,8 +41,14 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
 
   const isBeheerRoute = request.nextUrl.pathname.startsWith("/beheer");
   const isLoginRoute = request.nextUrl.pathname.startsWith("/beheer/login");
+  // Wachtwoord-instellen verwerkt een herstel-link (uit de e-mail) volledig
+  // client-side, vóórdat er een sessie is die de server hier al kan zien —
+  // moet dus net als /beheer/login bereikbaar zijn zonder sessie.
+  const isWachtwoordInstellenRoute = request.nextUrl.pathname.startsWith(
+    "/beheer/wachtwoord-instellen"
+  );
 
-  if (isBeheerRoute && !isLoginRoute && !user) {
+  if (isBeheerRoute && !isLoginRoute && !isWachtwoordInstellenRoute && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/beheer/login";
     return NextResponse.redirect(loginUrl);
