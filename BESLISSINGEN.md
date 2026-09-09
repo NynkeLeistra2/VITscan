@@ -562,3 +562,46 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   het oude `respondentId`-patroon rechtstreeks op de tabellen (fase 3), en
   `individuele_gegevens_bewaren` (kolom staat er, logica niet) is nog niet
   gebouwd.
+
+## Correctie op de functierechten + twee aanvullingen (2026-09-09, vervolg)
+
+- **Gevonden bug, na echte verificatie op de database (niet aangenomen):**
+  `revoke all on function ... from public` haalt niets weg bij `anon`.
+  Supabase zet standaard een schema-brede regel (`alter default
+  privileges ... grant execute on functions to anon, authenticated,
+  service_role`) die bij het *aanmaken* van een nieuwe functie
+  automatisch EXECUTE aan `anon` geeft, los van de rol `public`. Gevolg:
+  `verwijder_respondent`, `zet_start_limiet`, `verleng_bewaartermijn`,
+  `ruim_verlopen_respondenten_op` en de twee nieuwe leesfuncties waren
+  per ongeluk óók door `anon` aan te roepen, ondanks de `revoke ... from
+  public` die er al in stond. Gecontroleerd met `has_function_privilege()`
+  en de ruwe `pg_proc.proacl`/`pg_default_acl`, niet op het oog.
+- **Fix (`0006_functie_rechten_correctie.sql`):** de schema-brede regel
+  aangepast (`alter default privileges in schema public revoke execute
+  on functions from anon`, zodat nieuwe functies in fase 3 e.v. hier niet
+  opnieuw intrappen) én de zes al aangemaakte functies expliciet
+  gecorrigeerd. Ná de fix opnieuw gecontroleerd: `anon` kan nu alleen nog
+  `haal_scan_context`/`start_respondent`/`upsert_antwoorden`/
+  `rond_respondent_af` aanroepen, precies zoals bedoeld.
+- **Blijvend aandachtspunt voor volgende migraties:** dit lost alleen het
+  "rechtstreeks aan anon"-kanaal op. Postgres' eigen ingebouwde gedrag
+  (EXECUTE op een nieuwe functie automatisch aan de rol `public` geven)
+  is met een losse test bevestigd dat dat *niet* schema-breed uit te
+  zetten is — elke nieuwe functie die niet publiek mag zijn, moet zelf
+  een `revoke all on function ... from public` blijven bevatten (wat alle
+  functies in dit project al deden, en waar we dus al goed in zaten).
+- **Leesfuncties voor het beheerscherm** (`0005_scanronde_voortgang.sql`):
+  `scanronde_deelnemers_aantal` en `scanronde_thema_gemiddelden`, alleen
+  voor `authenticated`, geven aantallen/gemiddelden terug over de
+  respondenten die er *nu nog* staan (dus ook tijdens een lopende
+  scanronde, niet pas na de 3-maanden-opruiming zoals de
+  samenvattingstabellen uit 0004).
+- **Rate limiting per scanronde verruimbaar:** `rate_limit_start_respondent`
+  telt nu per (ip, scanronde) in plaats van per ip alleen;
+  `scanrondes.start_limiet_per_ip` + `zet_start_limiet(scanronde_id,
+  limiet)` laten het standaardlimiet (20 per 10 minuten) per scanronde
+  optrekken voor een workshop met veel deelnemers achter één wifi/NAT.
+- **Migraties 0001 t/m 0006 zijn toegepast** op het nieuwe eu-west-1-project
+  (`supabase db push`, via `db query --linked` gecontroleerd: RLS aan op
+  alle 8 tabellen, geen policy op respondenten/antwoorden/
+  rate_limit_start_respondent, en de juiste execute-rechten per functie).

@@ -43,6 +43,11 @@ create table scanrondes (
   -- geaggregeerde groepsrapport over. De logica en de knop daarvoor volgen
   -- pas na akkoord op het opruim-voorstel.
   individuele_gegevens_bewaren boolean not null default true,
+  -- Overschrijft het standaardlimiet van start_respondent() (0002) voor
+  -- deze ene scanronde. Null = standaard (20 per ip per 10 minuten) blijft
+  -- gelden. Nodig voor een workshop waar veel deelnemers achter dezelfde
+  -- wifi/NAT-ip vandaan komen en dus hetzelfde ip delen.
+  start_limiet_per_ip integer,
   created_at timestamptz not null default now()
 );
 create index scanrondes_organisatie_id_idx on scanrondes (organisatie_id);

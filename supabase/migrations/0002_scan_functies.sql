@@ -55,20 +55,56 @@ grant execute on function public.haal_scan_context(uuid, uuid) to anon, authenti
 -- teltabel, geen persoonsgegevens. IP komt uit de request-headers die
 -- Supabase/PostgREST als GUC beschikbaar stelt (niet uit de
 -- databaseverbinding zelf, die loopt via een gedeelde pooler). Zonder die
--- header valt alles terug op de sleutel 'onbekend' — dan geldt het limiet
+-- header valt alles terug op het "ip" 'onbekend' — dan geldt het limiet
 -- voor dat verkeer gezamenlijk, wat nog steeds beschermt tegen een script
 -- dat de header weglaat, maar wél betekent dat we dit in fase 4 moeten
 -- controleren met een echt verzoek (zie testplan).
+--
+-- Geteld per (ip, scanronde) in plaats van per ip alleen: een groep die in
+-- één ruimte achter hetzelfde ip een heel andere scanronde start, mag het
+-- budget van deze scanronde niet al opgebruikt hebben. Voor een workshop
+-- waar veel deelnemers wél tegelijk dezelfde scanronde starten vanaf
+-- hetzelfde ip, kan het limiet per scanronde omhoog (zie
+-- scanrondes.start_limiet_per_ip / zet_start_limiet hieronder) — anders is
+-- dit een bekende beperking die zich meldt met een duidelijke foutmelding,
+-- niet met een stille mislukking.
 create table public.rate_limit_start_respondent (
-  sleutel text primary key,
+  ip text not null,
+  scanronde_id uuid not null,
   venster_begin timestamptz not null,
-  aantal integer not null
+  aantal integer not null,
+  primary key (ip, scanronde_id)
 );
 
 -- Geen RLS-policy nodig: deze tabel wordt alleen door start_respondent()
 -- zelf aangeraakt (SECURITY DEFINER), nooit rechtstreeks door anon/
 -- authenticated. RLS staat toch aan, voor het geval dat later verandert.
 alter table public.rate_limit_start_respondent enable row level security;
+
+-- Verruimen vanuit /beheer (de functie nu, de knop volgt in fase 3): een
+-- ondergrens van 1 voorkomt per ongeluk de bescherming helemaal
+-- uitschakelen, een bovengrens van 500 voorkomt een tikfout (bv. een 0
+-- vergeten) die de bescherming juist zinloos streng maakt.
+create or replace function public.zet_start_limiet(p_scanronde_id uuid, p_limiet integer)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null then
+    raise exception 'Niet toegestaan.';
+  end if;
+  if p_limiet < 1 or p_limiet > 500 then
+    raise exception 'Limiet moet tussen 1 en 500 liggen.';
+  end if;
+
+  update scanrondes set start_limiet_per_ip = p_limiet where id = p_scanronde_id;
+end;
+$$;
+
+revoke all on function public.zet_start_limiet(uuid, integer) from public;
+grant execute on function public.zet_start_limiet(uuid, integer) to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 2. start_respondent: maakt de respondent pas aan als de deelnemer echt op
@@ -91,22 +127,32 @@ as $$
 declare
   v_ip text;
   v_venster interval := interval '10 minutes';
-  -- Ruim genoeg voor een workshop achter één wifi-aansluiting/NAT (meerdere
-  -- mensen delen dan hetzelfde ip), streng genoeg tegen een script dat
-  -- massaal rijen aanmaakt. Bij te veel valse meldingen: dit getal ophogen.
-  v_limiet integer := 20;
+  -- Standaard, ruim genoeg voor een workshop achter één wifi-aansluiting/
+  -- NAT (meerdere mensen delen dan hetzelfde ip), streng genoeg tegen een
+  -- script dat massaal rijen aanmaakt. Per scanronde te verruimen via
+  -- scanrondes.start_limiet_per_ip / zet_start_limiet().
+  v_limiet integer;
   v_nu timestamptz := now();
   v_aantal integer;
   v_token uuid;
 begin
+  select coalesce(start_limiet_per_ip, 20)
+  into v_limiet
+  from scanrondes
+  where id = p_scanronde_id and gearchiveerd_op is null;
+
+  if v_limiet is null then
+    raise exception 'Deze scanronde bestaat niet (meer).';
+  end if;
+
   v_ip := split_part(
     coalesce(current_setting('request.headers', true)::json ->> 'x-forwarded-for', 'onbekend'),
     ',', 1
   );
 
-  insert into rate_limit_start_respondent (sleutel, venster_begin, aantal)
-  values (v_ip, v_nu, 1)
-  on conflict (sleutel) do update set
+  insert into rate_limit_start_respondent (ip, scanronde_id, venster_begin, aantal)
+  values (v_ip, p_scanronde_id, v_nu, 1)
+  on conflict (ip, scanronde_id) do update set
     aantal = case
       when rate_limit_start_respondent.venster_begin < v_nu - v_venster then 1
       else rate_limit_start_respondent.aantal + 1
@@ -119,13 +165,6 @@ begin
 
   if v_aantal > v_limiet then
     raise exception 'Te veel pogingen om te starten, probeer het over een paar minuten opnieuw.';
-  end if;
-
-  if not exists (
-    select 1 from scanrondes
-    where id = p_scanronde_id and gearchiveerd_op is null
-  ) then
-    raise exception 'Deze scanronde bestaat niet (meer).';
   end if;
 
   insert into respondenten (scanronde_id, team_id, respondent_code, stellingen_versie, naam)
