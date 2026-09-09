@@ -647,3 +647,42 @@ Korte log van keuzes tijdens de bouw. Zie `VIT-scan-projectplan.md` voor het vol
   eigen Supabase-koppeling.
 - **Frontend naar het token:** zie de commit "Frontend naar het
   toegangstoken (fase 3), Boost-toggle afgerond".
+
+## Fase 4: testen (2026-09-09, vervolg)
+
+Alles getest tegen het echte nieuwe project (met testdata die na iedere test
+weer verwijderd is, database staat weer leeg):
+
+- **Rechtstreeks schrijven/lezen met de publieke sleutel:** INSERT op
+  `respondenten` → RLS-foutmelding. UPDATE op `respondenten` → 0 rijen
+  geraakt. SELECT op `scanrondes` → leeg. Alle drie bevestigd met een
+  echte HTTP-aanroep naar de Supabase REST-API, geen aanname.
+- **Verkeerd/verzonnen token:** `upsert_antwoorden`/`start_respondent`
+  reageren met een lege/generieke uitkomst, geen foutmelding die verklapt
+  of een token wel of niet bestaat. Met een echte database-query erna
+  gecontroleerd dat er ook werkelijk niets veranderd is.
+- **Afgeronde scan niet meer te wijzigen:** na `rond_respondent_af` bleef
+  een tweede aanroep (ander e-mailadres) en een `upsert_antwoorden`-poging
+  zonder effect -- gecontroleerd met een query, niet op het antwoord van
+  de aanroep zelf vertrouwd.
+- **Scanpagina zonder publieke leesrechten:** `haal_scan_context` geeft de
+  juiste organisatie-/team-/rondenaam terug voor een geldige combinatie,
+  en niets voor een onbekende/foute combinatie.
+- **Gearchiveerde scanronde:** `start_respondent` weigert met een
+  duidelijke melding, `haal_scan_context` geeft niets terug (dus de link
+  toont "niet geldig", zoals voor een niet-bestaande scanronde).
+- **Rate limiting:** 23 pogingen op rij vanaf hetzelfde ip/scanronde --
+  precies de 20e nog toegestaan, de 21e t/m 23e geweigerd. Klopt exact met
+  het ingestelde standaardlimiet.
+- **Echte browsertest** op `https://vit-scan.fortemcoaching.workers.dev`:
+  introscherm laadt de juiste scanronde-naam, "Start de scan" maakt een
+  echte respondent+token aan, de eerste vier stellingen (één thema) zijn
+  na afronden van dat thema daadwerkelijk in `antwoorden` terechtgekomen --
+  bevestigd met een query, niet aangenomen. Geen app-fouten in de
+  browserconsole (alleen bekende, onschuldige extensie-ruis).
+- **Nog niet getest (geen inlog-account in het nieuwe project):** de
+  hele scan tot en met het rapport in de mailbox (vraagt een handmatige
+  doorloop, en het e-mailadres moet echt gecontroleerd worden),
+  `/beheer` zelf, en de drie authenticated-only functies
+  (`verwijder_respondent`, `verleng_bewaartermijn`, `zet_start_limiet`) in
+  de praktijk met een echte ingelogde sessie.
