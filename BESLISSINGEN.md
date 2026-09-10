@@ -786,3 +786,31 @@ weer verwijderd is, database staat weer leeg):
   Twee opties voor een eigen achterdeur (tweede authenticator toestaan, of
   eenmalige back-upcodes) zijn voorgelegd en bewust nog niet gebouwd op
   Nynkes verzoek. Terug te pakken als daar later behoefte aan is.
+
+## Keep-alive workflow definitief naar het nieuwe project, met een eigen ping-functie (2026-09-10)
+
+- **Aanleiding:** de workflow verwees na de eerdere secret-fix nog naar het
+  oude Zürich-project via een hardcoded URL in het workflowbestand zelf.
+  Dat project is inmiddels verwijderd.
+- **`keep_alive_ping()`** (`0007_keep_alive_ping.sql`): een nieuwe, kleine
+  SECURITY DEFINER-functie met als enige doel aantonen dat de database
+  leeft. Bewust niet de kale PostgREST-rootroute gebruikt zoals voorheen --
+  onafhankelijke bronnen bevestigen dat zoiets mogelijk geen echte
+  databasequery is (kan uit een gecachete schemabeschrijving komen) en dan
+  niet als activiteit telt voor Supabase's pauzeer-detectie. Deze functie
+  doet een echte `select count(*) from scanrondes`, geeft alleen het
+  aantal terug, nooit inhoud -- er gaat dus nooit een persoonsgegeven
+  doorheen.
+- **Workflow (`NynkeLeistra2/databasequery-`):** URL's staan nu ook in
+  secrets (`SUPABASE_URL_1`/`SUPABASE_URL_2`) i.p.v. hardcoded -- nergens
+  meer een project-ref of sleutel in het bestand zelf. Beide stappen loggen
+  hun HTTP-status en falen expliciet (`exit 1` + `::error::`) bij iets
+  anders dan 200, met `if: always()` zodat een mislukking bij project 1
+  niet verbergt of project 2 ook faalt. README.md toegevoegd met twee
+  zinnen over wat de repo doet.
+- **Getest:** handmatig gestart via de GitHub Actions-API (met het al
+  aanwezige git-credential, geen `gh` CLI nodig). Faalde de eerste keer
+  zichtbaar en correct (curl exit 3, "URL malformed") omdat de twee nieuwe
+  URL-secrets nog niet bestonden -- dat is precies het gedrag dat gevraagd
+  was ("zichtbaar falen"), niet een bug. Nynke voegt de twee ontbrekende
+  secrets toe, daarna opnieuw gedraaid.
