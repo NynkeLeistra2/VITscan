@@ -8,7 +8,11 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 /**
  * Ververst de Supabase-sessie op elk request en beveiligt `/beheer`: zonder
  * geldige sessie (en niet al op het inlogscherm) volgt een redirect naar
- * `/beheer/login` — fail closed (SECURITY.md regel 7).
+ * `/beheer/login` — fail closed (SECURITY.md regel 7). Met een gekoppelde
+ * authenticator-app geldt dat ook als de sessie wel bestaat maar nog op
+ * aal1 staat (bv. een oude sessie van vóór het koppelen, of iemand die
+ * /beheer/mfa-controleren probeert over te slaan): dan mag alleen die
+ * controleerpagina (en login/wachtwoord-instellen) bereikt worden.
  */
 export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({ request });
@@ -47,11 +51,22 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   const isWachtwoordInstellenRoute = request.nextUrl.pathname.startsWith(
     "/beheer/wachtwoord-instellen"
   );
+  const isMfaControlerenRoute = request.nextUrl.pathname.startsWith("/beheer/mfa-controleren");
+  const isUitzonderingsRoute = isLoginRoute || isWachtwoordInstellenRoute || isMfaControlerenRoute;
 
-  if (isBeheerRoute && !isLoginRoute && !isWachtwoordInstellenRoute && !user) {
+  if (isBeheerRoute && !isUitzonderingsRoute && !user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/beheer/login";
     return NextResponse.redirect(loginUrl);
+  }
+
+  if (isBeheerRoute && !isUitzonderingsRoute && user) {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+      const mfaUrl = request.nextUrl.clone();
+      mfaUrl.pathname = "/beheer/mfa-controleren";
+      return NextResponse.redirect(mfaUrl);
+    }
   }
 
   return response;

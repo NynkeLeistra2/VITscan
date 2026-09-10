@@ -77,11 +77,19 @@ export default async function BeheerPagina() {
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-zinc-900">Beheer: VIT-scan</h1>
-        <form action={logout}>
-          <button type="submit" className="text-sm text-zinc-500 underline hover:text-zinc-700">
-            Uitloggen
-          </button>
-        </form>
+        <div className="flex items-center gap-4">
+          <a
+            href="/beheer/mfa-instellen"
+            className="text-sm text-zinc-500 underline hover:text-zinc-700"
+          >
+            Inlogbeveiliging
+          </a>
+          <form action={logout}>
+            <button type="submit" className="text-sm text-zinc-500 underline hover:text-zinc-700">
+              Uitloggen
+            </button>
+          </form>
+        </div>
       </div>
 
       <h2 className="mt-8 text-lg font-medium text-zinc-900">Nieuwe scanronde</h2>

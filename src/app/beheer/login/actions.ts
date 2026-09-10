@@ -56,5 +56,15 @@ export async function login(
     return { fout: generiekeFout };
   }
 
+  // Wachtwoord klopt, maar met een gekoppelde authenticator-app is dat nog
+  // niet genoeg: nextLevel is dan 'aal2' terwijl deze sessie nog op 'aal1'
+  // staat. Middleware.ts vangt dit ook af voor wie deze pagina overslaat,
+  // maar hier meteen naar de juiste stap sturen is prettiger dan een extra
+  // redirect-rondje.
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+    redirect("/beheer/mfa-controleren");
+  }
+
   redirect("/beheer");
 }

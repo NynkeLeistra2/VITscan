@@ -758,3 +758,31 @@ weer verwijderd is, database staat weer leeg):
   `NynkeVitScan2026!` (rechtstreeks aan Nynke doorgegeven, niet
   opgeslagen). Ze kan dit voortaan zelf wijzigen via "Wachtwoord
   vergeten?" op de inlogpagina.
+
+## MFA op het beheeraccount: gebouwd, getest, en het noodscenario (2026-09-10)
+
+- **Gebouwd:** `/beheer/mfa-instellen` (authenticator-app koppelen/ontkoppelen),
+  AAL2 afgedwongen via `middleware.ts` op elke `/beheer`-route (niet alleen
+  het inlogscherm), een aparte stap `/beheer/mfa-controleren` na een correct
+  wachtwoord, en `/beheer/wachtwoord-instellen` vraagt nu ook eerst om de
+  authenticator-code als die er is — dat laatste specifiek om het AAL2-
+  vastlopen te voorkomen dat Nynke eerder bij Loopbaankompas tegenkwam.
+- **Getest:** met een wegwerp-testaccount (aangemaakt en na afloop weer
+  verwijderd) is de kern hard bevestigd via losse, schone API-aanroepen:
+  een reset-sessie uit de e-mail staat op AAL1 en een wachtwoord zetten
+  geeft dan exact `insufficient_aal`; met een geldige authenticator-code
+  eerst (challenge + verify) komt de sessie op AAL2 en lukt het wachtwoord
+  zetten daarna wel. Nynke heeft de echte flow met haar eigen account en
+  telefoon getest en bevestigd dat het werkt.
+- **Noodscenario (telefoon/authenticator kwijt) -- besproken, bewust niets
+  extra gebouwd:** op dit moment zijn er twee routes, allebei van buiten de
+  app zelf:
+  1. Via Claude Code: de factor verwijderen met `auth.admin.mfa.deleteFactor`
+     (Admin API, service-role-sleutel) -- deze aanpak is dit hele traject
+     al aantoonbaar gebruikt op het testaccount.
+  2. Via het Supabase-dashboard van Nynke's eigen account (dat heeft zijn
+     eigen, aparte MFA) -- niet gecontroleerd of die knop zichtbaar is in de
+     huidige dashboard-UI.
+  Twee opties voor een eigen achterdeur (tweede authenticator toestaan, of
+  eenmalige back-upcodes) zijn voorgelegd en bewust nog niet gebouwd op
+  Nynkes verzoek. Terug te pakken als daar later behoefte aan is.
