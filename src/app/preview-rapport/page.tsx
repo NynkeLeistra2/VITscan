@@ -16,10 +16,11 @@ export default function PreviewRapportPage() {
   return (
     <RapportScreen
       antwoorden={mockAntwoorden()}
-      respondentCode="PREVIEW-01"
+      toegangstoken="00000000-0000-0000-0000-000000000000"
       naam=""
       organisatieNaam=""
       boostIngeschakeld={true}
+      mailMislukt={false}
     />
   );
 }

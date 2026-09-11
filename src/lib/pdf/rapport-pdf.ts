@@ -8,8 +8,9 @@ import { LOGO_OFFICIEEL_BASE64, LOGO_ICOON_BASE64 } from "./logos";
 /**
  * Server-only PDF-opbouw van het persoonlijk rapport. Zelfde diepte als het
  * scherm (RapportScreen): totaalscore + duiding, per thema score + duiding/
- * reflectievragen/aanbevelingen, afsluiting + persoonlijke code, geen losse
- * stellingscores.
+ * reflectievragen/aanbevelingen, afsluiting, geen losse stellingscores.
+ * Geen respondent-code (meer) -- de scan is volledig anoniem, er is geen
+ * label meer dat een rapport aan een persoon koppelt.
  *
  * Huisstijl (2026-07-20): zacht violet als hoofdkleur, amber en salie als
  * accenten, zelfde palet als de rest van de app (zie globals.css).
@@ -162,14 +163,12 @@ function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
 export interface RapportPdfInput {
   antwoorden: Record<string, number>;
   naam: string | null;
-  respondentCode: string;
   organisatieNaam?: string | null;
 }
 
 export function genereerRapportPdf({
   antwoorden,
   naam,
-  respondentCode,
   organisatieNaam,
 }: RapportPdfInput): Buffer {
   const resultaat = berekenScores(antwoorden);
@@ -224,14 +223,6 @@ export function genereerRapportPdf({
     pdf.text(organisatieNaam, pageWidth / 2, ctx.y, { align: "center" });
     ctx.y += 6;
   }
-
-  // Code altijd op het voorblad: zonder naam is dit de enige identificatie
-  // van de respondent, mét naam staat 'ie er nog klein bij.
-  pdf.setFontSize(9);
-  pdf.setFont("courier", "normal");
-  pdf.setTextColor(...TEXT_MUTED);
-  pdf.text(`Code: ${respondentCode}`, pageWidth / 2, ctx.y, { align: "center" });
-  ctx.y += 6;
 
   drawAmberDivider(ctx, ctx.y);
   ctx.y += 8;
@@ -313,26 +304,7 @@ export function genereerRapportPdf({
   drawSectionTitel(ctx, algemeen.afsluiting.titel);
   drawParagraaf(ctx, algemeen.afsluiting.tekst);
 
-  // Persoonlijke code
-  checkPageBreak(ctx, 24);
   ctx.y += 4;
-  drawAmberDivider(ctx, ctx.y);
-  ctx.y += 8;
-  pdf.setFontSize(9.5);
-  pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(...TEXT_MUTED);
-  pdf.text("Jouw persoonlijke code:", pageWidth / 2, ctx.y, { align: "center" });
-  ctx.y += 6;
-  pdf.setFontSize(13);
-  pdf.setFont("courier", "bold");
-  pdf.setTextColor(...TEXT_DARK);
-  pdf.text(respondentCode, pageWidth / 2, ctx.y, { align: "center" });
-  ctx.y += 6;
-  pdf.setFontSize(8.5);
-  pdf.setFont("helvetica", "normal");
-  pdf.setTextColor(...TEXT_MUTED);
-  pdf.text("Bewaar deze code.", pageWidth / 2, ctx.y, { align: "center" });
-  ctx.y += 4.2 + 6;
 
   // Footer met contactgegevens (alleen op de laatste pagina)
   checkPageBreak(ctx, 24);

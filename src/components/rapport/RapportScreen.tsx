@@ -4,16 +4,21 @@ import { useState } from "react";
 import { berekenScores } from "@/lib/scoring";
 import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
+import { verwijderMijnAntwoorden } from "@/lib/supabase/scan-repository";
 import { ThemaDetail } from "./ThemaDetail";
 import { WerkgelukWiel } from "./WerkgelukWiel";
 import { ScanFooter } from "@/components/scan/ScanFooter";
 
 interface RapportScreenProps {
   antwoorden: Record<string, number>;
-  respondentCode: string;
+  /** Voor het zelf verwijderen van je gegevens (verwijderMijnAntwoorden) --
+   * verder alleen in de browser bewaard, nooit in een link/log. */
+  toegangstoken: string;
   naam: string;
   organisatieNaam: string;
   boostIngeschakeld: boolean;
+  /** True als het versturen van het rapport per mail definitief mislukt is. */
+  mailMislukt: boolean;
 }
 
 const WIEL_TITEL: Record<string, string> = {
@@ -28,15 +33,21 @@ function bestandsnaamUitHeader(contentDisposition: string | null, fallback: stri
 
 export function RapportScreen({
   antwoorden,
-  respondentCode,
+  toegangstoken,
   naam,
   organisatieNaam,
   boostIngeschakeld,
+  mailMislukt,
 }: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
   const [pdfBezig, setPdfBezig] = useState(false);
   const [pdfFoutmelding, setPdfFoutmelding] = useState<string | null>(null);
+
+  const [verwijderBevestigen, setVerwijderBevestigen] = useState(false);
+  const [verwijderBezig, setVerwijderBezig] = useState(false);
+  const [verwijderFout, setVerwijderFout] = useState<string | null>(null);
+  const [verwijderd, setVerwijderd] = useState(false);
 
   /**
    * Geeft de zojuist berekende thema-scores door aan de losstaande,
@@ -72,7 +83,6 @@ export function RapportScreen({
         body: JSON.stringify({
           antwoorden,
           naam: naam.trim() || null,
-          respondentCode,
           organisatie: organisatieNaam.trim() || null,
         }),
       });
@@ -98,6 +108,34 @@ export function RapportScreen({
     } finally {
       setPdfBezig(false);
     }
+  }
+
+  async function verwijderMijnGegevens() {
+    setVerwijderFout(null);
+    setVerwijderBezig(true);
+    try {
+      await verwijderMijnAntwoorden(toegangstoken);
+      setVerwijderd(true);
+    } catch {
+      setVerwijderFout(
+        "Verwijderen is niet gelukt. Controleer je internetverbinding en probeer het opnieuw."
+      );
+    } finally {
+      setVerwijderBezig(false);
+    }
+  }
+
+  if (verwijderd) {
+    return (
+      <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center px-6 py-12 text-center">
+        <h1 className="text-xl font-semibold text-zinc-900">Je gegevens zijn verwijderd</h1>
+        <p className="mt-3 text-zinc-700">
+          Je antwoorden staan niet meer in de database. Het rapport dat je eventueel per
+          e-mail hebt gekregen, blijft van jou.
+        </p>
+        <ScanFooter />
+      </div>
+    );
   }
 
   return (
@@ -182,12 +220,25 @@ export function RapportScreen({
         <p className="mt-2 text-zinc-700">{algemeen.afsluiting.tekst}</p>
       </div>
 
+      {mailMislukt && (
+        <div className="mt-8 rounded-lg border border-red-300 bg-red-50 p-4 text-center text-red-900">
+          <p className="text-sm font-medium">
+            Het mailen van je rapport is niet gelukt. Download het hieronder — we kunnen het
+            later niet alsnog versturen, want we weten dan niet meer naar wie.
+          </p>
+        </div>
+      )}
+
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <button
           type="button"
           onClick={downloadPdf}
           disabled={pdfBezig}
-          className="h-12 w-full max-w-xs rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
+          className={
+            mailMislukt
+              ? "h-12 w-full max-w-xs rounded-lg bg-red-700 font-medium text-white transition-colors hover:bg-red-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+              : "h-12 w-full max-w-xs rounded-lg bg-brand-violet font-medium text-white transition-colors hover:bg-brand-violet-dark disabled:cursor-not-allowed disabled:bg-zinc-300"
+          }
         >
           {pdfBezig ? "Rapport wordt gemaakt..." : "Download rapport (PDF)"}
         </button>
@@ -205,12 +256,42 @@ export function RapportScreen({
         <p className="mt-3 text-center text-sm text-red-600">{pdfFoutmelding}</p>
       )}
 
-      <div className="mt-8 rounded-lg border border-brand-salie/40 bg-brand-ecru p-4 text-center">
-        <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>
-        <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
-          {respondentCode}
-        </p>
-        <p className="mt-1 text-xs text-zinc-500">Bewaar deze code.</p>
+      <div className="mt-10 text-center">
+        {!verwijderBevestigen ? (
+          <button
+            type="button"
+            onClick={() => setVerwijderBevestigen(true)}
+            className="text-sm text-zinc-500 underline hover:text-zinc-700"
+          >
+            Mijn gegevens verwijderen
+          </button>
+        ) : (
+          <div className="mx-auto max-w-md rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900">
+            <p>
+              Weet je zeker dat je je antwoorden wilt laten verwijderen? Het rapport dat je
+              per mail hebt gekregen blijft van jou. Na verwijderen kan Nynke je niet meer
+              helpen met vragen over je uitslag — er is dan niets meer.
+            </p>
+            {verwijderFout && <p className="mt-2 font-medium">{verwijderFout}</p>}
+            <div className="mt-3 flex justify-center gap-4">
+              <button
+                type="button"
+                disabled={verwijderBezig}
+                onClick={verwijderMijnGegevens}
+                className="font-medium text-red-700 underline disabled:opacity-50"
+              >
+                {verwijderBezig ? "Bezig..." : "Ja, verwijderen"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setVerwijderBevestigen(false)}
+                className="text-zinc-600 underline"
+              >
+                Annuleren
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <ScanFooter />

@@ -54,17 +54,18 @@ async function verstuurNaarN8n(payload: Record<string, unknown>): Promise<void> 
 }
 
 /**
- * Vuur-en-vergeet doorsturen naar n8n, met één automatische herhaling na een
- * korte wachttijd: een koude Cloudflare Worker-instantie kan de eerste keer
- * tegen de CPU-tijdslimiet aanlopen (zie ONTWIKKELLOG), een tweede, inmiddels
- * warme poging lukt dan meestal wel. Blokkeert nooit `afronden()` — de
- * respondent ziet zijn rapport altijd meteen, deze functie wordt bewust niet
- * afgewacht door de aanroeper.
+ * Doorsturen naar n8n, met één automatische herhaling na een korte
+ * wachttijd: een koude Cloudflare Worker-instantie kan de eerste keer tegen
+ * de CPU-tijdslimiet aanlopen (zie ONTWIKKELLOG), een tweede, inmiddels warme
+ * poging lukt dan meestal wel. Geeft terug of het (uiteindelijk) gelukt is,
+ * zodat de aanroeper bij een mislukking het rapport zelf laat downloaden --
+ * we kunnen het later niet alsnog versturen, want er is geen e-mailadres
+ * meer bewaard om op terug te vallen (0008_scan_volledig_anoniem.sql).
  */
-async function verstuurResultatenMetRetry(payload: Record<string, unknown>): Promise<void> {
+async function verstuurResultatenMetRetry(payload: Record<string, unknown>): Promise<boolean> {
   try {
     await verstuurNaarN8n(payload);
-    return;
+    return true;
   } catch {
     // eerste poging mislukt, val door naar de herhaling hieronder
   }
@@ -73,16 +74,13 @@ async function verstuurResultatenMetRetry(payload: Record<string, unknown>): Pro
 
   try {
     await verstuurNaarN8n(payload);
+    return true;
   } catch {
-    // Ook de herhaling mislukt: geen respondent-blokkerende actie meer
-    // mogelijk, wel een kort seintje naar een extreem lichte logroute zodat
-    // dit zichtbaar wordt in Cloudflare Workers Logs (zie
+    // Ook de herhaling mislukt: kort seintje naar een extreem lichte
+    // logroute zodat dit zichtbaar wordt in Cloudflare Workers Logs (zie
     // /api/verstuur-resultaten-mislukt — bewust geen zware imports daar).
-    fetch("/api/verstuur-resultaten-mislukt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ respondentCode: payload.respondentCode }),
-    }).catch(() => {});
+    fetch("/api/verstuur-resultaten-mislukt", { method: "POST" }).catch(() => {});
+    return false;
   }
 }
 
@@ -153,9 +151,7 @@ export function ScanFlow({ context }: ScanFlowProps) {
       const toegangstoken = await startRespondent({
         scanrondeId: context.scanrondeId,
         teamId: context.teamId,
-        respondentCode: sessie!.respondentCode,
         stellingenVersie: sessie!.stellingenVersie,
-        naam: sessie!.naam.trim() || null,
       });
       bijwerken({ toegangstoken, stapIndex: 1 });
     } catch {
@@ -216,19 +212,26 @@ export function ScanFlow({ context }: ScanFlowProps) {
       await slaAntwoordenOp(sessie!.toegangstoken!, sessie!.antwoorden);
       const emailVoorOpslag =
         context.emailVerplicht || sessie!.emailOptIn ? sessie!.email.trim() : "";
-      await rondRespondentAf(sessie!.toegangstoken!, emailVoorOpslag || null);
-      // Secundaire integratie (e-mail + Google Sheet via n8n): bewust niet
-      // afgewacht/geblokkeerd op, een storing hierin mag de respondent
-      // nooit het zicht op het eigen rapport ontnemen. Eén automatische
-      // herhaling bij falen, zie verstuurResultatenMetRetry hierboven.
-      verstuurResultatenMetRetry({
-        antwoorden: sessie!.antwoorden,
-        naam: sessie!.naam.trim() || null,
-        email: emailVoorOpslag || null,
-        respondentCode: sessie!.respondentCode,
-        organisatie: context.organisatieNaam || null,
-      }).catch(() => {});
-      bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true });
+      await rondRespondentAf(sessie!.toegangstoken!);
+
+      // Mailen (indien opgegeven) wél afwachten -- anders dan voorheen: we
+      // moeten weten of het gelukt is, want zonder opgeslagen e-mailadres
+      // kunnen we het niet later alsnog proberen (0008_scan_volledig_anoniem.sql).
+      // Blokkeert het tonen van het rapport zelf niet: dat gebeurt hierna
+      // altijd, gelukt of niet.
+      let mailMislukt = false;
+      if (emailVoorOpslag) {
+        const gelukt = await verstuurResultatenMetRetry({
+          token: sessie!.toegangstoken,
+          antwoorden: sessie!.antwoorden,
+          naam: sessie!.naam.trim() || null,
+          email: emailVoorOpslag,
+          organisatie: context.organisatieNaam || null,
+        });
+        mailMislukt = !gelukt;
+      }
+
+      bijwerken({ stapIndex: AFGEROND_STAP, afgerond: true, mailMislukt });
     } catch {
       setFoutmelding(
         "Afronden is niet gelukt. Controleer je internetverbinding en probeer het opnieuw."
@@ -242,10 +245,11 @@ export function ScanFlow({ context }: ScanFlowProps) {
     return (
       <RapportScreen
         antwoorden={sessie.antwoorden}
-        respondentCode={sessie.respondentCode}
+        toegangstoken={sessie.toegangstoken!}
         naam={sessie.naam.trim()}
         organisatieNaam={context.organisatieNaam}
         boostIngeschakeld={context.boostIngeschakeld}
+        mailMislukt={sessie.mailMislukt}
       />
     );
   }
@@ -255,7 +259,6 @@ export function ScanFlow({ context }: ScanFlowProps) {
       <IntroScreen
         organisatieNaam={context.organisatieNaam}
         teamNaam={context.teamNaam}
-        respondentCode={sessie.respondentCode}
         naam={sessie.naam}
         onNaamWijzig={(naam) => bijwerken({ naam })}
         emailVerplicht={context.emailVerplicht}

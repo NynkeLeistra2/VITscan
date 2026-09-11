@@ -31,7 +31,6 @@ const RequestSchema = z.object({
     .nullable()
     .optional()
     .transform((v) => (v ? v : null)),
-  respondentCode: z.string().trim().min(1).max(100),
   organisatie: z
     .string()
     .trim()
@@ -61,9 +60,9 @@ function magVerder(ip: string): boolean {
   return true;
 }
 
-function bestandsnaam(naam: string | null, respondentCode: string): string {
-  const basis = naam ?? respondentCode;
-  const veilig = basis
+function bestandsnaam(naam: string | null): string {
+  if (!naam) return "vit-scan-resultaat.pdf";
+  const veilig = naam
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-zA-Z0-9]+/g, "-")
@@ -90,14 +89,13 @@ export async function POST(request: NextRequest) {
     const pdfBuffer = genereerRapportPdf({
       antwoorden: input.antwoorden,
       naam: input.naam,
-      respondentCode: input.respondentCode,
       organisatieNaam: input.organisatie,
     });
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="${bestandsnaam(input.naam, input.respondentCode)}"`,
+        "Content-Disposition": `attachment; filename="${bestandsnaam(input.naam)}"`,
         "Content-Length": String(pdfBuffer.length),
       },
     });

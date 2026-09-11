@@ -1,4 +1,3 @@
-import { genereerRespondentCode } from "./respondent-code";
 import { STELLINGEN_VERSIE } from "./stellingen";
 
 export interface ScanSessie {
@@ -8,9 +7,8 @@ export interface ScanSessie {
    * niets om mee te schrijven, alleen lokale antwoorden in deze sessie.
    */
   toegangstoken: string | null;
-  respondentCode: string;
   stellingenVersie: string;
-  /** Optioneel: zodat de medewerker zichzelf op het rapport herkent i.p.v. alleen de respondent-code. */
+  /** Optioneel, puur voor de weergave op het scherm en in de PDF -- wordt nooit opgeslagen. */
   naam: string;
   /** stelling_key -> waarde (1-10) */
   antwoorden: Record<string, number>;
@@ -18,6 +16,8 @@ export interface ScanSessie {
   /** Standaard aan: mensen kunnen 'm uitzetten als ze geen rapport per e-mail willen. */
   emailOptIn: boolean;
   afgerond: boolean;
+  /** True als het versturen van het rapport per mail definitief mislukt is (na de automatische herhaling), zodat het rapportscherm dat na een herlaad-actie kan blijven tonen. */
+  mailMislukt: boolean;
   /** Index in de platte stappenlijst (0 = intro, 1 per stelling, dan e-mailstap/afgerond), zodat herladen hervat waar je was. */
   stapIndex: number;
 }
@@ -44,8 +44,8 @@ export function laadSessie(
     // hervatten, dus behandel als "geen sessie" zodat er een nieuwe met een
     // echt token wordt gestart.
     if ("respondentId" in sessie && !("toegangstoken" in sessie)) return null;
-    // Sessies opgeslagen vóór introductie van het naamveld hebben dit nog niet.
-    return { ...sessie, naam: sessie.naam ?? "" };
+    // Sessies opgeslagen vóór introductie van naam-/mailmislukt-velden hebben die nog niet.
+    return { ...sessie, naam: sessie.naam ?? "", mailMislukt: sessie.mailMislukt ?? false };
   } catch {
     return null;
   }
@@ -66,13 +66,13 @@ export function opslaanSessie(
 export function nieuweSessie(): ScanSessie {
   return {
     toegangstoken: null,
-    respondentCode: genereerRespondentCode(),
     stellingenVersie: STELLINGEN_VERSIE,
     naam: "",
     antwoorden: {},
     email: "",
     emailOptIn: true,
     afgerond: false,
+    mailMislukt: false,
     stapIndex: 0,
   };
 }

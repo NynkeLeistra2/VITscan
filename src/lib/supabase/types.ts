@@ -90,17 +90,17 @@ export interface Database {
       // Geen enkele policy (zie supabase/migrations/0001_init_schema.sql) --
       // dus geen .from("respondenten") in de app, altijd via de functies
       // hieronder. Deze Row/Insert-vorm staat er alleen voor volledigheid.
+      // Bewust geen naam/email/respondent_code (meer): sinds
+      // 0008_scan_volledig_anoniem.sql staat er niets meer in deze tabel dat
+      // een antwoord naar een persoon terug kan leiden.
       respondenten: {
         Row: {
           id: string;
           scanronde_id: string;
           team_id: string | null;
-          respondent_code: string;
           toegangstoken: string;
-          email: string | null;
-          naam: string | null;
           stellingen_versie: string;
-          open_vraag_antwoord: string | null;
+          rapport_mail_pogingen: number;
           gestart_op: string;
           afgerond_op: string | null;
           created_at: string;
@@ -109,12 +109,9 @@ export interface Database {
           id?: string;
           scanronde_id: string;
           team_id?: string | null;
-          respondent_code: string;
           toegangstoken?: string;
-          email?: string | null;
-          naam?: string | null;
           stellingen_versie: string;
-          open_vraag_antwoord?: string | null;
+          rapport_mail_pogingen?: number;
           gestart_op?: string;
           afgerond_op?: string | null;
           created_at?: string;
@@ -183,14 +180,13 @@ export interface Database {
         }[];
       };
       // Maakt de respondent aan en geeft het toegangstoken terug -- dat
-      // token is vanaf hier het enige dat de browser gebruikt.
+      // token is vanaf hier het enige dat de browser gebruikt. Geen
+      // naam/code meer: die worden nergens meer opgeslagen.
       start_respondent: {
         Args: {
           p_scanronde_id: string;
           p_team_id: string | null;
-          p_respondent_code: string;
           p_stellingen_versie: string;
-          p_naam?: string | null;
         };
         Returns: string;
       };
@@ -201,10 +197,28 @@ export interface Database {
         };
         Returns: void;
       };
+      // Zet alleen nog afgerond_op. Het e-mailadres gaat rechtstreeks naar
+      // de mailroute, nooit via de database.
       rond_respondent_af: {
         Args: {
           p_token: string;
-          p_email?: string | null;
+        };
+        Returns: void;
+      };
+      // Poortwachter voor /api/verstuur-resultaten: true als het token bij
+      // een echt afgeronde respondent hoort én de teller (max. 5) nog niet
+      // vol is. Telt in dezelfde aanroep meteen mee.
+      mag_rapport_versturen: {
+        Args: {
+          p_token: string;
+        };
+        Returns: boolean;
+      };
+      // Zelfbediening: de deelnemer verwijdert zijn eigen respondent +
+      // antwoorden met zijn eigen token, geen login nodig.
+      verwijder_mijn_antwoorden: {
+        Args: {
+          p_token: string;
         };
         Returns: void;
       };

@@ -4,7 +4,6 @@ import { ScanFooter } from "./ScanFooter";
 interface IntroScreenProps {
   organisatieNaam: string;
   teamNaam: string | null;
-  respondentCode: string;
   naam: string;
   onNaamWijzig: (naam: string) => void;
   emailVerplicht: boolean;
@@ -16,7 +15,6 @@ interface IntroScreenProps {
 export function IntroScreen({
   organisatieNaam,
   teamNaam,
-  respondentCode,
   naam,
   onNaamWijzig,
   emailVerplicht,
@@ -49,15 +47,18 @@ export function IntroScreen({
         </p>
         <p>
           Je antwoorden zijn van jou: het rapport dat je straks direct te
-          zien krijgt, is alleen voor jou. Je werkgever ziet nooit
-          individuele antwoorden, alleen geanonimiseerde teamcijfers.
+          zien krijgt, is alleen voor jou. Er wordt niets opgeslagen waarmee
+          een antwoord naar jou persoonlijk te herleiden is — geen naam,
+          geen e-mailadres. Je werkgever ziet nooit individuele antwoorden,
+          alleen geanonimiseerde teamcijfers.
         </p>
         <p>
-          Een naam invullen is niet nodig, je herkent je rapport ook aan je
-          persoonlijke code hieronder. Wil je wel je naam erop, dan kan dat.
+          Een naam invullen is niet nodig. Wil je 'm toch op je rapport,
+          vul hem dan hieronder in — die naam wordt nergens opgeslagen,
+          alleen gebruikt om dit scherm en je PDF te maken.
           {emailVerplicht
-            ? " We vragen straks ook je e-mailadres, zodat je het rapport ook per e-mail ontvangt."
-            : " Aan het einde kun je optioneel ook je e-mailadres achterlaten om het rapport toegestuurd te krijgen."}
+            ? " We vragen straks ook je e-mailadres om het rapport per e-mail te versturen; ook dat bewaren we niet."
+            : " Aan het einde kun je optioneel ook je e-mailadres achterlaten om het rapport toegestuurd te krijgen — ook dat bewaren we niet."}
         </p>
       </div>
 
@@ -73,14 +74,6 @@ export function IntroScreen({
           placeholder="Bijv. Jan Jansen"
           className="mt-1 w-full rounded-lg border border-brand-salie/40 p-3 text-zinc-900 focus:border-brand-violet focus:outline-none"
         />
-      </div>
-
-      <div className="mt-6 rounded-lg border border-brand-salie/40 bg-brand-ecru p-4">
-        <p className="text-sm text-zinc-600">Jouw persoonlijke code:</p>
-        <p className="mt-1 font-mono text-lg font-semibold text-zinc-900">
-          {respondentCode}
-        </p>
-        <p className="mt-1 text-xs text-zinc-500">Bewaar deze code.</p>
       </div>
 
       {foutmelding && (
