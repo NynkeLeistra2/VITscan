@@ -814,3 +814,65 @@ weer verwijderd is, database staat weer leeg):
   URL-secrets nog niet bestonden -- dat is precies het gedrag dat gevraagd
   was ("zichtbaar falen"), niet een bug. Nynke voegt de twee ontbrekende
   secrets toe, daarna opnieuw gedraaid.
+
+## Scan volledig anoniem gemaakt (2026-09-11)
+
+- **Aanleiding:** Nynke wilde geen enkel gegeven meer in de database dat een
+  antwoord naar een persoon terug kan leiden. Voorstel eerst uitgewerkt en
+  voorgelegd (vier open keuzes, allemaal beantwoord) voordat er gebouwd is.
+- **`0008_scan_volledig_anoniem.sql`:** kolommen `naam`, `email`,
+  `respondent_code` en de al ongebruikte `open_vraag_antwoord` weg uit
+  `respondenten`. De drie bestaande testrijen (Nynkes eigen adressen, geen
+  echte deelnemers) zijn hierdoor leeggemaakt -- vooraf met haar bevestigd.
+  `start_respondent`/`rond_respondent_af` herschreven zonder die velden.
+- **E-mail gaat nooit meer door Supabase:** het adres gaat rechtstreeks van
+  de browser naar `/api/verstuur-resultaten`, dat na de PDF-generatie alleen
+  nog `{ email, pdfs.results }` naar n8n stuurt -- geen losse antwoorden,
+  scores of naam meer. Bijvangst: Nynkes Google Sheet-logging, die tot nu
+  toe uit dit zelfde webhook-bericht kwam, krijgt die velden dus niet meer.
+- **`mag_rapport_versturen`:** nieuwe poortwachter vóór het versturen, om
+  een concreet lek te dichten dat Nynke zelf benoemde -- zonder deze check
+  zou één geldig token (van een eigen, echte scan) een open kanaal zijn om
+  namens `contact@nynkeleistra.nl` mail naar willekeurige adressen te
+  sturen. Eén atomische UPDATE valideert (token bestaat, is afgerond) én telt
+  tegelijk een pogingenteller (max. 5) op -- voorkomt een race tussen
+  controleren en tellen. Bij een definitief mislukte mail (na één automatische
+  herhaling) toont het rapportscherm een duidelijke melding met een
+  uitgelichte downloadknop: zonder bewaard e-mailadres kan het later niet
+  alsnog verstuurd worden.
+- **`verwijder_mijn_antwoorden`:** nieuwe, niet-ingelogde zelfbedieningsfunctie
+  waarmee een deelnemer op basis van zijn eigen token zijn respondent- en
+  antwoordrijen laat verwijderen (cascade via de bestaande FK). Vervangt de
+  oude, admin-only `verwijder_respondent` (zocht op scanronde + respondent-
+  code -- met die kolom weg, en zonder enig ander onderscheidend gegeven,
+  kon Nynke sowieso nooit meer één respondent aanwijzen). Beide mochten van
+  Nynke naast elkaar bestaan, maar zijn conceptueel niet meer allebei nodig;
+  `verwijder_respondent` is daarom vervallen (haar akkoord, aanbevolen optie).
+- **Postgres-valkuil opnieuw tegengekomen, nu bij overloading in plaats van
+  bij default-privileges:** `create or replace function` met een ANDERE
+  parameterlijst vervangt niets, het maakt een nieuwe, los bestaande functie.
+  De oude `start_respondent(..., p_respondent_code, ..., p_naam)` en
+  `rond_respondent_af(p_token, p_email)` bleven na het draaien van 0008 dus
+  gewoon naast de nieuwe versies bestaan, met hun oude anon/authenticated-
+  rechten. Gevonden door na de push de functiesignatures + rechten
+  systematisch te controleren (niet aangenomen dat "create or replace"
+  volstond). Opgelost met een tweede migratie, `0009_oude_functie_overloads_
+  opruimen.sql`, die de oude signatures expliciet dropt. Alle nieuwe/
+  herschreven functies in beide migraties hebben zoals afgesproken een
+  losstaande `revoke all ... from public` plus een expliciete
+  `grant execute ... to anon, authenticated`.
+- **Getest, in deze volgorde:** `tsc --noEmit` schoon; migratie 0008 en 0009
+  gepusht naar de live database (Frankfurt/EU); direct in de database
+  gecontroleerd dat de kolommen weg zijn en dat de drie bestaande rijen geen
+  naam/e-mail/code meer hebben; gedeployed naar Cloudflare; een volledige
+  scan doorlopen in de browser tot en met een echt ontvangen rapport-mail in
+  Nynkes mailbox (onderwerp "Jouw VIT-scan: de resultaten"); daarna in de
+  database bevestigd dat die nieuwe respondent-rij ook geen enkel
+  identificerend gegeven heeft; de zelf-verwijderknop getest op die rij
+  (respondent + antwoorden bevestigd weg, geen login nodig); `mag_rapport_
+  versturen` los getest op alle drie de weigeringsgronden (onbekend token,
+  nog niet afgerond, pogingenlimiet bereikt na de vijfde poging); de
+  mail-mislukt-fallback bevestigd door de echte route een uitgeputte token
+  te laten weigeren (403, generieke foutmelding). Alle testrespondenten na
+  gebruik weer verwijderd; de database staat weer op de drie oorspronkelijke,
+  nu volledig anonieme rijen.
