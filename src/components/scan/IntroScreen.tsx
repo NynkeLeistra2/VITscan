@@ -48,17 +48,17 @@ export function IntroScreen({
         <p>
           Je antwoorden zijn van jou: het rapport dat je straks direct te
           zien krijgt, is alleen voor jou. Er wordt niets opgeslagen waarmee
-          een antwoord naar jou persoonlijk te herleiden is — geen naam,
+          een antwoord naar jou persoonlijk te herleiden is: geen naam,
           geen e-mailadres. Je werkgever ziet nooit individuele antwoorden,
           alleen geanonimiseerde teamcijfers.
         </p>
         <p>
           Een naam invullen is niet nodig. Wil je 'm toch op je rapport,
-          vul hem dan hieronder in — die naam wordt nergens opgeslagen,
+          vul hem dan hieronder in. Die naam wordt nergens opgeslagen,
           alleen gebruikt om dit scherm en je PDF te maken.
           {emailVerplicht
             ? " We vragen straks ook je e-mailadres om het rapport per e-mail te versturen; ook dat bewaren we niet."
-            : " Aan het einde kun je optioneel ook je e-mailadres achterlaten om het rapport toegestuurd te krijgen — ook dat bewaren we niet."}
+            : " Aan het einde kun je optioneel ook je e-mailadres achterlaten om het rapport toegestuurd te krijgen. Ook dat bewaren we niet."}
         </p>
       </div>
 

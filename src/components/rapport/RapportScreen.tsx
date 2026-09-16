@@ -223,7 +223,7 @@ export function RapportScreen({
       {mailMislukt && (
         <div className="mt-8 rounded-lg border border-red-300 bg-red-50 p-4 text-center text-red-900">
           <p className="text-sm font-medium">
-            Het mailen van je rapport is niet gelukt. Download het hieronder — we kunnen het
+            Het mailen van je rapport is niet gelukt. Download het hieronder: we kunnen het
             later niet alsnog versturen, want we weten dan niet meer naar wie.
           </p>
         </div>
@@ -270,7 +270,7 @@ export function RapportScreen({
             <p>
               Weet je zeker dat je je antwoorden wilt laten verwijderen? Het rapport dat je
               per mail hebt gekregen blijft van jou. Na verwijderen kan Nynke je niet meer
-              helpen met vragen over je uitslag — er is dan niets meer.
+              helpen met vragen over je uitslag, want er is dan niets meer.
             </p>
             {verwijderFout && <p className="mt-2 font-medium">{verwijderFout}</p>}
             <div className="mt-3 flex justify-center gap-4">

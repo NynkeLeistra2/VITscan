@@ -185,7 +185,7 @@
         },
         {
           "id": "ontspanning",
-          "titel": "Ontspanning – vrije tijd",
+          "titel": "Ontspanning: vrije tijd",
           "emoji": "🌴",
           "stellingen": [
             "Ik kan mijn werk makkelijk loslaten in mijn vrije tijd.",
@@ -195,7 +195,7 @@
         },
         {
           "id": "financien",
-          "titel": "Financiën – omgaan met geld",
+          "titel": "Financiën: omgaan met geld",
           "emoji": "💰",
           "stellingen": [
             "Ik ben over het algemeen tevreden over mijn financiën.",

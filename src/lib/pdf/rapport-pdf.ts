@@ -312,7 +312,7 @@ export function genereerRapportPdf({
   ctx.y += 6;
   pdf.setFontSize(8);
   pdf.setTextColor(...TEXT_MUTED);
-  pdf.text("Nynke Leistra – Coaching en Advies", pageWidth / 2, ctx.y, { align: "center" });
+  pdf.text("Nynke Leistra, Coaching en Advies", pageWidth / 2, ctx.y, { align: "center" });
   ctx.y += 4;
   pdf.text("contact@nynkeleistra.nl · www.nynkeleistra.nl", pageWidth / 2, ctx.y, { align: "center" });
   ctx.y += 4;
