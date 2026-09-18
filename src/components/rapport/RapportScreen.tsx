@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { berekenScores } from "@/lib/scoring";
+import { berekenVraagScores } from "@/lib/vraag-scores";
 import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
 import { verwijderMijnAntwoorden } from "@/lib/supabase/scan-repository";
 import { ThemaDetail } from "./ThemaDetail";
+import { VraagScoresDetail } from "./VraagScoresDetail";
 import { WerkgelukWiel } from "./WerkgelukWiel";
 import { ScanFooter } from "@/components/scan/ScanFooter";
 
@@ -41,6 +43,7 @@ export function RapportScreen({
 }: RapportScreenProps) {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
+  const themaVragen = berekenVraagScores(antwoorden);
   const [pdfBezig, setPdfBezig] = useState(false);
   const [pdfFoutmelding, setPdfFoutmelding] = useState<string | null>(null);
 
@@ -214,6 +217,8 @@ export function RapportScreen({
           </div>
         ))}
       </div>
+
+      <VraagScoresDetail themaVragen={themaVragen} />
 
       <div className="mt-10 rounded-lg border border-brand-oudroze/50 bg-brand-ecru p-6">
         <h2 className="font-semibold text-zinc-900">{algemeen.afsluiting.titel}</h2>

@@ -1,5 +1,6 @@
 import { jsPDF } from "jspdf";
 import { berekenScores } from "@/lib/scoring";
+import { berekenVraagScores } from "@/lib/vraag-scores";
 import { algemeen, totaalscoreTeksten, themaTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
@@ -160,6 +161,39 @@ function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
   ctx.y += 2;
 }
 
+function drawSubcategorieKop(ctx: PdfCtx, titel: string) {
+  const { pdf, margin } = ctx;
+  checkPageBreak(ctx, 6);
+  pdf.setFontSize(8.5);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...TEXT_MUTED);
+  pdf.text(titel.toUpperCase(), margin, ctx.y);
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(...TEXT_DARK);
+  ctx.y += 5;
+}
+
+function drawVraagRegel(ctx: PdfCtx, tekst: string, score: number | null) {
+  const { pdf, margin, contentWidth, pageWidth } = ctx;
+  const scoreBreedte = 10;
+  pdf.setFontSize(9);
+  pdf.setFont("helvetica", "normal");
+  const regels = pdf.splitTextToSize(tekst, contentWidth - scoreBreedte);
+  checkPageBreak(ctx, regels.length * 4.2 + 1.5);
+  pdf.setTextColor(...TEXT_DARK);
+  pdf.text(regels, margin, ctx.y);
+  pdf.setFont("helvetica", "bold");
+  if (score != null) {
+    pdf.setTextColor(scoreKleur(score));
+  } else {
+    pdf.setTextColor(...TEXT_MUTED);
+  }
+  pdf.text(score != null ? String(score) : "-", pageWidth - margin, ctx.y, { align: "right" });
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(...TEXT_DARK);
+  ctx.y += regels.length * 4.2 + 1.5;
+}
+
 export interface RapportPdfInput {
   antwoorden: Record<string, number>;
   naam: string | null;
@@ -305,6 +339,46 @@ export function genereerRapportPdf({
   drawParagraaf(ctx, algemeen.afsluiting.tekst);
 
   ctx.y += 4;
+
+  // Bijlage: score per vraag, zelfde groepering (hoofdthema > thema >
+  // eventuele subcategorie) als het uitklapbare venster op het scherm.
+  addNewPage(ctx);
+  drawSectionTitel(ctx, "Bijlage: score per vraag");
+
+  const themaVragen = berekenVraagScores(antwoorden);
+  const deelIds = [...new Set(themaVragen.map((t) => t.deelId))];
+  for (const deelId of deelIds) {
+    const themasVanDeel = themaVragen.filter((t) => t.deelId === deelId);
+    checkPageBreak(ctx, 12);
+    pdf.setFontSize(10.5);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(...TEXT_MUTED);
+    pdf.text(themasVanDeel[0].deelTitel, margin, ctx.y);
+    pdf.setFont("helvetica", "normal");
+    pdf.setTextColor(...TEXT_DARK);
+    ctx.y += 7;
+
+    for (const thema of themasVanDeel) {
+      checkPageBreak(ctx, 10);
+      pdf.setFontSize(10);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(thema.themaTitel, margin, ctx.y);
+      pdf.setFont("helvetica", "normal");
+      ctx.y += 6;
+
+      let laatsteSubcategorie: string | null = null;
+      for (const vraag of thema.vragen) {
+        if (vraag.subcategorieTitel && vraag.subcategorieTitel !== laatsteSubcategorie) {
+          drawSubcategorieKop(ctx, vraag.subcategorieTitel);
+        }
+        laatsteSubcategorie = vraag.subcategorieTitel;
+        drawVraagRegel(ctx, vraag.tekst, vraag.score);
+      }
+      ctx.y += 3;
+    }
+  }
+
+  ctx.y += 2;
 
   // Footer met contactgegevens (alleen op de laatste pagina)
   checkPageBreak(ctx, 24);
