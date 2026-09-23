@@ -6,7 +6,7 @@ import { berekenVraagScores } from "@/lib/vraag-scores";
 import {
   algemeen,
   bepaalKrachtbronnen,
-  persoonlijkeSamenvatting,
+  persoonlijkeSamenvattingDelen,
   totaalscoreTeksten,
 } from "@/lib/rapportteksten";
 import { formatScore, scoreKleur } from "@/lib/scoring-config";
@@ -170,7 +170,9 @@ export function RapportScreen({
           Totaalscore van werkenergie en persoonlijk welzijn
         </p>
         <p className="mt-3 text-left text-zinc-700">
-          {persoonlijkeSamenvatting(totaalTeksten.tekst, resultaat.themaScores)}
+          {persoonlijkeSamenvattingDelen(totaalTeksten.tekst, resultaat.themaScores).map((deel, i) =>
+            deel.vet ? <strong key={i}>{deel.tekst}</strong> : <span key={i}>{deel.tekst}</span>
+          )}
         </p>
       </div>
 
@@ -219,22 +221,25 @@ export function RapportScreen({
         ))}
       </div>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
-        <div>
-          <h2 className="font-semibold text-zinc-900">Om over na te denken</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-700">
-            {totaalTeksten.reflectievragen.map((vraag) => (
-              <li key={vraag}>{vraag}</li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h2 className="font-semibold text-zinc-900">Wat kun je doen</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-700">
-            {totaalTeksten.aanbevelingen.map((aanbeveling) => (
-              <li key={aanbeveling}>{aanbeveling}</li>
-            ))}
-          </ul>
+      <div className="mt-10 border-t border-brand-amber/50 pt-6">
+        <h2 className="text-xl font-semibold text-zinc-900">Aan de slag</h2>
+        <div className="mt-4 grid gap-6 sm:grid-cols-2">
+          <div>
+            <h3 className="font-semibold text-zinc-900">Om over na te denken</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-700">
+              {totaalTeksten.reflectievragen.map((vraag) => (
+                <li key={vraag}>{vraag}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold text-zinc-900">Wat kun je doen</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-700">
+              {totaalTeksten.aanbevelingen.map((aanbeveling) => (
+                <li key={aanbeveling}>{aanbeveling}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 

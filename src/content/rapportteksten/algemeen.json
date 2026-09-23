@@ -7,6 +7,7 @@
       "titel": "Zeer laag werkgeluk",
       "tekst": "Je staat in de overlevingsstand. Grote kans dat energie, plezier en voldoening structureel ontbreken. Dit is een signaal dat er nú actie nodig is, blijf hier niet alleen mee rondlopen.",
       "reflectievragen": [
+        "Welke verbanden zie je? Welke thema's beïnvloeden elkaar?",
         "Wat kost jou op dit moment het meeste energie in je werk?",
         "Welke onderdelen zijn voor jou het meest belangrijk en vragen nu om actie?",
         "Welk thema biedt jou de meeste kans op snelle verbetering?",
@@ -28,6 +29,7 @@
       "titel": "Laag werkgeluk",
       "tekst": "Er zitten een paar lichtpuntjes in je werk, maar de minpunten wegen nu zwaarder. Dat kost energie en motivatie. Breng in kaart wat jou het meeste belemmert en begin met het wegnemen of verminderen van die factor. Kleine verbeteringen kunnen al snel merkbaar zijn.",
       "reflectievragen": [
+        "Welke verbanden zie je? Welke thema's beïnvloeden elkaar?",
         "Wat belemmert jou het meest in je werkgeluk op dit moment en op welke subcategorieën scoor je het laagst?",
         "Welke onderdelen zijn voor jou het meest belangrijk en vragen nu om actie?",
         "Waar kun je snel winst behalen met een kleine verandering?",
@@ -49,6 +51,7 @@
       "titel": "Gemiddeld werkgeluk",
       "tekst": "Er is zeker wat goed, maar ook genoeg wat beter kan. Dit is hét moment om bewust keuzes te maken en te bouwen aan meer energie, plezier en betekenis. Sta ook stil bij wat er wél goed gaat. Door te erkennen wat werkt, kun je dat versterken en uitbouwen.",
       "reflectievragen": [
+        "Welke verbanden zie je? Welke thema's beïnvloeden elkaar?",
         "Wat gaat er goed en wil je graag behouden? Wat is daarvoor nodig?",
         "Op welke subcategorieën scoor jij het laagst en wat zegt dat over jouw huidige werkbeleving?",
         "Welke onderdelen zijn voor jou het meest belangrijk en kosten je het meeste energie?",
@@ -70,6 +73,7 @@
       "titel": "Hoog werkgeluk",
       "tekst": "Je bent over het algemeen tevreden en voelt je regelmatig energiek en betrokken. Hartstikke fijn! Juist als het goed gaat, is het krachtig om stil te staan bij wat daaraan bijdraagt en het bewust te versterken.",
       "reflectievragen": [
+        "Welke verbanden zie je? Welke thema's beïnvloeden elkaar?",
         "Wat werkt op dit moment goed voor jou en waarom?",
         "Waar liggen nog punten ter verbetering voor je?",
         "Wat zou je willen versterken of veranderen?",
@@ -90,6 +94,7 @@
       "titel": "Zeer hoog werkgeluk",
       "tekst": "Je zit helemaal op je plek en straalt dat uit. Je energie werkt aanstekelijk voor je omgeving. Blijf bewust investeren in wat werkt, zodat je ook in minder gunstige tijden je werkgeluk behoudt.",
       "reflectievragen": [
+        "Welke verbanden zie je? Welke thema's beïnvloeden elkaar?",
         "Wat maakt dat jij je zo goed voelt in je werk?",
         "Hoe kun je je werkgeluk duurzaam behouden, ook in uitdagende tijden?",
         "Op welke manieren kun je anderen meenemen in jouw positieve aanpak?"
@@ -111,7 +116,7 @@
     "titel": "Jouw krachtbronnen",
     "metLageThemas": {
       "tekst": "Hier haal je energie uit. Dat is een stevige basis, zeker nu andere onderdelen schuren.",
-      "vraag": "Hoe kun je wat hier werkt inzetten voor {laagsteThema}?"
+      "vraag": "Kijk eens naar je krachtbronnen en naar waar het schuurt. Hoe kunnen jouw krachtbronnen je helpen bij de thema's waar het niet zo lekker loopt?"
     },
     "zonderLageThemas": {
       "tekst": "Hier haal je energie uit. Het loont om te weten waarom dit zo goed werkt.",

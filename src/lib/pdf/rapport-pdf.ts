@@ -4,11 +4,12 @@ import { berekenVraagScores } from "@/lib/vraag-scores";
 import {
   algemeen,
   bepaalKrachtbronnen,
-  persoonlijkeSamenvatting,
+  persoonlijkeSamenvattingDelen,
   signalenVoorScores,
   totaalscoreTeksten,
   themaTeksten,
   type KrachtbronnenBlok,
+  type SamenvattingDeel,
 } from "@/lib/rapportteksten";
 import { formatRuweScore, formatScore, scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
@@ -123,6 +124,23 @@ function drawSectionTitel(ctx: PdfCtx, titel: string) {
   ctx.y += 12;
 }
 
+/** Lichte sectiekop: een dunne amberlijn met daaronder de titel in vet
+ * violet, i.p.v. de volle paarse banner van drawSectionTitel() -- gebruikt
+ * voor "Aan de slag", dat minder zwaar moet ogen dan "Per thema"/"En nu?". */
+function drawDunneSectieKop(ctx: PdfCtx, titel: string) {
+  checkPageBreak(ctx, 16);
+  const { pdf, margin } = ctx;
+  drawAmberDivider(ctx, ctx.y);
+  ctx.y += 7;
+  pdf.setFontSize(13);
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(...VIOLET_DARK);
+  pdf.text(titel, margin, ctx.y);
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(...TEXT_DARK);
+  ctx.y += 8;
+}
+
 function drawThemaHeader(ctx: PdfCtx, titel: string, score: number) {
   checkPageBreak(ctx, 10);
   const { pdf, margin } = ctx;
@@ -158,6 +176,80 @@ function drawParagraaf(ctx: PdfCtx, tekst: string, opties?: { vetgedrukt?: boole
   ctx.y += regels.length * 4.6 + 3;
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_DARK);
+}
+
+/**
+ * Tekent een paragraaf met gemengd vet/normaal lettertype (voor de
+ * persoonlijke samenvatting, waar thema-namen vet moeten). jsPDF kent geen
+ * gemengde opmaak binnen één regel tekst, dus dit bouwt de regels zelf op.
+ *
+ * Woorden worden gesplitst op de spaties in de brontekst (niet op elke
+ * deel-grens): zo blijft bijvoorbeeld "Voldoening" (vet) direct gevolgd
+ * door "." (normaal) één woord zonder spatie ertussen, terwijl "Plezier"
+ * en "en" wél als aparte, met een spatie gescheiden woorden blijven staan.
+ */
+function tekenGemengdeParagraaf(ctx: PdfCtx, delen: SamenvattingDeel[]) {
+  const { pdf, margin, contentWidth } = ctx;
+  pdf.setFontSize(9.5);
+
+  interface Stuk {
+    tekst: string;
+    vet: boolean;
+  }
+  type Woord = Stuk[];
+
+  const woorden: Woord[] = [];
+  let huidigWoord: Woord = [];
+  for (const deel of delen) {
+    deel.tekst.split(" ").forEach((stuk, i) => {
+      if (i > 0) {
+        if (huidigWoord.length > 0) woorden.push(huidigWoord);
+        huidigWoord = [];
+      }
+      if (stuk.length > 0) huidigWoord.push({ tekst: stuk, vet: !!deel.vet });
+    });
+  }
+  if (huidigWoord.length > 0) woorden.push(huidigWoord);
+
+  const woordBreedte = (woord: Woord) =>
+    woord.reduce((totaal, stuk) => {
+      pdf.setFont("helvetica", stuk.vet ? "bold" : "normal");
+      return totaal + pdf.getTextWidth(stuk.tekst);
+    }, 0);
+
+  const regels: Woord[][] = [];
+  let huidigeRegel: Woord[] = [];
+  let huidigeBreedte = 0;
+  for (const woord of woorden) {
+    const breedte = woordBreedte(woord);
+    const spatieBreedte = huidigeRegel.length > 0 ? pdf.getTextWidth(" ") : 0;
+    if (huidigeRegel.length > 0 && huidigeBreedte + spatieBreedte + breedte > contentWidth) {
+      regels.push(huidigeRegel);
+      huidigeRegel = [woord];
+      huidigeBreedte = breedte;
+    } else {
+      huidigeRegel.push(woord);
+      huidigeBreedte += spatieBreedte + breedte;
+    }
+  }
+  if (huidigeRegel.length > 0) regels.push(huidigeRegel);
+
+  checkPageBreak(ctx, regels.length * 4.6 + 3);
+  for (const regel of regels) {
+    let x = margin;
+    regel.forEach((woord, i) => {
+      if (i > 0) x += pdf.getTextWidth(" ");
+      for (const stuk of woord) {
+        pdf.setFont("helvetica", stuk.vet ? "bold" : "normal");
+        pdf.setTextColor(...TEXT_DARK);
+        pdf.text(stuk.tekst, x, ctx.y);
+        x += pdf.getTextWidth(stuk.tekst);
+      }
+    });
+    ctx.y += 4.6;
+  }
+  ctx.y += 3;
+  pdf.setFont("helvetica", "normal");
 }
 
 function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
@@ -343,23 +435,19 @@ export function genereerRapportPdf({
   pdf.setTextColor(...TEXT_DARK);
   ctx.y += boxHoogte + 8;
 
-  drawParagraaf(ctx, persoonlijkeSamenvatting(totaalTeksten.tekst, resultaat.themaScores));
+  tekenGemengdeParagraaf(ctx, persoonlijkeSamenvattingDelen(totaalTeksten.tekst, resultaat.themaScores));
 
-  // Wielen: samen op één pagina, verticaal gecentreerd (pure jsPDF-
-  // vectortekening, geen rasterlimiet).
-  const wielBreedteMm = 95;
+  // Wielen: elk op zijn eigen (deel van een) pagina, pure jsPDF-
+  // vectortekening, geen rasterlimiet.
+  const wielBreedteMm = 90;
   const wielTitelBlokHoogte = 14; // titelregel + gap tot het wiel
-  const wielGap = 10; // ruimte tussen de twee wielen
-  addNewPage(ctx);
-  const totaalWielBlokHoogte = 2 * (wielTitelBlokHoogte + wielBreedteMm) + wielGap;
-  const beschikbareWielHoogte = pageHeight - BOTTOM_MARGIN - START_Y;
-  ctx.y = START_Y + Math.max(0, (beschikbareWielHoogte - totaalWielBlokHoogte) / 2);
 
-  for (const deel of resultaat.deelScores) {
+  function tekenWielBlok(deel: (typeof resultaat.deelScores)[number]) {
     const segmenten = resultaat.themaScores
       .filter((t) => t.deelId === deel.deelId)
       .map((t) => ({ themaId: t.themaId, label: t.themaTitel, score: t.score }));
 
+    checkPageBreak(ctx, wielTitelBlokHoogte + wielBreedteMm);
     pdf.setFontSize(16);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(...VIOLET_DARK);
@@ -369,11 +457,20 @@ export function genereerRapportPdf({
     ctx.y += wielTitelBlokHoogte;
 
     tekenWiel(pdf, segmenten, deel.score, (pageWidth - wielBreedteMm) / 2, ctx.y, wielBreedteMm);
-    ctx.y += wielBreedteMm + wielGap;
+    ctx.y += wielBreedteMm + 8;
   }
 
-  // Jouw krachtbronnen: direct na het levenswiel, alleen als er thema's met
-  // een score van 7,5 of hoger zijn. Blijft altijd samen op één pagina
+  // Werkenergiewiel: direct onder de samenvatting, nog op pagina 1.
+  const werkenergieDeel = resultaat.deelScores.find((d) => d.deelId === "werkenergie")!;
+  const persoonlijkWelzijnDeel = resultaat.deelScores.find((d) => d.deelId === "persoonlijk_welzijn")!;
+  tekenWielBlok(werkenergieDeel);
+
+  // Levenswiel + Jouw krachtbronnen: samen op een nieuwe pagina 2.
+  addNewPage(ctx);
+  tekenWielBlok(persoonlijkWelzijnDeel);
+
+  // Jouw krachtbronnen, alleen als er thema's met een score van 7,5 of
+  // hoger zijn. Blijft altijd samen met het levenswiel op deze pagina
   // (kop, thema-regel, tekst én de vraag) -- reserveer eerst de totale
   // hoogte, spring pas naar een nieuwe pagina als het geheel niet past.
   if (krachtbronnenBlok) {
@@ -424,7 +521,8 @@ export function genereerRapportPdf({
 
   // Het algemene blok Om over na te denken / Wat kun je doen, gebaseerd op
   // de totaalscore (zelfde inhoud als voorheen bovenaan, alleen de plek
-  // is verplaatst naar na "Per thema").
+  // is verplaatst naar na "Per thema"), onder een lichte sectiekop.
+  drawDunneSectieKop(ctx, "Aan de slag");
   drawLijst(ctx, "Om over na te denken", totaalTeksten.reflectievragen);
   drawLijst(ctx, "Wat kun je doen", totaalTeksten.aanbevelingen);
 

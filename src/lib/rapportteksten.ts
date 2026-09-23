@@ -98,65 +98,85 @@ export function totaalscoreTeksten(totaalScore: number): TotaalscoreNiveau {
   return niveau ?? algemeen.totaalscoreNiveaus[algemeen.totaalscoreNiveaus.length - 1];
 }
 
-/** "Thema A" of "Thema A en Thema B" (max. 2 namen); null als de lijst leeg is. */
-function themaNamenZin(themas: { themaTitel: string }[]): string | null {
-  if (themas.length === 0) return null;
-  if (themas.length === 1) return themas[0].themaTitel;
-  return `${themas[0].themaTitel} en ${themas[1].themaTitel}`;
+/** Eén stukje van de samenvatting: gewone tekst, of een vetgedrukte
+ * thema-naam (zie persoonlijkeSamenvattingDelen()). */
+export interface SamenvattingDeel {
+  tekst: string;
+  vet?: boolean;
+}
+
+/** Bouwt "Intro Thema A." of "Intro Thema A en Thema B." op als losse
+ * delen, met de thema-namen (max. 2) als aparte vetgedrukte stukjes. */
+function themaZinDelen(intro: string, themas: { themaTitel: string }[]): SamenvattingDeel[] {
+  const delen: SamenvattingDeel[] = [{ tekst: `${intro} ` }, { tekst: themas[0].themaTitel, vet: true }];
+  if (themas.length > 1) {
+    delen.push({ tekst: " en " }, { tekst: themas[1].themaTitel, vet: true });
+  }
+  delen.push({ tekst: "." });
+  return delen;
 }
 
 /**
- * De 1-2 persoonlijke zinnen voor in de samenvatting, gebaseerd op de
- * thema-scores. Bij gelijke stand winnen thema's uit Werkenergie en
- * daarna de scanvolgorde -- dat volgt vanzelf uit een stabiele sort op de
- * al in scanvolgorde opgebouwde `themaScores`-array (zie stellingen.ts),
- * dus geen aparte tiebreak-code nodig.
+ * Voegt de persoonlijke zinnen toe direct na de eerste zin van de
+ * niveautekst bij de totaalscore, als losse tekst-/vetgedrukte delen (zie
+ * SamenvattingDeel) zodat scherm en PDF de thema-namen vet kunnen tonen.
+ * Splitst op het eerste zinseinde (. ! of ?); is er geen duidelijk
+ * zinseinde, dan komen de persoonlijke zinnen erachteraan.
+ *
+ * De twee hoogste thema's (≥7,5) krijgen "Je haalt de meeste energie uit
+ * ...", de twee laagste (<5,5) "Het meest schuurt het bij ..."; zijn er
+ * geen thema's <5,5, dan de twee laagste onder de 7,5 met "De meeste
+ * ruimte voor groei zit bij ...". Bij gelijke stand winnen thema's uit
+ * Werkenergie en daarna de scanvolgorde -- dat volgt vanzelf uit een
+ * stabiele sort op de al in scanvolgorde opgebouwde `themaScores`-array
+ * (zie stellingen.ts), dus geen aparte tiebreak-code nodig.
  */
-export function persoonlijkeSamenvattingZinnen(themaScores: ThemaScoreResultaat[]): string[] {
-  const zinnen: string[] = [];
+export function persoonlijkeSamenvattingDelen(
+  tekst: string,
+  themaScores: ThemaScoreResultaat[]
+): SamenvattingDeel[] {
+  const zinnenDelen: SamenvattingDeel[][] = [];
 
   const hoog = [...themaScores]
     .filter((t) => t.score >= SCORE_GRENZEN.groen)
     .sort((a, b) => b.score - a.score)
     .slice(0, 2);
-  const hoogNamen = themaNamenZin(hoog);
-  if (hoogNamen) zinnen.push(`Je haalt de meeste energie uit ${hoogNamen}.`);
+  if (hoog.length > 0) zinnenDelen.push(themaZinDelen("Je haalt de meeste energie uit", hoog));
 
   const laag = [...themaScores]
     .filter((t) => t.score < SCORE_GRENZEN.oranje)
     .sort((a, b) => a.score - b.score)
     .slice(0, 2);
-  const laagNamen = themaNamenZin(laag);
-  if (laagNamen) {
-    zinnen.push(`Het meest schuurt het bij ${laagNamen}.`);
+  if (laag.length > 0) {
+    zinnenDelen.push(themaZinDelen("Het meest schuurt het bij", laag));
   } else {
     const groei = [...themaScores]
       .filter((t) => t.score < SCORE_GRENZEN.groen)
       .sort((a, b) => a.score - b.score)
       .slice(0, 2);
-    const groeiNamen = themaNamenZin(groei);
-    if (groeiNamen) zinnen.push(`De meeste ruimte voor groei zit bij ${groeiNamen}.`);
+    if (groei.length > 0) zinnenDelen.push(themaZinDelen("De meeste ruimte voor groei zit bij", groei));
   }
 
-  return zinnen;
-}
+  if (zinnenDelen.length === 0) return [{ tekst }];
 
-/**
- * Voegt de persoonlijke zinnen (zie hierboven) toe direct na de eerste zin
- * van de niveautekst bij de totaalscore. Splitst op het eerste zinseinde
- * (. ! of ?); is er geen duidelijk zinseinde, dan komen de persoonlijke
- * zinnen erachteraan.
- */
-export function persoonlijkeSamenvatting(tekst: string, themaScores: ThemaScoreResultaat[]): string {
-  const zinnen = persoonlijkeSamenvattingZinnen(themaScores);
-  if (zinnen.length === 0) return tekst;
+  const persoonlijkeDelen: SamenvattingDeel[] = [];
+  zinnenDelen.forEach((delen, i) => {
+    if (i > 0) persoonlijkeDelen.push({ tekst: " " });
+    persoonlijkeDelen.push(...delen);
+  });
 
   const eersteZinMatch = tekst.match(/^(.*?[.!?])(\s+|$)/);
-  if (!eersteZinMatch) return `${tekst} ${zinnen.join(" ")}`.trim();
+  if (!eersteZinMatch) {
+    return [{ tekst: `${tekst} ` }, ...persoonlijkeDelen];
+  }
 
   const eersteZin = eersteZinMatch[1];
   const rest = tekst.slice(eersteZinMatch[0].length).trim();
-  return [eersteZin, ...zinnen, rest].filter(Boolean).join(" ");
+  return [
+    { tekst: `${eersteZin} ` },
+    ...persoonlijkeDelen,
+    ...(rest ? [{ tekst: ` ${rest}` }] : []),
+  ];
 }
 
 /**
@@ -223,17 +243,14 @@ export interface KrachtbronnenBlok {
   vraag: string;
 }
 
-const WERKENERGIE_DEEL_ID = "werkenergie";
 const KRACHTBRONNEN_OPSOMMING_MAX = 6;
 
 /**
  * Bouwt het blok "Jouw krachtbronnen": alle thema's met een score van 7,5 of
  * hoger. Geeft null als geen enkel thema zo hoog scoort (dan vervalt het
- * blok). Bij thema's onder de 5,5 wordt de vraag aangevuld met het thema met
- * de laagste score (bij gelijke stand: het thema uit Werkenergie), zie
- * src/content/rapportteksten/algemeen.json. Bij meer dan zes thema's ≥7,5
- * vervangt één zin de opsomming ("Al je thema's..." of "Veel van je
- * thema's...").
+ * blok). Bij meer dan zes thema's ≥7,5 vervangt één zin de opsomming
+ * ("Al je thema's..." of "Veel van je thema's..."), zie
+ * src/content/rapportteksten/algemeen.json.
  */
 export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): KrachtbronnenBlok | null {
   const krachtbronnen = themaScores.filter((t) => t.score >= SCORE_GRENZEN.groen);
@@ -243,14 +260,6 @@ export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): Krachtb
   const variant = heeftLageThemas
     ? algemeen.krachtbronnen.metLageThemas
     : algemeen.krachtbronnen.zonderLageThemas;
-
-  let vraag = variant.vraag;
-  if (heeftLageThemas) {
-    const laagsteScore = Math.min(...themaScores.map((t) => t.score));
-    const kandidaten = themaScores.filter((t) => t.score === laagsteScore);
-    const laagsteThema = kandidaten.find((t) => t.deelId === WERKENERGIE_DEEL_ID) ?? kandidaten[0];
-    vraag = variant.vraag.replace("{laagsteThema}", laagsteThema.themaTitel);
-  }
 
   const themaRegel =
     krachtbronnen.length > KRACHTBRONNEN_OPSOMMING_MAX
@@ -263,6 +272,6 @@ export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): Krachtb
     themas: krachtbronnen.map((t) => ({ themaId: t.themaId, themaTitel: t.themaTitel, score: t.score })),
     themaRegel,
     tekst: variant.tekst,
-    vraag,
+    vraag: variant.vraag,
   };
 }
