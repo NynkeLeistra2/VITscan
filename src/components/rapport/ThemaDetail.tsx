@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatScore, scoreKleur } from "@/lib/scoring-config";
 import type { ThemaScoreResultaat } from "@/lib/scoring";
 import { signalenVoorScores, themaTeksten } from "@/lib/rapportteksten";
 
@@ -15,7 +15,7 @@ interface ThemaDetailProps {
 export function ThemaDetail({ themaScore, vraagScores }: ThemaDetailProps) {
   const [open, setOpen] = useState(false);
   const teksten = themaTeksten(themaScore.themaId).niveaus[themaScore.niveau];
-  const signalen = signalenVoorScores(themaScore.themaId, vraagScores);
+  const signalen = signalenVoorScores(themaScore.themaId, themaScore.niveau, themaScore.score, vraagScores);
   const kleur = scoreKleur(themaScore.score);
   const percentage = Math.max(0, Math.min(100, (themaScore.score / 10) * 100));
 
@@ -33,7 +33,7 @@ export function ThemaDetail({ themaScore, vraagScores }: ThemaDetailProps) {
           </span>
           <span className="flex items-center gap-2">
             <span className="font-semibold" style={{ color: kleur }}>
-              {themaScore.score.toFixed(1)}
+              {formatScore(themaScore.score)}
             </span>
             <span className="text-zinc-400">{open ? "−" : "+"}</span>
           </span>
@@ -61,20 +61,9 @@ export function ThemaDetail({ themaScore, vraagScores }: ThemaDetailProps) {
             </>
           )}
 
-          {teksten.aanbevelingen.length > 0 && (
-            <>
-              <p className="mt-4 font-medium text-zinc-900">Wat kun je doen</p>
-              <ul className="mt-1 list-disc space-y-1 pl-5">
-                {teksten.aanbevelingen.map((aanbeveling) => (
-                  <li key={aanbeveling}>{aanbeveling}</li>
-                ))}
-              </ul>
-            </>
-          )}
-
           {signalen.length > 0 && (
             <>
-              <p className="mt-4 font-medium text-zinc-900">Signalen</p>
+              <p className="mt-4 font-medium text-zinc-900">Wat opvalt</p>
               <ul className="mt-1 list-disc space-y-1 pl-5">
                 {signalen.map((signaal) => (
                   <li key={signaal}>{signaal}</li>

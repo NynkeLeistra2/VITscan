@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatRuweScore, scoreKleur } from "@/lib/scoring-config";
 import type { ThemaVraagScores } from "@/lib/vraag-scores";
 
 interface VraagScoresDetailProps {
@@ -59,7 +59,7 @@ export function VraagScoresDetail({ themaVragen }: VraagScoresDetailProps) {
                                   className="shrink-0 font-semibold"
                                   style={{ color: vraag.score != null ? scoreKleur(vraag.score) : undefined }}
                                 >
-                                  {vraag.score ?? "–"}
+                                  {vraag.score != null ? formatRuweScore(vraag.score) : "–"}
                                 </span>
                               </div>
                             </li>

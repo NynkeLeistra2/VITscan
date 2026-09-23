@@ -4,7 +4,7 @@ import { useState } from "react";
 import { berekenScores } from "@/lib/scoring";
 import { berekenVraagScores } from "@/lib/vraag-scores";
 import { algemeen, bepaalKrachtbronnen, totaalscoreTeksten } from "@/lib/rapportteksten";
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatScore, scoreKleur } from "@/lib/scoring-config";
 import { verwijderMijnAntwoorden } from "@/lib/supabase/scan-repository";
 import { Krachtbronnen } from "./Krachtbronnen";
 import { ThemaDetail } from "./ThemaDetail";
@@ -25,7 +25,7 @@ interface RapportScreenProps {
 }
 
 const WIEL_TITEL: Record<string, string> = {
-  werkenergie: "Werkgelukwiel",
+  werkenergie: "Werkenergiewiel",
   persoonlijk_welzijn: "Levenswiel",
 };
 
@@ -158,9 +158,12 @@ export function RapportScreen({
           className="mt-1 text-5xl font-bold"
           style={{ color: scoreKleur(resultaat.totaalScore) }}
         >
-          {resultaat.totaalScore.toFixed(1)}
+          {formatScore(resultaat.totaalScore)}
         </p>
         <p className="mt-1 text-lg font-medium text-zinc-800">{totaalTeksten.titel}</p>
+        <p className="mt-1 text-xs text-zinc-500">
+          Totaalscore van werkenergie en persoonlijk welzijn
+        </p>
         <p className="mt-3 text-left text-zinc-700">{totaalTeksten.tekst}</p>
       </div>
 

@@ -42,3 +42,16 @@ export function scoreKleur(score: number): string {
   if (score < 10) return "#006400";
   return "#4B0082";
 }
+
+/** Toont een gemiddelde score (totaal/thema/deel) op 1 decimaal met een
+ * komma, zoals in heel het rapport (bijv. 9,0 in plaats van 9.0). */
+export function formatScore(score: number): string {
+  return score.toFixed(1).replace(".", ",");
+}
+
+/** Toont een ruwe stellingscore (bijlage) zoals hij is -- geen decimaal
+ * erbij verzonnen voor een heel getal, maar wel een komma i.p.v. een punt
+ * mocht de score toch een decimaal hebben. */
+export function formatRuweScore(score: number): string {
+  return score.toString().replace(".", ",");
+}

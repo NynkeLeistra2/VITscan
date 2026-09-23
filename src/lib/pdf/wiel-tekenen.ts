@@ -1,5 +1,5 @@
 import type { jsPDF } from "jspdf";
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatScore, scoreKleur } from "@/lib/scoring-config";
 import {
   WIEL_SIZE,
   WIEL_CENTER,
@@ -140,7 +140,7 @@ export function tekenWiel(
   pdf.setFont("helvetica", "bold");
   pdf.setFontSize(naarPt(38));
   pdf.setTextColor(...hexNaarRgb(scoreKleur(gemiddelde)));
-  pdf.text(gemiddelde.toFixed(1), naarMmX(WIEL_CENTER), naarMmY(WIEL_CENTER - 6), { align: "center" });
+  pdf.text(formatScore(gemiddelde), naarMmX(WIEL_CENTER), naarMmY(WIEL_CENTER - 6), { align: "center" });
 
   pdf.setFont("helvetica", "normal");
   pdf.setFontSize(naarPt(14));

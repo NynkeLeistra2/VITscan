@@ -1,4 +1,4 @@
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatScore, scoreKleur } from "@/lib/scoring-config";
 import {
   WIEL_SIZE,
   WIEL_CENTER,
@@ -103,7 +103,7 @@ export function WerkgelukWiel({ titel, segmenten, gemiddelde }: WerkgelukWielPro
           fontWeight={700}
           fill={scoreKleur(gemiddelde)}
         >
-          {gemiddelde.toFixed(1)}
+          {formatScore(gemiddelde)}
         </text>
         <text x={WIEL_CENTER} y={WIEL_CENTER + 22} textAnchor="middle" fontSize={14} fill="#71717a">
           Gemiddelde

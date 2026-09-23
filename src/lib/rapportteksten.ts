@@ -1,4 +1,4 @@
-import { SCORE_GRENZEN, type ScoreNiveau } from "./scoring-config";
+import { SCORE_GRENZEN, formatScore, type ScoreNiveau } from "./scoring-config";
 import type { ThemaScoreResultaat } from "./scoring";
 
 import algemeenData from "@/content/rapportteksten/algemeen.json";
@@ -99,34 +99,80 @@ export function totaalscoreTeksten(totaalScore: number): TotaalscoreNiveau {
 }
 
 /**
- * Signaalzinnen voor de stellingen binnen een thema met een score van 4 of
- * lager, laagste score eerst. `scores` moet dezelfde volgorde/lengte hebben
- * als de stellingen van het thema (zie berekenVraagScores() in
- * src/lib/vraag-scores.ts, die dezelfde thema-/stellingenlijst gebruikt).
+ * Zes stellingen die altijd hun signaalzin tonen zodra ze 4 of lager scoren,
+ * op elk niveau, en die niet meetellen voor het maximum van twee bij een
+ * laag thema (zie signalenVoorScores() en docs: vit-scan-rapportteksten.md).
+ * Positioneel gekoppeld aan themaId + index in vit-scan-stellingen.json,
+ * dezelfde volgorde als de `signalen` array per thema-json.
  */
-export function signalenVoorScores(themaId: string, scores: (number | null)[]): string[] {
+const ZORGSIGNAAL_POSITIES = new Set([
+  "fysieke_gezondheid:1", // Ik voel me vrij van stress gerelateerde fysieke klachten.
+  "mentale_gezondheid:0", // Ik voel mij mentaal gezond.
+  "mentale_gezondheid:1", // Ik voel me vrij van stress gerelateerde mentale klachten.
+  "ontspanning:2", // Ik slaap goed en krijg voldoende slaap.
+  "financien:2", // Ik hoef me geen zorgen te maken of ik wel rond kan komen.
+  "huis_leefomgeving:2", // Ik voel me veilig in mijn huis en omgeving.
+]);
+
+/**
+ * Signaalzinnen voor de stellingen binnen een thema, laagste score eerst.
+ * `scores` moet dezelfde volgorde/lengte hebben als de stellingen van het
+ * thema (zie berekenVraagScores() in src/lib/vraag-scores.ts).
+ *
+ * Bij midden en hoog: elke stelling met score ≤ 4.
+ * Bij laag: alleen stellingen ≤ 4 die minstens 1 punt onder de themascore
+ * liggen, maximaal twee. De zes zorgsignalen (ZORGSIGNAAL_POSITIES)
+ * verschijnen bij laag altijd als ze ≤ 4 scoren, ook als ze niet minstens 1
+ * punt onder de themascore liggen, en tellen niet mee voor dat maximum.
+ */
+export function signalenVoorScores(
+  themaId: string,
+  niveau: ScoreNiveau,
+  themaScore: number,
+  scores: (number | null)[]
+): string[] {
   const { signalen } = themaTeksten(themaId);
-  return signalen
-    .map((zin, i) => ({ zin, score: scores[i] }))
-    .filter((item): item is { zin: string; score: number } => item.score != null && item.score <= 4)
+  const kandidaten = signalen
+    .map((zin, i) => ({ zin, score: scores[i], i }))
+    .filter((item): item is { zin: string; score: number; i: number } => item.score != null && item.score <= 4);
+
+  if (niveau !== "rood") {
+    return kandidaten.sort((a, b) => a.score - b.score).map((item) => item.zin);
+  }
+
+  const isZorgsignaal = (i: number) => ZORGSIGNAAL_POSITIES.has(`${themaId}:${i}`);
+  const zorgsignalen = kandidaten.filter((item) => isZorgsignaal(item.i));
+  const overig = kandidaten
+    .filter((item) => !isZorgsignaal(item.i) && themaScore - item.score >= 1 - 1e-9)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 2);
+
+  return [...zorgsignalen, ...overig]
     .sort((a, b) => a.score - b.score)
     .map((item) => item.zin);
 }
 
 export interface KrachtbronnenBlok {
   themas: { themaId: string; themaTitel: string; score: number }[];
+  /** Kant-en-klare regel onder de kop: opsomming "Thema (score), ..." of,
+   * bij meer dan zes thema's, de vervangende zin. Zelfde tekst voor scherm
+   * en PDF. */
+  themaRegel: string;
   tekst: string;
   vraag: string;
 }
 
 const WERKENERGIE_DEEL_ID = "werkenergie";
+const KRACHTBRONNEN_OPSOMMING_MAX = 6;
 
 /**
  * Bouwt het blok "Jouw krachtbronnen": alle thema's met een score van 7,5 of
  * hoger. Geeft null als geen enkel thema zo hoog scoort (dan vervalt het
  * blok). Bij thema's onder de 5,5 wordt de vraag aangevuld met het thema met
  * de laagste score (bij gelijke stand: het thema uit Werkenergie), zie
- * src/content/rapportteksten/algemeen.json.
+ * src/content/rapportteksten/algemeen.json. Bij meer dan zes thema's ≥7,5
+ * vervangt één zin de opsomming ("Al je thema's..." of "Veel van je
+ * thema's...").
  */
 export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): KrachtbronnenBlok | null {
   const krachtbronnen = themaScores.filter((t) => t.score >= SCORE_GRENZEN.groen);
@@ -145,8 +191,16 @@ export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): Krachtb
     vraag = variant.vraag.replace("{laagsteThema}", laagsteThema.themaTitel);
   }
 
+  const themaRegel =
+    krachtbronnen.length > KRACHTBRONNEN_OPSOMMING_MAX
+      ? krachtbronnen.length === themaScores.length
+        ? "Al je thema's scoren 7,5 of hoger."
+        : "Veel van je thema's scoren 7,5 of hoger."
+      : krachtbronnen.map((t) => `${t.themaTitel} (${formatScore(t.score)})`).join(", ");
+
   return {
     themas: krachtbronnen.map((t) => ({ themaId: t.themaId, themaTitel: t.themaTitel, score: t.score })),
+    themaRegel,
     tekst: variant.tekst,
     vraag,
   };

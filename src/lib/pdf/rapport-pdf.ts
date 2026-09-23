@@ -8,7 +8,7 @@ import {
   totaalscoreTeksten,
   themaTeksten,
 } from "@/lib/rapportteksten";
-import { scoreKleur } from "@/lib/scoring-config";
+import { formatRuweScore, formatScore, scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
 import { LOGO_OFFICIEEL_BASE64, LOGO_ICOON_BASE64 } from "./logos";
 
@@ -32,7 +32,7 @@ const TEXT_MUTED: [number, number, number] = [113, 113, 122]; // zinc-500
 const WHITE: [number, number, number] = [255, 255, 255];
 
 const WIEL_TITEL: Record<string, string> = {
-  werkenergie: "Werkgelukwiel",
+  werkenergie: "Werkenergiewiel",
   persoonlijk_welzijn: "Levenswiel",
 };
 
@@ -71,9 +71,21 @@ function drawPageChrome(ctx: PdfCtx) {
     "MEDIUM"
   );
 
+  // Snapshot de tekstopmaak vóór het (kleine, grijze) paginanummer en zet
+  // 'm daarna terug -- anders erft de eerstvolgende tekst na een
+  // pagina-overgang per ongeluk dit kleine grijze lettertype (het bug die
+  // opsommingen na een pagina-overgang klein en grijs liet ogen).
+  const huidigeFontSize = pdf.getFontSize();
+  const huidigFont = pdf.getFont();
+  const huidigeKleur = pdf.getTextColor();
+
   pdf.setFontSize(8);
   pdf.setTextColor(...TEXT_MUTED);
   pdf.text(`${ctx.pageNumber}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+
+  pdf.setFontSize(huidigeFontSize);
+  pdf.setFont(huidigFont.fontName, huidigFont.fontStyle);
+  pdf.setTextColor(huidigeKleur);
 }
 
 function addNewPage(ctx: PdfCtx) {
@@ -126,7 +138,7 @@ function drawThemaHeader(ctx: PdfCtx, titel: string, score: number) {
   pdf.text(titel, margin + 5, ctx.y);
 
   pdf.setTextColor(scoreKleur(score));
-  pdf.text(score.toFixed(1), ctx.pageWidth - margin, ctx.y, { align: "right" });
+  pdf.text(formatScore(score), ctx.pageWidth - margin, ctx.y, { align: "right" });
 
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_DARK);
@@ -147,8 +159,13 @@ function drawParagraaf(ctx: PdfCtx, tekst: string, opties?: { vetgedrukt?: boole
 }
 
 function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
+  if (items.length === 0) return;
   const { pdf, margin, contentWidth } = ctx;
-  checkPageBreak(ctx, 8);
+  // Reserveer ruimte voor de kop én de eerste regel samen, zodat een kopje
+  // nooit alleen onderaan een pagina blijft staan zonder tekst eronder.
+  const eersteRegels = pdf.splitTextToSize(items[0], contentWidth - 6);
+  const eersteItemHoogte = eersteRegels.length * 4.4 + 1;
+  checkPageBreak(ctx, 8 + eersteItemHoogte);
   pdf.setFontSize(9.5);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(...TEXT_DARK);
@@ -194,7 +211,7 @@ function drawVraagRegel(ctx: PdfCtx, tekst: string, score: number | null) {
   } else {
     pdf.setTextColor(...TEXT_MUTED);
   }
-  pdf.text(score != null ? String(score) : "-", pageWidth - margin, ctx.y, { align: "right" });
+  pdf.text(score != null ? formatRuweScore(score) : "-", pageWidth - margin, ctx.y, { align: "right" });
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_DARK);
   ctx.y += regels.length * 4.2 + 1.5;
@@ -272,17 +289,22 @@ export function genereerRapportPdf({
   drawParagraaf(ctx, algemeen.overzichtIntro);
 
   // Totaalscore-box
-  const boxHoogte = 28;
+  const boxHoogte = 33;
   checkPageBreak(ctx, boxHoogte + 4);
   pdf.setFillColor(...VIOLET);
   pdf.roundedRect(margin, ctx.y, ctx.contentWidth, boxHoogte, 3, 3, "F");
   pdf.setFontSize(22);
   pdf.setFont("helvetica", "bold");
   pdf.setTextColor(...WHITE);
-  pdf.text(resultaat.totaalScore.toFixed(1), pageWidth / 2, ctx.y + 13, { align: "center" });
+  pdf.text(formatScore(resultaat.totaalScore), pageWidth / 2, ctx.y + 13, { align: "center" });
   pdf.setFontSize(11);
   pdf.setFont("helvetica", "normal");
   pdf.text(totaalTeksten.titel, pageWidth / 2, ctx.y + 21, { align: "center" });
+  pdf.setFontSize(8);
+  pdf.setTextColor(220, 210, 226);
+  pdf.text("Totaalscore van werkenergie en persoonlijk welzijn", pageWidth / 2, ctx.y + 27, {
+    align: "center",
+  });
   pdf.setTextColor(...TEXT_DARK);
   ctx.y += boxHoogte + 8;
 
@@ -316,15 +338,13 @@ export function genereerRapportPdf({
     ctx.y += wielBreedteMm + 8;
   }
 
-  // Jouw krachtbronnen: direct na de twee wielen, alleen als er thema's
-  // met een score van 7,5 of hoger zijn.
+  // Jouw krachtbronnen: direct na het levenswiel, alleen als er thema's met
+  // een score van 7,5 of hoger zijn. Geen geforceerde nieuwe pagina -- het
+  // loopt door en springt alleen naar een volgende pagina als het niet meer
+  // past (checkPageBreak in drawSectionTitel/drawParagraaf/drawLijst).
   if (krachtbronnenBlok) {
-    addNewPage(ctx);
     drawSectionTitel(ctx, algemeen.krachtbronnen.titel);
-    const themaRegel = krachtbronnenBlok.themas
-      .map((t) => `${t.themaTitel} (${t.score.toFixed(1)})`)
-      .join(", ");
-    drawParagraaf(ctx, themaRegel, { vetgedrukt: true });
+    drawParagraaf(ctx, krachtbronnenBlok.themaRegel, { vetgedrukt: true });
     drawParagraaf(ctx, krachtbronnenBlok.tekst);
     drawLijst(ctx, "Om over na te denken", [krachtbronnenBlok.vraag]);
   }
@@ -351,14 +371,11 @@ export function genereerRapportPdf({
       if (teksten.reflectievragen.length > 0) {
         drawLijst(ctx, "Om over na te denken", teksten.reflectievragen);
       }
-      if (teksten.aanbevelingen.length > 0) {
-        drawLijst(ctx, "Wat kun je doen", teksten.aanbevelingen);
-      }
       const vraagScores =
         themaVragen.find((t) => t.themaId === thema.themaId)?.vragen.map((v) => v.score) ?? [];
-      const signalen = signalenVoorScores(thema.themaId, vraagScores);
+      const signalen = signalenVoorScores(thema.themaId, thema.niveau, thema.score, vraagScores);
       if (signalen.length > 0) {
-        drawLijst(ctx, "Signalen", signalen);
+        drawLijst(ctx, "Wat opvalt", signalen);
       }
       ctx.y += 2;
     }
