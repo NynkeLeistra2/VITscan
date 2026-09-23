@@ -4,9 +4,11 @@ import { berekenVraagScores } from "@/lib/vraag-scores";
 import {
   algemeen,
   bepaalKrachtbronnen,
+  persoonlijkeSamenvatting,
   signalenVoorScores,
   totaalscoreTeksten,
   themaTeksten,
+  type KrachtbronnenBlok,
 } from "@/lib/rapportteksten";
 import { formatRuweScore, formatScore, scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
@@ -184,6 +186,27 @@ function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
   ctx.y += 2;
 }
 
+/** Hoogte die drawParagraaf() zou innemen, zonder iets te tekenen. */
+function hoogteParagraaf(ctx: PdfCtx, tekst: string): number {
+  ctx.pdf.setFontSize(9.5);
+  ctx.pdf.setFont("helvetica", "normal");
+  const regels = ctx.pdf.splitTextToSize(tekst, ctx.contentWidth);
+  return regels.length * 4.6 + 3;
+}
+
+/** Hoogte die drawLijst() zou innemen, zonder iets te tekenen. */
+function hoogteLijst(ctx: PdfCtx, items: string[]): number {
+  if (items.length === 0) return 0;
+  ctx.pdf.setFontSize(9.5);
+  ctx.pdf.setFont("helvetica", "normal");
+  let hoogte = 5;
+  for (const item of items) {
+    const regels = ctx.pdf.splitTextToSize(item, ctx.contentWidth - 6);
+    hoogte += regels.length * 4.4 + 1.5;
+  }
+  return hoogte + 2;
+}
+
 function drawSubcategorieKop(ctx: PdfCtx, titel: string) {
   const { pdf, margin } = ctx;
   checkPageBreak(ctx, 6);
@@ -215,6 +238,18 @@ function drawVraagRegel(ctx: PdfCtx, tekst: string, score: number | null) {
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_DARK);
   ctx.y += regels.length * 4.2 + 1.5;
+}
+
+/** Totale hoogte van het krachtbronnenblok (kop + thema-regel + tekst +
+ * vraag), zodat het geheel vooraf op één pagina gereserveerd kan worden --
+ * zie de aanroep in genereerRapportPdf(). */
+function krachtbronnenBlokHoogte(ctx: PdfCtx, blok: KrachtbronnenBlok): number {
+  return (
+    12 + // drawSectionTitel
+    hoogteParagraaf(ctx, blok.themaRegel) +
+    hoogteParagraaf(ctx, blok.tekst) +
+    hoogteLijst(ctx, [blok.vraag])
+  );
 }
 
 export interface RapportPdfInput {
@@ -308,25 +343,24 @@ export function genereerRapportPdf({
   pdf.setTextColor(...TEXT_DARK);
   ctx.y += boxHoogte + 8;
 
-  drawParagraaf(ctx, totaalTeksten.tekst);
-  drawLijst(ctx, "Om over na te denken", totaalTeksten.reflectievragen);
-  drawLijst(ctx, "Wat kun je doen", totaalTeksten.aanbevelingen);
+  drawParagraaf(ctx, persoonlijkeSamenvatting(totaalTeksten.tekst, resultaat.themaScores));
 
-  // Wielen: elk op een eigen pagina en verticaal gecentreerd, zo groot en
-  // scherp mogelijk (pure jsPDF-vectortekening, geen rasterlimiet).
-  const wielBreedteMm = 150;
-  const wielTitelBlokHoogte = 18; // titelregel + gap tot het wiel
+  // Wielen: samen op één pagina, verticaal gecentreerd (pure jsPDF-
+  // vectortekening, geen rasterlimiet).
+  const wielBreedteMm = 95;
+  const wielTitelBlokHoogte = 14; // titelregel + gap tot het wiel
+  const wielGap = 10; // ruimte tussen de twee wielen
+  addNewPage(ctx);
+  const totaalWielBlokHoogte = 2 * (wielTitelBlokHoogte + wielBreedteMm) + wielGap;
+  const beschikbareWielHoogte = pageHeight - BOTTOM_MARGIN - START_Y;
+  ctx.y = START_Y + Math.max(0, (beschikbareWielHoogte - totaalWielBlokHoogte) / 2);
+
   for (const deel of resultaat.deelScores) {
     const segmenten = resultaat.themaScores
       .filter((t) => t.deelId === deel.deelId)
       .map((t) => ({ themaId: t.themaId, label: t.themaTitel, score: t.score }));
 
-    addNewPage(ctx);
-    const blokHoogte = wielTitelBlokHoogte + wielBreedteMm;
-    const beschikbareHoogte = pageHeight - BOTTOM_MARGIN - START_Y;
-    ctx.y = START_Y + Math.max(0, (beschikbareHoogte - blokHoogte) / 2);
-
-    pdf.setFontSize(20);
+    pdf.setFontSize(16);
     pdf.setFont("helvetica", "bold");
     pdf.setTextColor(...VIOLET_DARK);
     pdf.text(WIEL_TITEL[deel.deelId] ?? deel.deelTitel, pageWidth / 2, ctx.y, { align: "center" });
@@ -335,14 +369,15 @@ export function genereerRapportPdf({
     ctx.y += wielTitelBlokHoogte;
 
     tekenWiel(pdf, segmenten, deel.score, (pageWidth - wielBreedteMm) / 2, ctx.y, wielBreedteMm);
-    ctx.y += wielBreedteMm + 8;
+    ctx.y += wielBreedteMm + wielGap;
   }
 
   // Jouw krachtbronnen: direct na het levenswiel, alleen als er thema's met
-  // een score van 7,5 of hoger zijn. Geen geforceerde nieuwe pagina -- het
-  // loopt door en springt alleen naar een volgende pagina als het niet meer
-  // past (checkPageBreak in drawSectionTitel/drawParagraaf/drawLijst).
+  // een score van 7,5 of hoger zijn. Blijft altijd samen op één pagina
+  // (kop, thema-regel, tekst én de vraag) -- reserveer eerst de totale
+  // hoogte, spring pas naar een nieuwe pagina als het geheel niet past.
   if (krachtbronnenBlok) {
+    checkPageBreak(ctx, krachtbronnenBlokHoogte(ctx, krachtbronnenBlok));
     drawSectionTitel(ctx, algemeen.krachtbronnen.titel);
     drawParagraaf(ctx, krachtbronnenBlok.themaRegel, { vetgedrukt: true });
     drawParagraaf(ctx, krachtbronnenBlok.tekst);
@@ -366,6 +401,12 @@ export function genereerRapportPdf({
     const themasVanDeel = resultaat.themaScores.filter((t) => t.deelId === deel.deelId);
     for (const thema of themasVanDeel) {
       const teksten = themaTeksten(thema.themaId).niveaus[thema.niveau];
+      // Reserveer de thema-titel én de eerste regel van de duiding samen,
+      // zodat de titel nooit alleen onderaan een pagina blijft staan.
+      pdf.setFontSize(9.5);
+      pdf.setFont("helvetica", "normal");
+      const eersteDuidingRegels = pdf.splitTextToSize(teksten.duiding, ctx.contentWidth);
+      checkPageBreak(ctx, 10 + eersteDuidingRegels.length * 4.6 + 1);
       drawThemaHeader(ctx, thema.themaTitel, thema.score);
       drawParagraaf(ctx, teksten.duiding);
       if (teksten.reflectievragen.length > 0) {
@@ -380,6 +421,12 @@ export function genereerRapportPdf({
       ctx.y += 2;
     }
   }
+
+  // Het algemene blok Om over na te denken / Wat kun je doen, gebaseerd op
+  // de totaalscore (zelfde inhoud als voorheen bovenaan, alleen de plek
+  // is verplaatst naar na "Per thema").
+  drawLijst(ctx, "Om over na te denken", totaalTeksten.reflectievragen);
+  drawLijst(ctx, "Wat kun je doen", totaalTeksten.aanbevelingen);
 
   // Afsluiting
   checkPageBreak(ctx, 30);

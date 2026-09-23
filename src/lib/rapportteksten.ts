@@ -98,6 +98,67 @@ export function totaalscoreTeksten(totaalScore: number): TotaalscoreNiveau {
   return niveau ?? algemeen.totaalscoreNiveaus[algemeen.totaalscoreNiveaus.length - 1];
 }
 
+/** "Thema A" of "Thema A en Thema B" (max. 2 namen); null als de lijst leeg is. */
+function themaNamenZin(themas: { themaTitel: string }[]): string | null {
+  if (themas.length === 0) return null;
+  if (themas.length === 1) return themas[0].themaTitel;
+  return `${themas[0].themaTitel} en ${themas[1].themaTitel}`;
+}
+
+/**
+ * De 1-2 persoonlijke zinnen voor in de samenvatting, gebaseerd op de
+ * thema-scores. Bij gelijke stand winnen thema's uit Werkenergie en
+ * daarna de scanvolgorde -- dat volgt vanzelf uit een stabiele sort op de
+ * al in scanvolgorde opgebouwde `themaScores`-array (zie stellingen.ts),
+ * dus geen aparte tiebreak-code nodig.
+ */
+export function persoonlijkeSamenvattingZinnen(themaScores: ThemaScoreResultaat[]): string[] {
+  const zinnen: string[] = [];
+
+  const hoog = [...themaScores]
+    .filter((t) => t.score >= SCORE_GRENZEN.groen)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2);
+  const hoogNamen = themaNamenZin(hoog);
+  if (hoogNamen) zinnen.push(`Je haalt de meeste energie uit ${hoogNamen}.`);
+
+  const laag = [...themaScores]
+    .filter((t) => t.score < SCORE_GRENZEN.oranje)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 2);
+  const laagNamen = themaNamenZin(laag);
+  if (laagNamen) {
+    zinnen.push(`Het meest schuurt het bij ${laagNamen}.`);
+  } else {
+    const groei = [...themaScores]
+      .filter((t) => t.score < SCORE_GRENZEN.groen)
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 2);
+    const groeiNamen = themaNamenZin(groei);
+    if (groeiNamen) zinnen.push(`De meeste ruimte voor groei zit bij ${groeiNamen}.`);
+  }
+
+  return zinnen;
+}
+
+/**
+ * Voegt de persoonlijke zinnen (zie hierboven) toe direct na de eerste zin
+ * van de niveautekst bij de totaalscore. Splitst op het eerste zinseinde
+ * (. ! of ?); is er geen duidelijk zinseinde, dan komen de persoonlijke
+ * zinnen erachteraan.
+ */
+export function persoonlijkeSamenvatting(tekst: string, themaScores: ThemaScoreResultaat[]): string {
+  const zinnen = persoonlijkeSamenvattingZinnen(themaScores);
+  if (zinnen.length === 0) return tekst;
+
+  const eersteZinMatch = tekst.match(/^(.*?[.!?])(\s+|$)/);
+  if (!eersteZinMatch) return `${tekst} ${zinnen.join(" ")}`.trim();
+
+  const eersteZin = eersteZinMatch[1];
+  const rest = tekst.slice(eersteZinMatch[0].length).trim();
+  return [eersteZin, ...zinnen, rest].filter(Boolean).join(" ");
+}
+
 /**
  * Zes stellingen die altijd hun signaalzin tonen zodra ze 4 of lager scoren,
  * op elk niveau, en die niet meetellen voor het maximum van twee bij een
