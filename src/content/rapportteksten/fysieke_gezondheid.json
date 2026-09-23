@@ -2,37 +2,35 @@
   "themaId": "fysieke_gezondheid",
   "niveaus": {
     "rood": {
-      "duiding": "Je voelt je fysiek niet fit en merkt mogelijk stressgerelateerde klachten. Dat is een signaal dat je lichaam aandacht vraagt.",
+      "duiding": "Je voelt je fysiek niet goed. Je lichaam geeft aan dat er iets moet veranderen.",
       "reflectievragen": [
-        "Welke klacht of signaal merk je het meest, en hoe lang speelt dit al?",
-        "Wat zou de eerste, kleine stap kunnen zijn om hier iets aan te doen?"
+        "Hoe lang voel je je al zo?",
+        "Wat heeft je lichaam op dit moment het meest nodig: rust, beweging of iets anders?"
       ],
       "aanbevelingen": [
-        "Overweeg een gesprek met een huisarts of bedrijfsarts als klachten aanhouden.",
-        "Bouw beweging in kleine, haalbare stappen op in plaats van in één keer alles anders te willen doen."
+        "Bespreek aanhoudende klachten met je huisarts of bedrijfsarts.",
+        "Kies één kleine, haalbare verandering en houd die een maand vol."
       ]
     },
     "oranje": {
-      "duiding": "Je gezondheid is redelijk op orde, maar niet altijd je prioriteit. Je merkt dat het kan verslappen.",
+      "duiding": "Je gezondheid is redelijk op orde, maar je voelt je niet altijd fit.",
       "reflectievragen": [
-        "Wat zorgt ervoor dat je gezondheid soms naar de achtergrond verdwijnt?",
         "Wat zou je structureel meer aandacht willen geven?"
       ],
       "aanbevelingen": [
-        "Plan beweegmomenten net zo vast in als werkafspraken.",
         "Let bewust op vroege signalen van stress, voordat het klachten wordt."
       ]
     },
     "groen": {
-      "duiding": "Je voelt je fysiek gezond en besteedt er bewust aandacht aan. Dat is een stevige basis onder je vitaliteit.",
-      "reflectievragen": [
-        "Wat werkt voor jou het beste om dit vast te houden?",
-        "Hoe blijf je dit doen als je het drukker krijgt?"
-      ],
-      "aanbevelingen": [
-        "Blijf je huidige routine vasthouden, ook in drukke periodes.",
-        "Wees alert op signalen die aangeven dat dit onder druk komt te staan."
-      ]
+      "duiding": "Je voelt je fysiek gezond en je besteedt er aandacht aan.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je voelt je fysiek niet gezond. Loop je hier al langer mee rond, ga dan langs je huisarts.",
+    "Je hebt lichamelijke klachten die met stress te maken hebben. Neem dat serieus, ook als de rest goed voelt. Bespreek het met je huisarts of bedrijfsarts.",
+    "Je hebt weinig aandacht voor je fysieke gezondheid. Wat schiet er als eerste bij in als het druk is?",
+    "Je beweegt te weinig. Plan beweegmomenten net zo vast in als werkafspraken."
+  ]
 }

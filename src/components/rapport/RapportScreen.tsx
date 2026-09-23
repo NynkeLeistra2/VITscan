@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { berekenScores } from "@/lib/scoring";
 import { berekenVraagScores } from "@/lib/vraag-scores";
-import { algemeen, totaalscoreTeksten } from "@/lib/rapportteksten";
+import { algemeen, bepaalKrachtbronnen, totaalscoreTeksten } from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
 import { verwijderMijnAntwoorden } from "@/lib/supabase/scan-repository";
+import { Krachtbronnen } from "./Krachtbronnen";
 import { ThemaDetail } from "./ThemaDetail";
 import { VraagScoresDetail } from "./VraagScoresDetail";
 import { WerkgelukWiel } from "./WerkgelukWiel";
@@ -44,6 +45,7 @@ export function RapportScreen({
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
   const themaVragen = berekenVraagScores(antwoorden);
+  const krachtbronnenBlok = bepaalKrachtbronnen(resultaat.themaScores);
   const [pdfBezig, setPdfBezig] = useState(false);
   const [pdfFoutmelding, setPdfFoutmelding] = useState<string | null>(null);
 
@@ -179,6 +181,8 @@ export function RapportScreen({
         ))}
       </div>
 
+      {krachtbronnenBlok && <Krachtbronnen blok={krachtbronnenBlok} />}
+
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div>
           <h2 className="font-semibold text-zinc-900">Om over na te denken</h2>
@@ -211,7 +215,13 @@ export function RapportScreen({
               {resultaat.themaScores
                 .filter((thema) => thema.deelId === deel.deelId)
                 .map((thema) => (
-                  <ThemaDetail key={thema.themaId} themaScore={thema} />
+                  <ThemaDetail
+                    key={thema.themaId}
+                    themaScore={thema}
+                    vraagScores={
+                      themaVragen.find((t) => t.themaId === thema.themaId)?.vragen.map((v) => v.score) ?? []
+                    }
+                  />
                 ))}
             </div>
           </div>

@@ -2,37 +2,34 @@
   "themaId": "financien",
   "niveaus": {
     "rood": {
-      "duiding": "Financiële zorgen spelen op dit moment een grote rol. Dat trekt aandacht en energie weg, ook op werk.",
+      "duiding": "Geld geeft je op dit moment zorgen. Dat neem je mee naar je werk en naar huis, ook als je er niet over praat.",
       "reflectievragen": [
-        "Welk deel van de financiële zorgen weegt het zwaarst?",
-        "Heb je hier al met iemand over gesproken, professioneel of persoonlijk?"
+        "Wat geeft je de meeste zorgen: rondkomen, of een onverwachte uitgave?",
+        "Heb je overzicht over wat er binnenkomt en uitgaat?"
       ],
       "aanbevelingen": [
-        "Overweeg een gesprek met een financieel adviseur of budgetcoach om overzicht te krijgen.",
-        "Kijk of er binnen je werk (bijvoorbeeld via de werkgever) ondersteuning beschikbaar is."
+        "Maak een overzicht van je inkomsten en uitgaven. Dat alleen geeft vaak al rust.",
+        "Zoek hulp als het niet lukt. Je gemeente biedt gratis hulp bij geldzorgen."
       ]
     },
     "oranje": {
-      "duiding": "Je financiën zijn redelijk op orde, maar onverwachte tegenvallers baren je wel zorgen.",
+      "duiding": "Je financiën zijn redelijk op orde, maar geven je niet altijd rust.",
       "reflectievragen": [
-        "Wat zou jou meer financiële rust geven?",
-        "Heb je zicht op wat een onverwachte tegenvaller voor jou zou betekenen?"
+        "Wat zou jou meer financiële rust geven?"
       ],
       "aanbevelingen": [
-        "Bouw, indien mogelijk, een buffer op voor onverwachte kosten.",
         "Maak periodiek tijd voor overzicht in plaats van het te laten liggen."
       ]
     },
     "groen": {
-      "duiding": "Je voelt je financieel stabiel en voorbereid op tegenvallers. Dat geeft rust die verder reikt dan alleen je portemonnee.",
-      "reflectievragen": [
-        "Wat draagt het meest bij aan deze financiële rust?",
-        "Blijft dit zo bij grote veranderingen in je leven?"
-      ],
-      "aanbevelingen": [
-        "Blijf je financiën periodiek checken, ook als het nu goed gaat.",
-        "Deel je aanpak met iemand die hier meer moeite mee heeft."
-      ]
+      "duiding": "Je hebt je financiën op orde en dat geeft je rust.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je bent niet tevreden over je financiën. Kijk wat je zelf kunt veranderen en waar je hulp bij nodig hebt.",
+    "Een onverwachte uitgave zou je in de problemen brengen. Een kleine buffer, als dat kan, geeft al rust.",
+    "Je maakt je zorgen of je rond kunt komen. Dat geeft veel spanning. Je hoeft dit niet alleen op te lossen: je gemeente biedt gratis hulp bij geldzorgen."
+  ]
 }

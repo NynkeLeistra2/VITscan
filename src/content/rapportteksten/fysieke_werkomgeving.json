@@ -2,37 +2,34 @@
   "themaId": "fysieke_werkomgeving",
   "niveaus": {
     "rood": {
-      "duiding": "Je fysieke werkomgeving ondersteunt je onvoldoende en voelt niet comfortabel. Dat is een randvoorwaarde die niet vanzelf verbetert.",
+      "duiding": "Je werkomgeving ondersteunt je onvoldoende. Dat merk je misschien niet direct, maar het kost je elke dag energie.",
       "reflectievragen": [
-        "Wat stoort je het meest aan je werkomgeving?",
-        "Is dit op te lossen, of is het een structureel probleem dat aandacht van de organisatie vraagt?"
+        "Wat stoort je het meest aan je werkplek: geluid, licht, ruimte of iets anders?",
+        "Wat heb je nodig om goed je werk te kunnen doen?"
       ],
       "aanbevelingen": [
-        "Meld concrete knelpunten (bijvoorbeeld ergonomie, geluid, ruimte) actief bij de juiste persoon.",
-        "Kijk wat je zelf op korte termijn kan aanpassen om het net wat werkbaarder te maken."
+        "Maak een lijstje van wat er beter kan en bespreek dat met je leidinggevende.",
+        "Vraag na of er een werkplekonderzoek mogelijk is."
       ]
     },
     "oranje": {
-      "duiding": "Je werkomgeving is redelijk werkbaar, maar niet optimaal. Er zit ruimte tussen wat je nodig hebt en wat je hebt.",
+      "duiding": "Je werkomgeving is redelijk op orde, maar er zijn punten die beter kunnen.",
       "reflectievragen": [
-        "Welk aspect van je werkomgeving zou het grootste verschil maken als het verbeterde?",
-        "Heb je dit al concreet aangekaart?"
+        "Welke aanpassing aan je werkplek zou het meeste verschil maken?"
       ],
       "aanbevelingen": [
-        "Doe een klein, concreet verzoek voor verbetering, bijvoorbeeld een beter bureau of stillere plek.",
-        "Wissel met collega's uit hoe zij hun werkplek hebben ingericht. Soms zit de oplossing dichtbij."
+        "Benoem die ene aanpassing bij je leidinggevende of de arbocoordinator."
       ]
     },
     "groen": {
-      "duiding": "Je werkomgeving ondersteunt je goed en voelt comfortabel. Dat draagt bij aan je welzijn, ook al is het niet altijd zichtbaar.",
-      "reflectievragen": [
-        "Wat maakt jouw werkomgeving zo goed werkbaar?",
-        "Blijft dit ook zo bij veranderingen, zoals een verhuizing of reorganisatie?"
-      ],
-      "aanbevelingen": [
-        "Deel wat voor jou werkt met collega's die hier meer moeite mee hebben.",
-        "Blijf signaleren als er iets verandert dat deze balans verstoort."
-      ]
+      "duiding": "Je werkomgeving ondersteunt je goed en voelt comfortabel.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je werkplek ondersteunt je slecht in je werk. Vraag om een aanpassing, dat is een redelijke vraag.",
+    "Je voelt je niet op je gemak in je werkomgeving. Ligt dat aan de plek, of aan wat er om je heen gebeurt?",
+    "Je werkomgeving draagt weinig bij aan hoe je je voelt. Denk aan licht, rust en een plek om even op adem te komen."
+  ]
 }

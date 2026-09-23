@@ -2,37 +2,35 @@
   "themaId": "mentale_gezondheid",
   "niveaus": {
     "rood": {
-      "duiding": "Je voelt je mentaal niet in je vel zitten en veerkracht is nu lastig te vinden. Dit verdient serieuze aandacht, niet uitstel.",
+      "duiding": "Je voelt je mentaal niet goed. Dat verdient aandacht, liever nu dan later.",
       "reflectievragen": [
-        "Wat speelt er op dit moment het meest: spanning, somberheid, vermoeidheid, iets anders?",
-        "Wie kan jou hierin op dit moment het beste steunen?"
+        "Hoe lang voel je je al zo?",
+        "Met wie kun je hierover praten?"
       ],
       "aanbevelingen": [
-        "Zoek professionele ondersteuning, bijvoorbeeld via de huisarts, een coach of bedrijfsmaatschappelijk werk.",
-        "Praat erover met iemand die je vertrouwt. Je hoeft dit niet alleen te dragen."
+        "Bespreek hoe je je voelt met je huisarts of bedrijfsarts. Je hoeft niet te wachten tot het niet meer gaat.",
+        "Kijk samen met je leidinggevende wat er in je werk kan helpen, tijdelijk of voor langere tijd."
       ]
     },
     "oranje": {
       "duiding": "Je mentale gezondheid is wisselend. Op sommige momenten voel je je stevig, op andere minder.",
       "reflectievragen": [
-        "Wat maakt het verschil tussen een goede en een mindere dag?",
         "Wat helpt jou om je veerkracht te herstellen?"
       ],
       "aanbevelingen": [
-        "Bouw bewust herstelmomenten in je week in, ook als het druk is.",
-        "Bespreek met je leidinggevende als werk een grote factor is in hoe je je voelt."
+        "Bouw bewust herstelmomenten in je week in, ook als het druk is."
       ]
     },
     "groen": {
-      "duiding": "Je voelt je mentaal gezond en veerkrachtig. Dat is een belangrijke basis om tegenslag aan te kunnen.",
-      "reflectievragen": [
-        "Wat draagt het meest bij aan deze veerkracht?",
-        "Hoe herken je het als dit begint te verschuiven?"
-      ],
-      "aanbevelingen": [
-        "Blijf investeren in wat jou mentaal sterk houdt.",
-        "Wees alert op vroege signalen bij jezelf en anderen."
-      ]
+      "duiding": "Je voelt je mentaal stevig en kunt tegen een stootje.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je voelt je mentaal niet gezond. Praat erover met iemand die je vertrouwt en met je huisarts.",
+    "Je hebt mentale klachten die met stress te maken hebben. Neem dit serieus, ook als de rest goed voelt. Bespreek het met je huisarts of bedrijfsarts, voordat het zwaarder wordt.",
+    "Je voelt weinig veerkracht om tegenslagen op te vangen. Wat of wie geeft je steun als het tegenzit?",
+    "Je hebt weinig aandacht voor je mentale gezondheid. Welk moment in de week kan echt van jou zijn?"
+  ]
 }

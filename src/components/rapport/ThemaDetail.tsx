@@ -3,15 +3,19 @@
 import { useState } from "react";
 import { scoreKleur } from "@/lib/scoring-config";
 import type { ThemaScoreResultaat } from "@/lib/scoring";
-import { themaTeksten } from "@/lib/rapportteksten";
+import { signalenVoorScores, themaTeksten } from "@/lib/rapportteksten";
 
 interface ThemaDetailProps {
   themaScore: ThemaScoreResultaat;
+  /** Losse stellingscores van dit thema, in dezelfde volgorde als de
+   * signalen in het rapportteksten-databestand (zie signalenVoorScores()). */
+  vraagScores: (number | null)[];
 }
 
-export function ThemaDetail({ themaScore }: ThemaDetailProps) {
+export function ThemaDetail({ themaScore, vraagScores }: ThemaDetailProps) {
   const [open, setOpen] = useState(false);
   const teksten = themaTeksten(themaScore.themaId).niveaus[themaScore.niveau];
+  const signalen = signalenVoorScores(themaScore.themaId, vraagScores);
   const kleur = scoreKleur(themaScore.score);
   const percentage = Math.max(0, Math.min(100, (themaScore.score / 10) * 100));
 
@@ -46,19 +50,38 @@ export function ThemaDetail({ themaScore }: ThemaDetailProps) {
         <div className="border-t border-brand-salie/30 px-4 py-4 text-sm text-zinc-700">
           <p>{teksten.duiding}</p>
 
-          <p className="mt-4 font-medium text-zinc-900">Om over na te denken</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5">
-            {teksten.reflectievragen.map((vraag) => (
-              <li key={vraag}>{vraag}</li>
-            ))}
-          </ul>
+          {teksten.reflectievragen.length > 0 && (
+            <>
+              <p className="mt-4 font-medium text-zinc-900">Om over na te denken</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                {teksten.reflectievragen.map((vraag) => (
+                  <li key={vraag}>{vraag}</li>
+                ))}
+              </ul>
+            </>
+          )}
 
-          <p className="mt-4 font-medium text-zinc-900">Wat kun je doen</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5">
-            {teksten.aanbevelingen.map((aanbeveling) => (
-              <li key={aanbeveling}>{aanbeveling}</li>
-            ))}
-          </ul>
+          {teksten.aanbevelingen.length > 0 && (
+            <>
+              <p className="mt-4 font-medium text-zinc-900">Wat kun je doen</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                {teksten.aanbevelingen.map((aanbeveling) => (
+                  <li key={aanbeveling}>{aanbeveling}</li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {signalen.length > 0 && (
+            <>
+              <p className="mt-4 font-medium text-zinc-900">Signalen</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                {signalen.map((signaal) => (
+                  <li key={signaal}>{signaal}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       )}
     </div>

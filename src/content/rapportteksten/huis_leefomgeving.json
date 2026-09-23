@@ -2,37 +2,34 @@
   "themaId": "huis_leefomgeving",
   "niveaus": {
     "rood": {
-      "duiding": "Je huis of leefomgeving geeft je nu weinig rust of veiligheid. Dat is een basisbehoefte die niet vervuld wordt, en dat raakt breder dan alleen wonen.",
+      "duiding": "Je voelt je niet goed thuis in je woonomgeving. Juist de plek waar je zou moeten opladen, geeft je nu weinig rust.",
       "reflectievragen": [
-        "Wat maakt dat je je hier niet op je gemak voelt?",
-        "Is dit tijdelijk of een structureel gegeven?"
+        "Wat maakt dat je thuis niet tot rust komt?",
+        "Is het iets wat je zelf kunt veranderen, of heb je er hulp bij nodig?"
       ],
       "aanbevelingen": [
-        "Breng in kaart wat concreet zou helpen. Soms is een kleine aanpassing al voldoende.",
-        "Zoek hulp of advies als de situatie structureel onveilig of belastend voelt."
+        "Zoek een plek, thuis of buiten, waar je wel even tot rust komt.",
+        "Bespreek met iemand die je vertrouwt wat er speelt."
       ]
     },
     "oranje": {
-      "duiding": "Je woonomgeving is redelijk, maar geeft niet altijd het gevoel van rust of energie dat je zou willen.",
+      "duiding": "Je woont redelijk prettig, maar thuis is niet altijd een plek waar je tot rust komt.",
       "reflectievragen": [
-        "Wat zou jouw leefomgeving voor jou fijner maken?",
-        "Is er een kleine verandering die al verschil zou maken?"
+        "Wat zou je thuis meer rust geven?"
       ],
       "aanbevelingen": [
-        "Maak een kleine aanpassing in huis die bijdraagt aan rust, bijvoorbeeld een opgeruimde plek om tot rust te komen.",
-        "Neem de tijd om na te denken of je woonsituatie nog bij je past."
+        "Maak één plek in huis die echt van jou is om op te laden."
       ]
     },
     "groen": {
       "duiding": "Je voelt je thuis en veilig in je woonomgeving en komt er tot rust. Dat is een belangrijke basis onder je welzijn.",
-      "reflectievragen": [
-        "Wat maakt jouw thuis zo'n plek van rust?",
-        "Hoe waardeer en onderhoud je dit?"
-      ],
-      "aanbevelingen": [
-        "Blijf bewust tijd besteden aan wat je huis een fijne plek maakt.",
-        "Deel wat voor jou werkt met anderen die hier moeite mee hebben."
-      ]
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je voelt je niet prettig op de plek waar je woont. Dat kost meer energie dan je misschien denkt.",
+    "Je komt thuis niet tot rust. Kijk wat er nodig is om thuis weer op te kunnen laden.",
+    "Je voelt je niet veilig in je huis of omgeving. Praat hierover met iemand die je vertrouwt of met je huisarts. Voel je je thuis niet veilig door iemand in je omgeving, dan kun je gratis en anoniem bellen met Veilig Thuis: 0800 2000."
+  ]
 }

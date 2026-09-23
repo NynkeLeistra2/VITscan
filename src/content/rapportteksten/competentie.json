@@ -2,7 +2,7 @@
   "themaId": "competentie",
   "niveaus": {
     "rood": {
-      "duiding": "Je hebt het gevoel dat je kwaliteiten en talenten nu onvoldoende worden ingezet. Dat is frustrerend: je weet wat je kunt, maar krijgt er de ruimte niet voor.",
+      "duiding": "Je hebt het gevoel dat je kwaliteiten en talenten nu onvoldoende worden ingezet, of dat je werk niet goed aansluit bij wat je kunt. Dat is frustrerend.",
       "reflectievragen": [
         "Welke van je kwaliteiten komen in je huidige werk het minste tot hun recht?",
         "Wat zou er moeten veranderen zodat je vaker kan doen waar je goed in bent?"
@@ -13,26 +13,23 @@
       ]
     },
     "oranje": {
-      "duiding": "Je kunt je werk aan, maar het gevoel dat je optimaal je talenten benut is er niet altijd. Er is ruimte om dat scherper te krijgen.",
+      "duiding": "Je kunt een deel van je kwaliteiten kwijt in je werk, maar nog niet alles.",
       "reflectievragen": [
-        "Welk deel van je werk voelt als een goede match met wie je bent?",
-        "Wat mis je nog om je volle potentieel te benutten?"
+        "Welk talent van jou blijft nu het meest liggen?"
       ],
       "aanbevelingen": [
-        "Vraag om taken die net iets meer aansluiten bij je sterke kanten.",
-        "Investeer in een vaardigheid die je huidige werk nog completer maakt."
+        "Kies één taak die goed bij je past en vraag of je daar vaker op ingezet kunt worden."
       ]
     },
     "groen": {
-      "duiding": "Je voelt je vaardig en zet je talenten goed in. Dat vertrouwen in je eigen kunnen is een belangrijke energiebron.",
-      "reflectievragen": [
-        "Wat maakt dat je je kwaliteiten hier zo goed kwijt kunt?",
-        "Waar zou je jezelf nog verder in willen ontwikkelen, vanuit deze sterke basis?"
-      ],
-      "aanbevelingen": [
-        "Zoek bewust nieuwe uitdagingen die passen bij je huidige niveau van vaardigheid.",
-        "Help collega's die hier meer moeite mee hebben. Het versterkt ook jouw positie."
-      ]
+      "duiding": "Je kunt in je werk doen waar je goed in bent en je voelt je bekwaam.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je komt weinig toe aan het werk waar je het beste in bent. Weet je leidinggevende welk werk dat is?",
+    "Je voelt je niet vaardig genoeg voor je werk. Dat vraagt om iets anders dan meer ruimte. Bespreek welke scholing, begeleiding of inwerktijd je nodig hebt.",
+    "Je kwaliteiten worden weinig benut. Maak voor jezelf helder welke dat zijn, zodat je ze ook kunt benoemen."
+  ]
 }

@@ -1,4 +1,5 @@
-import type { ScoreNiveau } from "./scoring-config";
+import { SCORE_GRENZEN, type ScoreNiveau } from "./scoring-config";
+import type { ThemaScoreResultaat } from "./scoring";
 
 import algemeenData from "@/content/rapportteksten/algemeen.json";
 import plezier from "@/content/rapportteksten/plezier.json";
@@ -30,6 +31,15 @@ export interface ThemaTekstNiveau {
 export interface ThemaTeksten {
   themaId: string;
   niveaus: Record<ScoreNiveau, ThemaTekstNiveau>;
+  /** Signaalzinnen, in dezelfde volgorde als de stellingen van dit thema
+   * (zie src/lib/stellingen.ts) -- zie signalenVoorScores(). */
+  signalen: string[];
+}
+
+export interface KrachtbronnenTeksten {
+  titel: string;
+  metLageThemas: { tekst: string; vraag: string };
+  zonderLageThemas: { tekst: string; vraag: string };
 }
 
 export interface TotaalscoreNiveau {
@@ -75,6 +85,7 @@ export const algemeen: {
   overzichtIntro: string;
   totaalscoreNiveaus: TotaalscoreNiveau[];
   afsluiting: { titel: string; tekst: string };
+  krachtbronnen: KrachtbronnenTeksten;
 } = algemeenData;
 
 /** Zoekt de tekstblok dat bij de totaalscore hoort (5 bandbreedtes, zie
@@ -85,4 +96,58 @@ export function totaalscoreTeksten(totaalScore: number): TotaalscoreNiveau {
     (n) => totaalScore >= n.minScore && totaalScore <= n.maxScore
   );
   return niveau ?? algemeen.totaalscoreNiveaus[algemeen.totaalscoreNiveaus.length - 1];
+}
+
+/**
+ * Signaalzinnen voor de stellingen binnen een thema met een score van 4 of
+ * lager, laagste score eerst. `scores` moet dezelfde volgorde/lengte hebben
+ * als de stellingen van het thema (zie berekenVraagScores() in
+ * src/lib/vraag-scores.ts, die dezelfde thema-/stellingenlijst gebruikt).
+ */
+export function signalenVoorScores(themaId: string, scores: (number | null)[]): string[] {
+  const { signalen } = themaTeksten(themaId);
+  return signalen
+    .map((zin, i) => ({ zin, score: scores[i] }))
+    .filter((item): item is { zin: string; score: number } => item.score != null && item.score <= 4)
+    .sort((a, b) => a.score - b.score)
+    .map((item) => item.zin);
+}
+
+export interface KrachtbronnenBlok {
+  themas: { themaId: string; themaTitel: string; score: number }[];
+  tekst: string;
+  vraag: string;
+}
+
+const WERKENERGIE_DEEL_ID = "werkenergie";
+
+/**
+ * Bouwt het blok "Jouw krachtbronnen": alle thema's met een score van 7,5 of
+ * hoger. Geeft null als geen enkel thema zo hoog scoort (dan vervalt het
+ * blok). Bij thema's onder de 5,5 wordt de vraag aangevuld met het thema met
+ * de laagste score (bij gelijke stand: het thema uit Werkenergie), zie
+ * src/content/rapportteksten/algemeen.json.
+ */
+export function bepaalKrachtbronnen(themaScores: ThemaScoreResultaat[]): KrachtbronnenBlok | null {
+  const krachtbronnen = themaScores.filter((t) => t.score >= SCORE_GRENZEN.groen);
+  if (krachtbronnen.length === 0) return null;
+
+  const heeftLageThemas = themaScores.some((t) => t.score < SCORE_GRENZEN.oranje);
+  const variant = heeftLageThemas
+    ? algemeen.krachtbronnen.metLageThemas
+    : algemeen.krachtbronnen.zonderLageThemas;
+
+  let vraag = variant.vraag;
+  if (heeftLageThemas) {
+    const laagsteScore = Math.min(...themaScores.map((t) => t.score));
+    const kandidaten = themaScores.filter((t) => t.score === laagsteScore);
+    const laagsteThema = kandidaten.find((t) => t.deelId === WERKENERGIE_DEEL_ID) ?? kandidaten[0];
+    vraag = variant.vraag.replace("{laagsteThema}", laagsteThema.themaTitel);
+  }
+
+  return {
+    themas: krachtbronnen.map((t) => ({ themaId: t.themaId, themaTitel: t.themaTitel, score: t.score })),
+    tekst: variant.tekst,
+    vraag,
+  };
 }

@@ -1,7 +1,13 @@
 import { jsPDF } from "jspdf";
 import { berekenScores } from "@/lib/scoring";
 import { berekenVraagScores } from "@/lib/vraag-scores";
-import { algemeen, totaalscoreTeksten, themaTeksten } from "@/lib/rapportteksten";
+import {
+  algemeen,
+  bepaalKrachtbronnen,
+  signalenVoorScores,
+  totaalscoreTeksten,
+  themaTeksten,
+} from "@/lib/rapportteksten";
 import { scoreKleur } from "@/lib/scoring-config";
 import { tekenWiel } from "./wiel-tekenen";
 import { LOGO_OFFICIEEL_BASE64, LOGO_ICOON_BASE64 } from "./logos";
@@ -207,6 +213,8 @@ export function genereerRapportPdf({
 }: RapportPdfInput): Buffer {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
+  const themaVragen = berekenVraagScores(antwoorden);
+  const krachtbronnenBlok = bepaalKrachtbronnen(resultaat.themaScores);
 
   const pdf = new jsPDF({ unit: "mm", format: "a4" });
   const pageWidth = pdf.internal.pageSize.getWidth();
@@ -308,6 +316,19 @@ export function genereerRapportPdf({
     ctx.y += wielBreedteMm + 8;
   }
 
+  // Jouw krachtbronnen: direct na de twee wielen, alleen als er thema's
+  // met een score van 7,5 of hoger zijn.
+  if (krachtbronnenBlok) {
+    addNewPage(ctx);
+    drawSectionTitel(ctx, algemeen.krachtbronnen.titel);
+    const themaRegel = krachtbronnenBlok.themas
+      .map((t) => `${t.themaTitel} (${t.score.toFixed(1)})`)
+      .join(", ");
+    drawParagraaf(ctx, themaRegel, { vetgedrukt: true });
+    drawParagraaf(ctx, krachtbronnenBlok.tekst);
+    drawLijst(ctx, "Om over na te denken", [krachtbronnenBlok.vraag]);
+  }
+
   // Per thema
   addNewPage(ctx);
   drawSectionTitel(ctx, "Per thema");
@@ -327,8 +348,18 @@ export function genereerRapportPdf({
       const teksten = themaTeksten(thema.themaId).niveaus[thema.niveau];
       drawThemaHeader(ctx, thema.themaTitel, thema.score);
       drawParagraaf(ctx, teksten.duiding);
-      drawLijst(ctx, "Om over na te denken", teksten.reflectievragen);
-      drawLijst(ctx, "Wat kun je doen", teksten.aanbevelingen);
+      if (teksten.reflectievragen.length > 0) {
+        drawLijst(ctx, "Om over na te denken", teksten.reflectievragen);
+      }
+      if (teksten.aanbevelingen.length > 0) {
+        drawLijst(ctx, "Wat kun je doen", teksten.aanbevelingen);
+      }
+      const vraagScores =
+        themaVragen.find((t) => t.themaId === thema.themaId)?.vragen.map((v) => v.score) ?? [];
+      const signalen = signalenVoorScores(thema.themaId, vraagScores);
+      if (signalen.length > 0) {
+        drawLijst(ctx, "Signalen", signalen);
+      }
       ctx.y += 2;
     }
   }
@@ -345,7 +376,6 @@ export function genereerRapportPdf({
   addNewPage(ctx);
   drawSectionTitel(ctx, "Bijlage: score per vraag");
 
-  const themaVragen = berekenVraagScores(antwoorden);
   const deelIds = [...new Set(themaVragen.map((t) => t.deelId))];
   for (const deelId of deelIds) {
     const themasVanDeel = themaVragen.filter((t) => t.deelId === deelId);

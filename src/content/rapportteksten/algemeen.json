@@ -106,5 +106,16 @@
   "afsluiting": {
     "titel": "En nu?",
     "tekst": "Je hebt nu een concreet beeld van waar je energie vandaan komt en waar het schuurt. Dat inzicht wordt pas echt waardevol als je het gesprek aangaat, met je leidinggevende, met HR, of met iemand die er van buitenaf naar kan kijken. Nynke Leistra Coaching en Advies begeleidt dat gesprek graag als neutrale derde, zonder oordeel en met oog voor wat voor jou werkt."
+  },
+  "krachtbronnen": {
+    "titel": "Jouw krachtbronnen",
+    "metLageThemas": {
+      "tekst": "Hier haal je energie uit. Dat is een stevige basis, zeker nu andere onderdelen schuren.",
+      "vraag": "Hoe kun je wat hier werkt inzetten voor {laagsteThema}?"
+    },
+    "zonderLageThemas": {
+      "tekst": "Hier haal je energie uit. Het loont om te weten waarom dit zo goed werkt.",
+      "vraag": "Wat heb je nodig om dit vast te houden als het drukker wordt?"
+    }
   }
 }

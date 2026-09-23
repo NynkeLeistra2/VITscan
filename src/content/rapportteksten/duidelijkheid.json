@@ -13,26 +13,22 @@
       ]
     },
     "oranje": {
-      "duiding": "Je hebt redelijk zicht op wat er van je verwacht wordt, maar niet alles is helder. Dat zorgt af en toe voor twijfel.",
+      "duiding": "Het is grotendeels duidelijk wat er van je verwacht wordt, maar niet op alle punten.",
       "reflectievragen": [
-        "Welk deel van je rol voelt nog onduidelijk?",
-        "Waar zou je zelf meer duidelijkheid kunnen creëren?"
+        "Op welk vlak mis je vooral duidelijkheid: taken, verantwoordelijkheden, of verwachtingen?"
       ],
       "aanbevelingen": [
-        "Check periodiek bij je leidinggevende of jullie beelden nog overeenkomen.",
-        "Leg afspraken die je maakt kort schriftelijk vast, dat voorkomt misverstanden."
+        "Leg samen met collega's vast wie waarvoor verantwoordelijk is, zeker bij overlappende taken."
       ]
     },
     "groen": {
-      "duiding": "Je weet goed wat er van je verwacht wordt en de rollen zijn helder. Die duidelijkheid geeft rust en richting.",
-      "reflectievragen": [
-        "Wat draagt het meest bij aan deze duidelijkheid?",
-        "Kun je die duidelijkheid ook bieden aan collega's die daar meer moeite mee hebben?"
-      ],
-      "aanbevelingen": [
-        "Blijf verwachtingen actief afstemmen, ook als je functie verandert.",
-        "Help nieuwe collega's snel dezelfde duidelijkheid te krijgen."
-      ]
+      "duiding": "Je weet wat er van je verwacht wordt en de rollen zijn helder.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je weet niet goed wat er van je verwacht wordt. Vraag je leidinggevende om dit concreet te maken, het liefst op papier.",
+    "De rollen in de organisatie zijn voor jou onduidelijk. Dat zorgt vaak voor dubbel werk of werk dat blijft liggen."
+  ]
 }

@@ -2,37 +2,33 @@
   "themaId": "familie_relaties",
   "niveaus": {
     "rood": {
-      "duiding": "Je ervaart weinig steun vanuit familie of vrienden en het contact voelt niet zorgeloos. Dat mist een belangrijke bron van veerkracht.",
+      "duiding": "Je ervaart weinig steun van de mensen om je heen, of het contact kost je energie. Dan wordt het zwaarder om tegenslagen op te vangen.",
       "reflectievragen": [
-        "Wat maakt dat dit contact nu zwaar voelt?",
-        "Is er iemand met wie je dit zou kunnen bespreken, ook al is het lastig?"
+        "Bij wie kun je terecht als het tegenzit?",
+        "Welk contact kost je nu de meeste energie?"
       ],
       "aanbevelingen": [
-        "Zoek bewust naar één relatie waarin je wel steun ervaart en investeer daarin.",
-        "Overweeg professionele ondersteuning als relaties structureel zwaar voelen."
+        "Zoek contact met één persoon bij wie je je op je gemak voelt.",
+        "Vragen relaties veel van je, bespreek het dan met iemand die je vertrouwt of met een coach."
       ]
     },
     "oranje": {
-      "duiding": "Er is steun vanuit je omgeving, maar het contact voelt niet altijd zorgeloos. Het wisselt.",
+      "duiding": "Je hebt steun van mensen om je heen, maar sommige contacten vragen ook energie.",
       "reflectievragen": [
-        "Met wie voel je je het meest gesteund?",
-        "Wat zou het contact met anderen makkelijker maken?"
+        "Welke mensen geven je energie, en welke kosten het?"
       ],
       "aanbevelingen": [
-        "Maak bewust tijd vrij voor de mensen die jou energie geven.",
-        "Bespreek openlijk als iets in een relatie schuurt, in plaats van het te laten liggen."
+        "Maak bewust tijd voor de mensen bij wie je oplaadt."
       ]
     },
     "groen": {
       "duiding": "Je ervaart steun vanuit je familie en vrienden en het contact voelt zorgeloos. Dat is een sterke basis om op terug te vallen.",
-      "reflectievragen": [
-        "Wat maakt deze relaties zo waardevol voor je?",
-        "Hoe blijf je hierin investeren als het druk wordt?"
-      ],
-      "aanbevelingen": [
-        "Blijf bewust tijd maken voor deze mensen, ook in drukke periodes.",
-        "Wees er ook voor anderen. Steun werkt vaak wederkerig."
-      ]
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je ervaart weinig steun van de mensen die belangrijk voor je zijn. Is er iemand, ook buiten familie en vrienden, bij wie je terecht kunt?",
+    "Het contact met mensen om je heen voelt niet zorgeloos. Relaties die veel spanning geven, kosten ook energie op je werk."
+  ]
 }

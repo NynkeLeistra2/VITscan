@@ -13,26 +13,26 @@
       ]
     },
     "oranje": {
-      "duiding": "Er is een basis van vertrouwen, maar niet in elke situatie voel je je vrij om open te zijn. Dat maakt je soms voorzichtig.",
+      "duiding": "Het vertrouwen in je team is er grotendeels, maar niet altijd. Soms houd je je mening voor je of twijfel je hoe iets valt.",
       "reflectievragen": [
-        "In welke situaties voel je je wel volledig veilig, en wat is daar anders?",
-        "Wat zou jou helpen om je vaker uit te spreken?"
+        "Bij wie of in welke situaties houd je je het meest in?"
       ],
       "aanbevelingen": [
-        "Oefen met het delen van een kleine, afwijkende mening in een veilige setting.",
-        "Geef zelf het goede voorbeeld door open te reageren op ideeën van anderen."
+        "Zoek één persoon uit waarmee je dit patroon kan doorbreken, met een klein, concreet gesprek."
       ]
     },
     "groen": {
-      "duiding": "Je voelt je veilig om jezelf te zijn en te zeggen wat je denkt. Dat vertrouwen is een van de sterkste fundamenten van een goed functionerend team.",
-      "reflectievragen": [
-        "Wat draagt het meest bij aan dit vertrouwen?",
-        "Hoe help jij mee dit vertrouwen ook voor anderen te laten groeien?"
-      ],
-      "aanbevelingen": [
-        "Blijf dit gedrag actief voorleven. Het werkt aanstekelijk.",
-        "Signaleer het als je merkt dat een collega zich minder vrij voelt."
-      ]
+      "duiding": "Je voelt je vrij om te zeggen wat je denkt en je vertrouwt je collega's.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je deelt je mening niet makkelijk als die afwijkt. Zo blijven goede ideeën en zorgen liggen.",
+    "Je ideeën worden volgens jou weinig serieus genomen. Benoem wat je daarvan merkt, en bij wie.",
+    "Je bent bang voor kritiek of afwijzing als je open bent. Dat is zwaar om elke dag mee te dragen. Bespreek het met je leidinggevende of een vertrouwenspersoon.",
+    "Je hebt het gevoel dat collega's je weinig vertrouwen. Is er iets gebeurd, of speelt dit al langer?",
+    "Je hebt weinig vertrouwen in je collega's. Gaat dat over het hele team of over een paar mensen?",
+    "Je voelt je weinig gerespecteerd door collega's. Dat hoef je niet te accepteren. Bespreek het met je leidinggevende of een vertrouwenspersoon."
+  ]
 }

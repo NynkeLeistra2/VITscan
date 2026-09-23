@@ -2,37 +2,35 @@
   "themaId": "waardering",
   "niveaus": {
     "rood": {
-      "duiding": "Je voelt je onvoldoende gewaardeerd: persoonlijk, financieel, of allebei. Dat knaagt, zeker als je het gevoel hebt dat je het niet hardop kan maken.",
+      "duiding": "Je voelt je weinig gewaardeerd in je werk. Dat raakt je motivatie, ook als je het werk zelf leuk vindt.",
       "reflectievragen": [
-        "Mis je vooral erkenning, financiële waardering, of het gevoel dat je ertoe doet?",
-        "Wanneer voelde je je voor het laatst echt gewaardeerd?"
+        "Welke waardering mis je het meest: persoonlijk, financieel of steun van collega's?",
+        "Weet je leidinggevende wat waardering voor jou betekent?"
       ],
       "aanbevelingen": [
-        "Maak concreet bespreekbaar wat je nodig hebt om je gewaardeerd te voelen. Vaag blijven helpt niet.",
-        "Zoek zelf naar momenten om waardering te geven; dat verlaagt vaak ook de drempel om het te ontvangen."
+        "Bespreek met je leidinggevende wat jij nodig hebt om je gewaardeerd te voelen.",
+        "Vraag om feedback op je werk. Dan hoor je ook wat er wel gezien wordt."
       ]
     },
     "oranje": {
-      "duiding": "Je voelt soms waardering, maar het is niet vanzelfsprekend of structureel. Je twijfelt weleens of je ertoe doet.",
+      "duiding": "Je voelt je op onderdelen gewaardeerd, maar niet overal.",
       "reflectievragen": [
-        "Op welke momenten voel je je wel gewaardeerd?",
-        "Wat zou een klein signaal van waardering voor jou betekenen?"
+        "Welke vorm van waardering zou voor jou nu het meeste verschil maken?"
       ],
       "aanbevelingen": [
-        "Vraag actief om feedback in plaats van te wachten tot het spontaan komt.",
-        "Bespreek in een functioneringsgesprek concreet hoe waardering voor jou werkt."
+        "Maak het bespreekbaar in je volgende gesprek met je leidinggevende."
       ]
     },
     "groen": {
       "duiding": "Je voelt je gewaardeerd, persoonlijk en in wat je bijdraagt. Dat gevoel van ertoe doen versterkt je motivatie.",
-      "reflectievragen": [
-        "Wat draagt het meest bij aan dit gevoel van waardering?",
-        "Hoe geef jij op jouw beurt waardering aan anderen?"
-      ],
-      "aanbevelingen": [
-        "Blijf uitspreken wanneer iets goed voelt. Het houdt het gesprek levend.",
-        "Geef de waardering die jij ervaart ook door aan je team."
-      ]
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je ervaart weinig persoonlijke waardering. Het helpt om zelf te benoemen wat je nodig hebt.",
+    "Je ervaart weinig financiële waardering. Bespreek dit op een moment dat ervoor bedoeld is, zoals je jaargesprek, en bereid het goed voor.",
+    "Je hebt niet het gevoel dat je ertoe doet. Neem dat serieus en praat erover met iemand die je vertrouwt.",
+    "Je ervaart weinig steun van collega's. Vraag zelf om hulp als je die nodig hebt. Dat doorbreekt vaak het patroon."
+  ]
 }

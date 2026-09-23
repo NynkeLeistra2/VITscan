@@ -13,26 +13,23 @@
       ]
     },
     "oranje": {
-      "duiding": "Er is af en toe uitdaging, maar structurele groeimogelijkheden zijn niet vanzelfsprekend. Je merkt dat je meer zou aankunnen.",
+      "duiding": "Je werk biedt je af en toe uitdaging, maar op sommige punten heb je het gevoel dat je stilstaat.",
       "reflectievragen": [
-        "Welke uitdaging zou je energie geven zonder dat het je overvraagt?",
-        "Wat houdt je tegen om hierover het gesprek aan te gaan?"
+        "Wat zou jou op dit moment iets nieuws laten leren?"
       ],
       "aanbevelingen": [
-        "Bespreek concreet één ontwikkelwens in je eerstvolgende gesprek met je leidinggevende.",
-        "Verken mogelijkheden buiten je huidige functie, zoals een cursus of project."
+        "Benoem één ontwikkelwens en leg die voor aan je leidinggevende."
       ]
     },
     "groen": {
-      "duiding": "Je ervaart voldoende uitdaging en ziet ruimte om te groeien. Dat houdt je scherp en betrokken.",
-      "reflectievragen": [
-        "Welke uitdaging heeft de afgelopen tijd het meeste bijgedragen aan je ontwikkeling?",
-        "Wat is de volgende stap die je voor jezelf ziet?"
-      ],
-      "aanbevelingen": [
-        "Blijf actief sturen op nieuwe leermomenten, ook als het nu goed gaat.",
-        "Deel je ontwikkelpad met je leidinggevende zodat het zichtbaar blijft."
-      ]
+      "duiding": "Je werk daagt je uit en je ziet ruimte om je te blijven ontwikkelen.",
+      "reflectievragen": [],
+      "aanbevelingen": []
     }
-  }
+  },
+  "signalen": [
+    "Je werk daagt je weinig uit. Te weinig uitdaging kost op den duur net zoveel energie als te veel.",
+    "Je ziet weinig mogelijkheden om te groeien. Vraag na wat er wel kan, ook als het niet vanzelf wordt aangeboden.",
+    "Je krijgt weinig kansen om te leren buiten je eigen functie. Denk aan meelopen, een project of een training."
+  ]
 }
