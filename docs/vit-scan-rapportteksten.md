@@ -97,8 +97,8 @@ hoog werkgeluk").
 
 ### Afsluiting
 
-Vaste titel "En nu?" met een vaste tekst die uitnodigt tot het gesprek en
-verwijst naar begeleiding door Nynke als neutrale derde. Zie
+Vaste titel "En nu?" met een vaste tekst die uitnodigt tot het gesprek
+(met leidinggevende, HR, of iemand van buitenaf). Zie
 `src/content/rapportteksten/algemeen.json`.
 
 ### Blok Jouw krachtbronnen

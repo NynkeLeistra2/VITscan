@@ -113,7 +113,9 @@ function drawAmberDivider(ctx: PdfCtx, y: number) {
 function drawSectionTitel(ctx: PdfCtx, titel: string) {
   checkPageBreak(ctx, 14);
   const { pdf, margin, contentWidth } = ctx;
-  pdf.setFillColor(...VIOLET_DARK);
+  // Zelfde vaste VIOLET-constante als de balk bovenaan de pagina
+  // (drawPageChrome), zodat kopbalk en paginabalk nooit uit elkaar lopen.
+  pdf.setFillColor(...VIOLET);
   pdf.roundedRect(margin, ctx.y - 5.5, contentWidth, 9, 1.5, 1.5, "F");
   pdf.setFontSize(12);
   pdf.setFont("helvetica", "bold");
@@ -134,7 +136,7 @@ function drawDunneSectieKop(ctx: PdfCtx, titel: string) {
   ctx.y += 7;
   pdf.setFontSize(13);
   pdf.setFont("helvetica", "bold");
-  pdf.setTextColor(...VIOLET_DARK);
+  pdf.setTextColor(...VIOLET);
   pdf.text(titel, margin, ctx.y);
   pdf.setFont("helvetica", "normal");
   pdf.setTextColor(...TEXT_DARK);
@@ -436,6 +438,7 @@ export function genereerRapportPdf({
   ctx.y += boxHoogte + 8;
 
   tekenGemengdeParagraaf(ctx, persoonlijkeSamenvattingDelen(totaalTeksten.tekst, resultaat.themaScores));
+  ctx.y += 6; // extra witruimte boven het werkenergiewiel
 
   // Wielen: elk op zijn eigen (deel van een) pagina, pure jsPDF-
   // vectortekening, geen rasterlimiet.
@@ -468,6 +471,7 @@ export function genereerRapportPdf({
   // Levenswiel + Jouw krachtbronnen: samen op een nieuwe pagina 2.
   addNewPage(ctx);
   tekenWielBlok(persoonlijkWelzijnDeel);
+  ctx.y += 8; // extra witruimte boven het krachtbronnenblok
 
   // Jouw krachtbronnen, alleen als er thema's met een score van 7,5 of
   // hoger zijn. Blijft altijd samen met het levenswiel op deze pagina
@@ -521,10 +525,14 @@ export function genereerRapportPdf({
 
   // Het algemene blok Om over na te denken / Wat kun je doen, gebaseerd op
   // de totaalscore (zelfde inhoud als voorheen bovenaan, alleen de plek
-  // is verplaatst naar na "Per thema"), onder een lichte sectiekop.
+  // is verplaatst naar na "Per thema"), onder een lichte sectiekop. Begint
+  // altijd op een nieuwe pagina, met En nu? direct erna op diezelfde
+  // pagina -- de twee blokken worden nooit over twee pagina's verdeeld.
+  addNewPage(ctx);
   drawDunneSectieKop(ctx, "Aan de slag");
   drawLijst(ctx, "Om over na te denken", totaalTeksten.reflectievragen);
   drawLijst(ctx, "Wat kun je doen", totaalTeksten.aanbevelingen);
+  ctx.y += 8; // extra witruimte boven En nu?
 
   // Afsluiting
   checkPageBreak(ctx, 30);
