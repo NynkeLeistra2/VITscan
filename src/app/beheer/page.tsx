@@ -79,6 +79,12 @@ export default async function BeheerPagina() {
         <h1 className="text-2xl font-semibold text-zinc-900">Beheer: VIT-scan</h1>
         <div className="flex items-center gap-4">
           <a
+            href="/beheer/voorbeeldrapport"
+            className="text-sm text-zinc-500 underline hover:text-zinc-700"
+          >
+            Voorbeeldrapport downloaden
+          </a>
+          <a
             href="/beheer/mfa-instellen"
             className="text-sm text-zinc-500 underline hover:text-zinc-700"
           >

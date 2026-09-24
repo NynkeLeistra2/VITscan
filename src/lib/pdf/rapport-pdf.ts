@@ -280,6 +280,22 @@ function drawLijst(ctx: PdfCtx, kopTekst: string, items: string[]) {
   ctx.y += 2;
 }
 
+/** Kleine, cursieve toelichtingsregel onder een lijstitem (alleen gebruikt
+ * bij de ene signaalzin die het voorbeeldrapport wél toont). */
+function drawKleineToelichting(ctx: PdfCtx, tekst: string) {
+  const { pdf, margin, contentWidth } = ctx;
+  const tekstX = margin + 6;
+  pdf.setFontSize(7.5);
+  pdf.setFont("helvetica", "italic");
+  pdf.setTextColor(...TEXT_MUTED);
+  const regels = pdf.splitTextToSize(tekst, contentWidth - 6);
+  checkPageBreak(ctx, regels.length * 3.6 + 2);
+  pdf.text(regels, tekstX, ctx.y);
+  ctx.y += regels.length * 3.6 + 2;
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(...TEXT_DARK);
+}
+
 /** Hoogte die drawParagraaf() zou innemen, zonder iets te tekenen. */
 function hoogteParagraaf(ctx: PdfCtx, tekst: string): number {
   ctx.pdf.setFontSize(9.5);
@@ -350,12 +366,23 @@ export interface RapportPdfInput {
   antwoorden: Record<string, number>;
   naam: string | null;
   organisatieNaam?: string | null;
+  /** Voorbeeldrapport voor Nynke om te delen met potentiële klanten: geen
+   * signalen per stelling (op één vaste uitzondering na) en geen bijlage
+   * met scores per vraag, zie src/app/beheer/voorbeeldrapport/route.ts. */
+  voorbeeld?: boolean;
 }
+
+/** Enige signaalzin die in het voorbeeldrapport wordt getoond, zodat een
+ * potentiële klant weet dat dit soort duiding bestaat zonder de volledige
+ * (voor een demo te gedetailleerde) signalenlijst per thema te zien. */
+const VOORBEELD_SIGNAAL_THEMA = "mentale_gezondheid";
+const VOORBEELD_SIGNAAL_INDEX = 1;
 
 export function genereerRapportPdf({
   antwoorden,
   naam,
   organisatieNaam,
+  voorbeeld = false,
 }: RapportPdfInput): Buffer {
   const resultaat = berekenScores(antwoorden);
   const totaalTeksten = totaalscoreTeksten(resultaat.totaalScore);
@@ -395,6 +422,15 @@ export function genereerRapportPdf({
     "MEDIUM"
   );
   ctx.y += logoHoogte + 8;
+
+  if (voorbeeld) {
+    pdf.setFontSize(10.5);
+    pdf.setFont("helvetica", "bold");
+    pdf.setTextColor(...VIOLET);
+    pdf.text("VOORBEELDRAPPORT", pageWidth / 2, ctx.y, { align: "center" });
+    pdf.setTextColor(...TEXT_DARK);
+    ctx.y += 7;
+  }
 
   pdf.setFontSize(20);
   pdf.setFont("helvetica", "bold");
@@ -513,11 +549,22 @@ export function genereerRapportPdf({
       if (teksten.reflectievragen.length > 0) {
         drawLijst(ctx, "Om over na te denken", teksten.reflectievragen);
       }
-      const vraagScores =
-        themaVragen.find((t) => t.themaId === thema.themaId)?.vragen.map((v) => v.score) ?? [];
-      const signalen = signalenVoorScores(thema.themaId, thema.niveau, thema.score, vraagScores);
-      if (signalen.length > 0) {
-        drawLijst(ctx, "Wat opvalt", signalen);
+      if (voorbeeld) {
+        if (thema.themaId === VOORBEELD_SIGNAAL_THEMA) {
+          const signaalTekst = themaTeksten(thema.themaId).signalen[VOORBEELD_SIGNAAL_INDEX];
+          drawLijst(ctx, "Wat opvalt", [signaalTekst]);
+          drawKleineToelichting(
+            ctx,
+            "In het rapport van deelnemers staat dit bij elke stelling die laag scoort."
+          );
+        }
+      } else {
+        const vraagScores =
+          themaVragen.find((t) => t.themaId === thema.themaId)?.vragen.map((v) => v.score) ?? [];
+        const signalen = signalenVoorScores(thema.themaId, thema.niveau, thema.score, vraagScores);
+        if (signalen.length > 0) {
+          drawLijst(ctx, "Wat opvalt", signalen);
+        }
       }
       ctx.y += 2;
     }
@@ -543,45 +590,48 @@ export function genereerRapportPdf({
 
   // Bijlage: score per vraag, zelfde groepering (hoofdthema > thema >
   // eventuele subcategorie) als het uitklapbare venster op het scherm.
-  addNewPage(ctx);
-  drawSectionTitel(ctx, "Bijlage: score per vraag");
+  // Overgeslagen in het voorbeeldrapport (zie RapportPdfInput.voorbeeld).
+  if (!voorbeeld) {
+    addNewPage(ctx);
+    drawSectionTitel(ctx, "Bijlage: score per vraag");
 
-  const deelIds = [...new Set(themaVragen.map((t) => t.deelId))];
-  for (const deelId of deelIds) {
-    const themasVanDeel = themaVragen.filter((t) => t.deelId === deelId);
-    checkPageBreak(ctx, 12);
-    pdf.setFontSize(10.5);
-    pdf.setFont("helvetica", "bold");
-    pdf.setTextColor(...TEXT_MUTED);
-    pdf.text(themasVanDeel[0].deelTitel, margin, ctx.y);
-    pdf.setFont("helvetica", "normal");
-    pdf.setTextColor(...TEXT_DARK);
-    ctx.y += 7;
-
-    for (const thema of themasVanDeel) {
-      checkPageBreak(ctx, 10);
-      pdf.setFontSize(10);
+    const deelIds = [...new Set(themaVragen.map((t) => t.deelId))];
+    for (const deelId of deelIds) {
+      const themasVanDeel = themaVragen.filter((t) => t.deelId === deelId);
+      checkPageBreak(ctx, 12);
+      pdf.setFontSize(10.5);
       pdf.setFont("helvetica", "bold");
-      pdf.text(thema.themaTitel, margin, ctx.y);
+      pdf.setTextColor(...TEXT_MUTED);
+      pdf.text(themasVanDeel[0].deelTitel, margin, ctx.y);
       pdf.setFont("helvetica", "normal");
-      ctx.y += 6;
+      pdf.setTextColor(...TEXT_DARK);
+      ctx.y += 7;
 
-      let laatsteSubcategorie: string | null = null;
-      for (const vraag of thema.vragen) {
-        if (vraag.subcategorieTitel && vraag.subcategorieTitel !== laatsteSubcategorie) {
-          drawSubcategorieKop(ctx, vraag.subcategorieTitel);
+      for (const thema of themasVanDeel) {
+        checkPageBreak(ctx, 10);
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(thema.themaTitel, margin, ctx.y);
+        pdf.setFont("helvetica", "normal");
+        ctx.y += 6;
+
+        let laatsteSubcategorie: string | null = null;
+        for (const vraag of thema.vragen) {
+          if (vraag.subcategorieTitel && vraag.subcategorieTitel !== laatsteSubcategorie) {
+            drawSubcategorieKop(ctx, vraag.subcategorieTitel);
+          }
+          laatsteSubcategorie = vraag.subcategorieTitel;
+          drawVraagRegel(ctx, vraag.tekst, vraag.score);
         }
-        laatsteSubcategorie = vraag.subcategorieTitel;
-        drawVraagRegel(ctx, vraag.tekst, vraag.score);
+        ctx.y += 3;
       }
-      ctx.y += 3;
     }
+
+    ctx.y += 2;
   }
 
-  ctx.y += 2;
-
   // Footer met contactgegevens (alleen op de laatste pagina)
-  checkPageBreak(ctx, 24);
+  checkPageBreak(ctx, voorbeeld ? 29 : 24);
   drawAmberDivider(ctx, ctx.y);
   ctx.y += 6;
   pdf.setFontSize(8);
@@ -593,6 +643,14 @@ export function genereerRapportPdf({
   pdf.text(`© ${new Date().getFullYear()} Nynke Leistra Coaching en Advies`, pageWidth / 2, ctx.y, {
     align: "center",
   });
+
+  if (voorbeeld) {
+    ctx.y += 5;
+    pdf.setFont("helvetica", "italic");
+    pdf.text("Dit rapport is gemaakt met fictieve scores.", pageWidth / 2, ctx.y, { align: "center" });
+    pdf.setFont("helvetica", "normal");
+  }
+
   pdf.setTextColor(...TEXT_DARK);
 
   return Buffer.from(pdf.output("arraybuffer"));

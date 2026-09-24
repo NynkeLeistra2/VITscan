@@ -123,6 +123,24 @@ tekst én de vraag).
   uit. Het loont om te weten waarom dit zo goed werkt."
   Vraag: "Wat heb je nodig om dit vast te houden als het drukker wordt?"
 
+### Voorbeeldrapport
+
+Onder "Voorbeeldrapport downloaden" op `/beheer` staat een PDF met vaste,
+verzonnen scores (`src/lib/pdf/voorbeeld-scores.ts`), voor Nynke om te
+delen met potentiële klanten. Zelfde opbouw als het echte rapport, met
+twee verschillen:
+
+- Geen signaalzinnen per stelling, op één uitzondering na: bij Mentale
+  gezondheid staat altijd de signaalzin van "Ik voel me vrij van stress
+  gerelateerde mentale klachten", met eronder in kleinere cursieve tekst
+  "In het rapport van deelnemers staat dit bij elke stelling die laag
+  scoort."
+- Geen bijlage met scores per vraag.
+
+Bovenaan staat "Voorbeeldrapport", onderaan bij de contactgegevens "Dit
+rapport is gemaakt met fictieve scores." Zie `RapportPdfInput.voorbeeld`
+in `src/lib/pdf/rapport-pdf.ts`.
+
 ## Werkenergie, deel 1
 
 ### Plezier
