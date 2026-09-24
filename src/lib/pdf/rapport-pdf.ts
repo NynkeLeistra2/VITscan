@@ -586,6 +586,13 @@ export function genereerRapportPdf({
   drawSectionTitel(ctx, algemeen.afsluiting.titel);
   drawParagraaf(ctx, algemeen.afsluiting.tekst);
 
+  if (voorbeeld) {
+    drawKleineToelichting(
+      ctx,
+      "In het rapport dat een deelnemer ontvangt, staat hierna ook een bijlage met de score per stelling."
+    );
+  }
+
   ctx.y += 4;
 
   // Bijlage: score per vraag, zelfde groepering (hoofdthema > thema >
